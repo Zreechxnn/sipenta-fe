@@ -76,4 +76,5 @@ export const API_ENDPOINTS = {
   get USER() { return `${getApiBaseUrl()}/User`; },
   get CHAT() { return `${getApiBaseUrl()}/Chat`; },
   get BIDANG() { return `${getApiBaseUrl()}/bidang`; },
+  get DASHBOARD() { return `${getApiBaseUrl()}/Dashboard`; },
 };

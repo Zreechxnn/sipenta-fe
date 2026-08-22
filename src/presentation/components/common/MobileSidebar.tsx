@@ -72,7 +72,10 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
         <nav className="p-4 flex flex-col gap-1.5 flex-1 overflow-y-auto">
           <NavItem href="/dashboard" icon="fa-file-alt" label="Laporan Kerja" />
           {isAdmin && (
-            <NavItem href="/users" icon="fa-users" label="Daftar Pengguna" />
+            <>
+              <NavItem href="/admin/dashboard" icon="fa-chart-pie" label="Admin Dashboard" />
+              <NavItem href="/users" icon="fa-users" label="Kelola Pengguna" />
+            </>
           )}
 
           <NavItem href="/chat" icon="fa-comments" label="Asisten Analisis AI" />

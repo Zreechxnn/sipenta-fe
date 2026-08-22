@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Document, DocumentAccessUser } from '@/core/domain/document';
+import { UserAccount } from '@/core/domain/user';
+import { userRepository } from '@/infrastructure/repositories/UserRepository';
 import { BIDANG_COLORS } from '@/core/constants/bidang';
 
 interface ShareDocumentModalProps {
@@ -22,6 +24,11 @@ export const ShareDocumentModal: React.FC<ShareDocumentModalProps> = ({
   fetchShares,
 }) => {
   const [username, setUsername] = useState('');
+  const [searchResults, setSearchResults] = useState<UserAccount[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [shares, setShares] = useState<DocumentAccessUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -44,10 +51,47 @@ export const ShareDocumentModal: React.FC<ShareDocumentModalProps> = ({
   useEffect(() => {
     if (isOpen && document?.id) {
       setUsername('');
+      setSearchResults([]);
+      setShowDropdown(false);
       setFeedback(null);
       loadShares();
     }
   }, [isOpen, document?.id]);
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUsername(value);
+    
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    
+    if (value.trim().length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    setIsSearching(true);
+    setShowDropdown(true);
+
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const results = await userRepository.searchUsers(value.trim());
+        // Filter out users who already have access
+        const filteredResults = results.filter(u => !shares.some(s => s.userId === u.id));
+        setSearchResults(filteredResults);
+      } catch (err) {
+        console.error('Failed to search users', err);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+  };
+
+  const selectUser = (selectedUsername: string) => {
+    setUsername(selectedUsername);
+    setShowDropdown(false);
+  };
 
   if (!isOpen || !document) return null;
 
@@ -162,11 +206,48 @@ export const ShareDocumentModal: React.FC<ShareDocumentModalProps> = ({
                 <input
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={handleUsernameChange}
+                  onFocus={() => { if (username.length >= 2) setShowDropdown(true); }}
+                  onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                   placeholder="Ketik username (contoh: budi_aptika)"
                   required
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-8 pr-3 text-sm text-slate-800 placeholder-slate-400 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
                 />
+                {showDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden max-h-60 overflow-y-auto">
+                    {isSearching ? (
+                      <div className="p-3 text-center text-xs text-slate-500">
+                        <i className="fa-solid fa-circle-notch fa-spin text-indigo-500 mr-2"></i>Mencari...
+                      </div>
+                    ) : searchResults.length > 0 ? (
+                      <ul>
+                        {searchResults.map((user) => (
+                          <li
+                            key={user.id}
+                            className="px-4 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0"
+                            onClick={() => selectUser(user.username)}
+                          >
+                            <div className="flex flex-col">
+                              <span className="text-sm font-semibold text-slate-800">{user.fullName || user.username}</span>
+                              <div className="flex items-center text-xs text-slate-500 mt-0.5">
+                                <span className="mr-2">@{user.username}</span>
+                                {user.bidang && (
+                                  <span className={`inline-flex rounded px-1.5 py-0.2 text-[9px] font-medium ${BIDANG_COLORS[user.bidang]?.bg || 'bg-slate-100'} border ${BIDANG_COLORS[user.bidang]?.border || 'border-slate-200'}`}>
+                                    {user.bidang}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : username.length >= 2 ? (
+                      <div className="p-3 text-center text-xs text-slate-500">
+                        Pengguna tidak ditemukan atau sudah memiliki akses.
+                      </div>
+                    ) : null}
+                  </div>
+                )}
               </div>
               <button
                 type="submit"

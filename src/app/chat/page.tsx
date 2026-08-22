@@ -14,7 +14,7 @@ import { useToast } from '@/presentation/hooks/useToast';
 import { useDataSignalR } from '@/presentation/hooks/useDataSignalR';
 
 export default function ChatPage() {
-  const { isLoading: authLoading, isPendingApproval, checkAuth } = useAuth(true, false);
+  const { isLoading: authLoading, isPendingApproval, checkAuth, refreshProfile } = useAuth(true, false);
   const { toast, showToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileChatHistoryOpen, setMobileChatHistoryOpen] = useState(false);
@@ -39,7 +39,13 @@ export default function ChatPage() {
     }
   }, [fetchSessions, loadSessionDetails, currentSessionId]);
 
-  const { isConnected: isSignalRConnected } = useDataSignalR(undefined, undefined, handleChatChange);
+  const handleUserChange = useCallback((event: string) => {
+    if (event === 'UserUpdated') {
+      refreshProfile();
+    }
+  }, [refreshProfile]);
+
+  const { isConnected: isSignalRConnected } = useDataSignalR(undefined, handleUserChange, handleChatChange);
 
   useEffect(() => {
     if (!authLoading && !isPendingApproval) {
@@ -77,7 +83,7 @@ export default function ChatPage() {
         {/* Pending Approval Alert */}
         {isPendingApproval && (
           <div className="mb-6">
-            <PendingApprovalNotice onRefresh={checkAuth} />
+            <PendingApprovalNotice onRefresh={refreshProfile} />
           </div>
         )}
 

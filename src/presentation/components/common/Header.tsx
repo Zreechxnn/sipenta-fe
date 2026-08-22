@@ -18,6 +18,7 @@ interface NavItemConfig {
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
+  { href: '/admin/dashboard', label: 'Admin Dashboard', icon: 'fa-chart-pie', adminOnly: true },
   { href: '/dashboard', label: 'Laporan Kerja', icon: 'fa-file-alt' },
   { href: '/users', label: 'Pengguna', icon: 'fa-users', adminOnly: true },
   { href: '/chat', label: 'Chat AI', icon: 'fa-comments' },
