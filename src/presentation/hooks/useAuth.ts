@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { authRepository } from '@/infrastructure/repositories/AuthRepository';
 import { AuthUseCases } from '@/core/usecases/authUseCases';
 import { LoginRequest, RegisterRequest } from '@/core/domain/auth';
+import { userRepository } from '@/infrastructure/repositories/UserRepository';
 
 const authUseCases = new AuthUseCases(authRepository);
 
@@ -42,6 +43,19 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
 
     return true;
   }, [requireAuth, requireAdmin, router]);
+
+  const refreshProfile = useCallback(async () => {
+    if (!token) return;
+    try {
+      const updatedUser = await userRepository.getProfile();
+      if (updatedUser) {
+        authRepository.setAuth(token, updatedUser.role || role || 'user', updatedUser);
+        checkAuth();
+      }
+    } catch (error) {
+      console.error('Failed to refresh profile', error);
+    }
+  }, [token, role, checkAuth]);
 
   useEffect(() => {
     checkAuth();
@@ -118,5 +132,6 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
     register,
     logout,
     checkAuth,
+    refreshProfile,
   };
 }

@@ -20,7 +20,7 @@ import { Document } from '@/core/domain/document';
 import { BIDANG_LIST } from '@/core/constants/bidang';
 
 export default function DashboardPage() {
-  const { isLoading: authLoading, role, bidang: userBidang, isPendingApproval, isAdmin, checkAuth } = useAuth(true, false);
+  const { isLoading: authLoading, role, bidang: userBidang, isPendingApproval, isAdmin, checkAuth, refreshProfile } = useAuth(true, false);
   const { bidangs } = useBidangs();
   const { toast, showToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -131,7 +131,13 @@ export default function DashboardPage() {
     }
   }, [fetchDocuments, showToast]);
 
-  const { isConnected: isSignalRConnected } = useDataSignalR(handleDocumentChange);
+  const handleUserChange = useCallback((event: string) => {
+    if (event === 'UserUpdated') {
+      refreshProfile();
+    }
+  }, [refreshProfile]);
+
+  const { isConnected: isSignalRConnected } = useDataSignalR(handleDocumentChange, handleUserChange);
 
   const isInitialMount = useRef(true);
 
@@ -250,7 +256,7 @@ export default function DashboardPage() {
         {/* Pending Approval Notice */}
         {isPendingApproval && (
           <div className="mb-6">
-            <PendingApprovalNotice onRefresh={checkAuth} />
+            <PendingApprovalNotice onRefresh={refreshProfile} />
           </div>
         )}
 
