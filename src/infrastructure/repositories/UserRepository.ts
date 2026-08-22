@@ -88,6 +88,17 @@ export class UserRepository implements IUserRepository {
     }
     return { ok: false, message: result.message || 'Gagal memperbarui profil' };
   }
+
+  async searchUsers(query: string): Promise<UserAccount[]> {
+    const res = await authFetch(`${API_ENDPOINTS.USER}/search?query=${encodeURIComponent(query)}`, {
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error('Gagal mencari pengguna');
+    }
+    const data = await res.json();
+    return data;
+  }
 }
 
 export const userRepository = new UserRepository();

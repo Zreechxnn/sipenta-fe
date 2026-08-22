@@ -8,4 +8,5 @@ export interface IUserRepository {
   deleteUser(id: string): Promise<{ ok: boolean; message?: string }>;
   getProfile(): Promise<UserAccount>;
   updateProfile(dto: UpdateProfileDto): Promise<{ ok: boolean; message?: string; user?: UserAccount }>;
+  searchUsers(query: string): Promise<UserAccount[]>;
 }
