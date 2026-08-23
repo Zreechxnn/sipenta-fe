@@ -324,12 +324,15 @@ export default function DashboardPage() {
           {/* Bidang Dropdown Filter */}
           <div className="relative w-full sm:w-auto min-w-[170px]">
             <select
-              value={bidang}
+              value={role === 'kasubag' || role === 'user' ? (userBidang || '') : bidang}
               onChange={e => setBidang(e.target.value)}
-              className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all text-slate-700 cursor-pointer font-medium"
+              disabled={role === 'kasubag' || role === 'user'}
+              className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all text-slate-700 cursor-pointer font-medium disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <option value="">Semua Bidang</option>
-              {bidangs.length > 0 ? (
+              {role !== 'kasubag' && role !== 'user' && <option value="">Semua Bidang</option>}
+              {role === 'kasubag' || role === 'user' ? (
+                <option value={userBidang || ''}>{userBidang || 'Belum Ditentukan'}</option>
+              ) : bidangs.length > 0 ? (
                 bidangs.map(b => (
                   <option key={b.id} value={b.nama}>
                     {b.nama}
@@ -456,6 +459,7 @@ export default function DashboardPage() {
         showToast={showToast}
         userBidang={userBidang}
         isAdmin={isAdmin}
+        role={role}
       />
 
       {/* Share Document Modal */}

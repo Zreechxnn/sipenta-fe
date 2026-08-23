@@ -15,11 +15,12 @@ interface NavItemConfig {
   label: string;
   icon: string;
   adminOnly?: boolean;
+  superAdminOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
-  { href: '/admin/dashboard', label: 'Admin Dashboard', icon: 'fa-chart-pie', adminOnly: true },
-  { href: '/dashboard', label: 'Laporan Kerja', icon: 'fa-file-alt' },
+  { href: '/admin/dashboard', label: 'Admin Dashboard', icon: 'fa-chart-pie', superAdminOnly: true },
+  { href: '/dokumen', label: 'Laporan Kerja', icon: 'fa-file-alt' },
   { href: '/users', label: 'Pengguna', icon: 'fa-users', adminOnly: true },
   { href: '/chat', label: 'Chat AI', icon: 'fa-comments' },
   { href: '/profile', label: 'Profil', icon: 'fa-id-card' },
@@ -27,7 +28,7 @@ const NAV_ITEMS: NavItemConfig[] = [
 
 export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyncing = true }) => {
   const pathname = usePathname();
-  const { token, isAdmin, logout } = useAuth();
+  const { token, isAdmin, role, logout } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
 
@@ -47,8 +48,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
 
   const navRef = useRef<HTMLElement>(null);
   const availableNavItems = useMemo(
-    () => NAV_ITEMS.filter(item => !item.adminOnly || isAdmin),
-    [isAdmin]
+    () => NAV_ITEMS.filter(item => {
+      if (item.superAdminOnly) return role === 'super-admin';
+      if (item.adminOnly) return isAdmin;
+      return true;
+    }),
+    [isAdmin, role]
   );
 
   const itemRefs = useRef<Record<string, HTMLAnchorElement | null>>({});

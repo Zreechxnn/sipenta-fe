@@ -201,7 +201,7 @@ export default function HomePage() {
               <span>Tanya AI</span>
             </Link>
             <Link
-              href="/dashboard"
+              href="/dokumen"
               className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-medium bg-[var(--color-navy)] text-white shadow-xs hover:bg-[var(--color-navy-light)] hover:shadow-md active:scale-95 transition-all"
             >
               <span>Akses Dashboard</span>
@@ -241,7 +241,7 @@ export default function HomePage() {
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-3.5 mb-12 animate-fade-up stagger-2">
             <Link
-              href="/dashboard"
+              href="/dokumen"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full text-sm font-medium bg-[var(--color-navy)] text-white shadow-sm hover:shadow-lg hover:bg-[var(--color-navy-light)] active:scale-95 transition-all"
             >
               <i className="fas fa-folder-open text-xs text-[var(--color-gold)]" />
@@ -820,7 +820,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-3.5">
             <Link
-              href="/dashboard"
+              href="/dokumen"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-sm font-medium bg-[var(--color-gold)] text-[var(--color-navy)] shadow-md hover:bg-[var(--color-gold-light)] active:scale-95 transition-all"
             >
               <span>Akses Dashboard Sistem</span>
@@ -855,7 +855,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-[var(--color-ink-muted)]">
-            <Link href="/dashboard" className="hover:text-[var(--color-navy)] transition-colors">
+            <Link href="/dokumen" className="hover:text-[var(--color-navy)] transition-colors">
               Laporan Kerja
             </Link>
             <Link href="/chat" className="hover:text-[var(--color-navy)] transition-colors">

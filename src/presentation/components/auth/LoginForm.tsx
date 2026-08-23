@@ -37,7 +37,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
         const savedRole = localStorage.getItem('role');
         const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
         setTimeout(() => {
-          router.push(isAdmin ? '/dashboard' : '/chat');
+          router.push(isAdmin ? '/dokumen' : '/chat');
         }, 600);
       } else {
         showToast(result.message || 'Login gagal', true);
@@ -131,7 +131,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
                   const savedRole = localStorage.getItem('role');
                   const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
                   setTimeout(() => {
-                    router.push(isAdmin ? '/dashboard' : '/chat');
+                    router.push(isAdmin ? '/dokumen' : '/chat');
                   }, 600);
                 } else {
                   showToast(result.message || 'Login dengan Google gagal', true);
