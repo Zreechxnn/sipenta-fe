@@ -12,7 +12,7 @@ interface SidebarItem {
 }
 
 const SIDEBAR_ITEMS: SidebarItem[] = [
-  { href: '/dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
+  { href: '/dokumen', icon: 'fa-file-lines', label: 'Dokumen' },
   { href: '/documents', icon: 'fa-file-alt', label: 'Laporan Kerja', badge: 18 },
   { href: '/chat', icon: 'fa-robot', label: 'AI Assistant' },
   { href: '/users', icon: 'fa-users', label: 'Manajemen Tim' },

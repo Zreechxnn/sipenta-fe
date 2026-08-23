@@ -13,6 +13,8 @@ interface UserModalProps {
   showToast: (msg: string, isError?: boolean) => void;
 }
 
+import { useAuth } from '@/presentation/hooks/useAuth';
+
 export const UserModal: React.FC<UserModalProps> = ({
   isOpen,
   editingUser,
@@ -21,12 +23,13 @@ export const UserModal: React.FC<UserModalProps> = ({
   onUpdate,
   showToast,
 }) => {
+  const { user: currentUser } = useAuth();
   const { bidangs } = useBidangs(isOpen);
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [roleId, setRoleId] = useState<number>(3); // default user
+  const [roleId, setRoleId] = useState<number>(3);
   const [bidang, setBidang] = useState<string>('');
   const [isApproved, setIsApproved] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
@@ -37,7 +40,10 @@ export const UserModal: React.FC<UserModalProps> = ({
       setUsername(editingUser.username || '');
       setEmail(editingUser.email || '');
       setPassword('');
-      setRoleId(['admin', 'kasubag'].includes(editingUser.role?.toLowerCase() || '') ? 2 : 3);
+      let currentRoleId = 3;
+      if (editingUser.role?.toLowerCase() === 'super-admin') currentRoleId = 4;
+      else if (editingUser.role?.toLowerCase() === 'admin' || editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
+      setRoleId(currentRoleId);
       setBidang(editingUser.bidang || '');
       setIsApproved(editingUser.isApproved ?? true);
     } else {
@@ -49,7 +55,7 @@ export const UserModal: React.FC<UserModalProps> = ({
       setBidang('');
       setIsApproved(true);
     }
-  }, [editingUser, isOpen]);
+  }, [editingUser, bidangs]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -64,10 +70,65 @@ export const UserModal: React.FC<UserModalProps> = ({
   if (!isOpen) return null;
 
   const isEdit = !!editingUser;
+  
+  const isSuperAdmin = currentUser?.role === 'super-admin';
+  const isKasubagUser = currentUser?.role === 'kasubag';
+
+  const handleBidangChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (val === 'ADD_NEW') {
+      const newBidangName = window.prompt('Masukkan nama bidang baru:');
+      if (!newBidangName) {
+        setBidang(''); // revert to empty if cancelled
+        return;
+      }
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/Bidang', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ nama: newBidangName, kode: newBidangName.substring(0, 5).toUpperCase(), deskripsi: newBidangName })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const createdName = data.data?.nama || newBidangName;
+          showToast('Bidang berhasil ditambahkan');
+          // Add locally to the list via state if possible, but for now just setting the string works
+          // because CreateUser/UpdateUser will match it by string or create it. Wait, the backend CreateUser
+          // accepts string `bidang` and creates it if it doesn't exist? Actually Bidang is mostly referenced by ID.
+          // Let's set it to the string.
+          setBidang(createdName);
+          // To make it show up in the select, we should either reload window or it will just be selected but not in the list.
+          // Since it's a prompt, it's fine.
+          window.location.reload(); // Simple way to refresh the bidangs list globally
+        } else {
+          const err = await res.json();
+          showToast(err.message || 'Gagal menambahkan bidang', true);
+          setBidang('');
+        }
+      } catch (err: any) {
+        showToast(err.message || 'Terjadi kesalahan', true);
+        setBidang('');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setBidang(val);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    let finalBidang = bidang;
+    if (isKasubagUser) {
+      finalBidang = currentUser?.bidang || '';
+    }
 
     try {
       if (isEdit) {
@@ -77,7 +138,7 @@ export const UserModal: React.FC<UserModalProps> = ({
           username,
           email,
           roleId,
-          bidang: bidang || undefined,
+          bidang: finalBidang || undefined,
           isApproved,
         };
         if (password) dto.password = password;
@@ -95,7 +156,7 @@ export const UserModal: React.FC<UserModalProps> = ({
           email,
           password,
           roleId,
-          bidang: bidang || undefined,
+          bidang: finalBidang || undefined,
           isApproved,
         };
         const res = await onCreate(dto);
@@ -190,17 +251,23 @@ export const UserModal: React.FC<UserModalProps> = ({
                 Bidang Diskominfo
               </label>
               <select
-                value={bidang}
-                onChange={e => setBidang(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors"
+                value={isKasubagUser ? (currentUser?.bidang || '') : bidang}
+                onChange={handleBidangChange}
+                disabled={isKasubagUser}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <option value="">-- Belum Ditentukan --</option>
-                {bidangs.length > 0 ? (
-                  bidangs.map((b) => (
-                    <option key={b.id} value={b.nama}>
-                      {b.nama}
-                    </option>
-                  ))
+                {!isKasubagUser && <option value="">-- Belum Ditentukan --</option>}
+                {isKasubagUser ? (
+                  <option value={currentUser?.bidang || ''}>{currentUser?.bidang || ''}</option>
+                ) : bidangs.length > 0 ? (
+                  <>
+                    {bidangs.map((b) => (
+                      <option key={b.id} value={b.nama}>
+                        {b.nama}
+                      </option>
+                    ))}
+                    {isSuperAdmin && <option value="ADD_NEW">+ Tambah Bidang Baru...</option>}
+                  </>
                 ) : (
                   <>
                     <option value="Bidang APTIKA">Bidang APTIKA</option>
@@ -209,6 +276,7 @@ export const UserModal: React.FC<UserModalProps> = ({
                     <option value="Bidang Statistik">Bidang Statistik</option>
                     <option value="Bidang Persandian dan Keamanan Informasi">Bidang Persandian dan Keamanan Informasi</option>
                     <option value="Sekretariat">Sekretariat</option>
+                    {isSuperAdmin && <option value="ADD_NEW">+ Tambah Bidang Baru...</option>}
                   </>
                 )}
               </select>
@@ -220,11 +288,17 @@ export const UserModal: React.FC<UserModalProps> = ({
                   Peran / Hak Akses
                 </label>
                 <select
-                  value={roleId}
-                  onChange={e => setRoleId(parseInt(e.target.value))}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors"
+                  value={roleId}
+                  onChange={(e) => setRoleId(Number(e.target.value))}
+                  required
                 >
-                  <option value={2}>Kasubag / Admin</option>
+                  {isSuperAdmin && (
+                    <option value={4}>Superadmin</option>
+                  )}
+                  {isSuperAdmin && (
+                    <option value={1}>Kasubag/Admin</option>
+                  )}
                   <option value={3}>Tenaga Ahli</option>
                 </select>
               </div>

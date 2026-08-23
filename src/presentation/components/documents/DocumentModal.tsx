@@ -13,6 +13,7 @@ interface DocumentModalProps {
   showToast: (msg: string, isError?: boolean) => void;
   userBidang?: string | null;
   isAdmin?: boolean;
+  role?: string | null;
 }
 
 export const DocumentModal: React.FC<DocumentModalProps> = ({
@@ -23,6 +24,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
   showToast,
   userBidang,
   isAdmin = false,
+  role,
 }) => {
   const { bidangs } = useBidangs(isOpen);
   const [nama, setNama] = useState('');
@@ -223,7 +225,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                 <div className="p-3.5 rounded-xl border border-indigo-100 bg-indigo-50/50 flex items-start gap-3">
                   <i className="fas fa-info-circle text-indigo-600 mt-0.5"></i>
                   <div className="text-xs text-indigo-900 flex-1">
-                    {isAdmin ? (
+                    {role === 'super-admin' ? (
                       <div className="space-y-1.5">
                         <span className="font-semibold block">Tentukan Bidang untuk Dokumen yang Diunggah:</span>
                         <select
@@ -232,12 +234,17 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                           className="w-full rounded-lg border border-indigo-200 bg-white px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                         >
                           <option value="">-- Gunakan Bidang Pengunggah --</option>
-                          {BIDANG_LIST.map((b) => (
+                          {bidangs.length > 0 ? (
+                            bidangs.map((b) => (
+                              <option key={b.id} value={b.nama}>
+                                {b.nama}
+                              </option>
+                            ))
+                          ) : BIDANG_LIST.map((b) => (
                             <option key={b} value={b}>
                               {b}
                             </option>
                           ))}
-                          <option value="Sekretariat">Sekretariat</option>
                         </select>
                       </div>
                     ) : (
@@ -344,12 +351,15 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                       Bidang Diskominfo
                     </label>
                     <select
-                      value={bidang}
+                      value={role === 'kasubag' || role === 'user' ? (userBidang || '') : bidang}
                       onChange={e => setBidang(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors"
+                      disabled={role === 'kasubag' || role === 'user'}
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      <option value="">-- Belum Ditentukan --</option>
-                      {bidangs.length > 0 ? (
+                      {role !== 'kasubag' && role !== 'user' && <option value="">-- Belum Ditentukan --</option>}
+                      {role === 'kasubag' || role === 'user' ? (
+                        <option value={userBidang || ''}>{userBidang || 'Belum Ditentukan'}</option>
+                      ) : bidangs.length > 0 ? (
                         bidangs.map((b) => (
                           <option key={b.id} value={b.nama}>
                             {b.nama}

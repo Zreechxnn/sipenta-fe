@@ -42,7 +42,7 @@ export class AuthUseCases {
     const token = this.authRepo.getToken();
     const role = this.authRepo.getRole();
     const user = this.authRepo.getUser();
-    const isAdmin = !!(role && ['admin', 'kasubag'].includes(role.toLowerCase()));
+    const isAdmin = !!(role && ['super-admin', 'admin', 'kasubag'].includes(role.toLowerCase()));
     const bidangId = user?.bidangId ? Number(user.bidangId) : (typeof window !== 'undefined' && localStorage.getItem('bidangId') ? Number(localStorage.getItem('bidangId')) : null);
     const bidang = user?.bidang || (typeof window !== 'undefined' ? localStorage.getItem('bidang') : null);
     const isApproved = isAdmin || (user?.isApproved ?? (typeof window !== 'undefined' ? localStorage.getItem('isApproved') === 'true' : false));

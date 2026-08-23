@@ -12,7 +12,7 @@ interface MobileSidebarProps {
 
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
-  const { isAdmin, logout } = useAuth();
+  const { isAdmin, role, logout } = useAuth();
 
   if (!isOpen) return null;
 
@@ -70,12 +70,12 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
 
         {/* Navigation Items */}
         <nav className="p-4 flex flex-col gap-1.5 flex-1 overflow-y-auto">
-          <NavItem href="/dashboard" icon="fa-file-alt" label="Laporan Kerja" />
+          <NavItem href="/dokumen" icon="fa-file-alt" label="Laporan Kerja" />
+          {role === 'super-admin' && (
+             <NavItem href="/admin/dashboard" icon="fa-chart-pie" label="Admin Dashboard" />
+          )}
           {isAdmin && (
-            <>
-              <NavItem href="/admin/dashboard" icon="fa-chart-pie" label="Admin Dashboard" />
-              <NavItem href="/users" icon="fa-users" label="Kelola Pengguna" />
-            </>
+             <NavItem href="/users" icon="fa-users" label="Kelola Pengguna" />
           )}
 
           <NavItem href="/chat" icon="fa-comments" label="Asisten Analisis AI" />

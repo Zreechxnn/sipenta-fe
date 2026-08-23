@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function AdminDashboardPage() {
-  const { isLoading: authLoading, isAdmin, user } = useAuth(true, false);
+  const { isLoading: authLoading, isAdmin, user, role } = useAuth(true, false);
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   
@@ -38,28 +38,28 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    if (!authLoading && !isAdmin) {
-      router.push('/dashboard');
+    if (!authLoading && role !== 'super-admin') {
+      router.push('/dokumen');
     }
-  }, [authLoading, isAdmin, router]);
+  }, [authLoading, role, router]);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (role === 'super-admin') {
       fetchSummary();
     }
-  }, [isAdmin, fetchSummary]);
+  }, [role, fetchSummary]);
 
   const handleDocumentChange = useCallback(() => {
-    if (isAdmin) fetchSummary();
-  }, [isAdmin, fetchSummary]);
+    if (role === 'super-admin') fetchSummary();
+  }, [role, fetchSummary]);
 
   const handleUserChange = useCallback(() => {
-    if (isAdmin) fetchSummary();
-  }, [isAdmin, fetchSummary]);
+    if (role === 'super-admin') fetchSummary();
+  }, [role, fetchSummary]);
 
   const { isConnected: isSignalRConnected } = useDataSignalR(handleDocumentChange, handleUserChange);
 
-  if (authLoading || !isAdmin) return null;
+  if (authLoading || role !== 'super-admin') return null;
 
   const formatBytes = (bytes: number, decimals = 2) => {
     if (!+bytes) return '0 Bytes';
@@ -95,9 +95,9 @@ export default function AdminDashboardPage() {
               <i className="fa-solid fa-users text-slate-400"></i>
               Kelola Pengguna
             </Link>
-            <Link href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white">
-              <i className="fa-solid fa-folder-open text-white/80"></i>
-              Buka Laporan
+            <Link href="/dokumen" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white">
+              <i className="fa-solid fa-file-lines text-[14px]"></i>
+              Lihat Dokumen
             </Link>
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
               <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden flex flex-col">
                 <div className="px-5 py-4 border-b border-slate-200/80 flex justify-between items-center bg-slate-50/50">
                   <h3 className="text-sm font-bold text-slate-800">Riwayat Unggahan Terbaru</h3>
-                  <Link href="/dashboard" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg">Lihat Semua</Link>
+                  <Link href="/dokumen" className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg">Lihat Semua</Link>
                 </div>
                 <div className="flex-1 overflow-auto">
                   <table className="w-full text-left text-sm whitespace-nowrap border-collapse">

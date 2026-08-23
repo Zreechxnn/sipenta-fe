@@ -16,7 +16,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (!isLoading && token) {
       const isAdmin = role && ['admin', 'kasubag'].includes(role.toLowerCase());
-      router.push(isAdmin ? '/dashboard' : '/chat');
+      router.push(isAdmin ? '/dokumen' : '/chat');
     }
   }, [token, role, isLoading, router]);
 
