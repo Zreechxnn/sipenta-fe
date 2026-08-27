@@ -23,7 +23,7 @@ export const UserModal: React.FC<UserModalProps> = ({
   onUpdate,
   showToast,
 }) => {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, role: userRole, bidang: userBidang } = useAuth();
   const { bidangs } = useBidangs(isOpen);
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
@@ -33,6 +33,9 @@ export const UserModal: React.FC<UserModalProps> = ({
   const [bidang, setBidang] = useState<string>('');
   const [isApproved, setIsApproved] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
+
+  const isSuperAdmin = userRole === 'super-admin';
+  const isBidangAdmin = !isSuperAdmin;
 
   useEffect(() => {
     if (editingUser) {
@@ -44,7 +47,7 @@ export const UserModal: React.FC<UserModalProps> = ({
       if (editingUser.role?.toLowerCase() === 'super-admin') currentRoleId = 4;
       else if (editingUser.role?.toLowerCase() === 'admin' || editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
       setRoleId(currentRoleId);
-      setBidang(editingUser.bidang || '');
+      setBidang(isBidangAdmin ? (userBidang || '') : (editingUser.bidang || ''));
       setIsApproved(editingUser.isApproved ?? true);
     } else {
       setFullName('');
@@ -52,10 +55,10 @@ export const UserModal: React.FC<UserModalProps> = ({
       setEmail('');
       setPassword('');
       setRoleId(3);
-      setBidang('');
+      setBidang(isBidangAdmin ? (userBidang || '') : '');
       setIsApproved(true);
     }
-  }, [editingUser, bidangs]);
+  }, [editingUser, bidangs, isBidangAdmin, userBidang]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -70,9 +73,6 @@ export const UserModal: React.FC<UserModalProps> = ({
   if (!isOpen) return null;
 
   const isEdit = !!editingUser;
-  
-  const isSuperAdmin = currentUser?.role === 'super-admin';
-  const isKasubagUser = currentUser?.role === 'kasubag';
 
   const handleBidangChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -126,9 +126,11 @@ export const UserModal: React.FC<UserModalProps> = ({
     setLoading(true);
 
     let finalBidang = bidang;
-    if (isKasubagUser) {
-      finalBidang = currentUser?.bidang || '';
+    if (isBidangAdmin) {
+      finalBidang = userBidang || '';
     }
+
+    const finalRoleId = isBidangAdmin ? 3 : roleId;
 
     try {
       if (isEdit) {
@@ -137,7 +139,7 @@ export const UserModal: React.FC<UserModalProps> = ({
           fullName,
           username,
           email,
-          roleId,
+          roleId: finalRoleId,
           bidang: finalBidang || undefined,
           isApproved,
         };
@@ -155,7 +157,7 @@ export const UserModal: React.FC<UserModalProps> = ({
           username,
           email,
           password,
-          roleId,
+          roleId: finalRoleId,
           bidang: finalBidang || undefined,
           isApproved,
         };
@@ -251,14 +253,14 @@ export const UserModal: React.FC<UserModalProps> = ({
                 Bidang Diskominfo
               </label>
               <select
-                value={isKasubagUser ? (currentUser?.bidang || '') : bidang}
+                value={isBidangAdmin ? (currentUser?.bidang || userBidang || '') : bidang}
                 onChange={handleBidangChange}
-                disabled={isKasubagUser}
+                disabled={isBidangAdmin}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {!isKasubagUser && <option value="">-- Belum Ditentukan --</option>}
-                {isKasubagUser ? (
-                  <option value={currentUser?.bidang || ''}>{currentUser?.bidang || ''}</option>
+                {!isBidangAdmin && <option value="">-- Belum Ditentukan --</option>}
+                {isBidangAdmin ? (
+                  <option value={currentUser?.bidang || userBidang || ''}>{currentUser?.bidang || userBidang || ''}</option>
                 ) : bidangs.length > 0 ? (
                   <>
                     {bidangs.map((b) => (
@@ -288,9 +290,10 @@ export const UserModal: React.FC<UserModalProps> = ({
                   Peran / Hak Akses
                 </label>
                 <select
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors"
-                  value={roleId}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  value={isBidangAdmin ? 3 : roleId}
                   onChange={(e) => setRoleId(Number(e.target.value))}
+                  disabled={isBidangAdmin}
                   required
                 >
                   {isSuperAdmin && (

@@ -63,11 +63,15 @@ export const UserTable: React.FC<UserTableProps> = ({
           </div>
         ) : (
           users.map((user, idx) => {
-            const isAdmin = ['admin', 'kasubag'].includes(user.role?.toLowerCase() || '');
+            const roleLower = user.role?.toLowerCase() || '';
+            const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(roleLower);
             const isApproved = isAdmin || user.isApproved;
             const bidangStyle = user.bidang && BIDANG_COLORS[user.bidang]
               ? BIDANG_COLORS[user.bidang]
               : { bg: 'bg-slate-100 text-slate-700', border: 'border-slate-200' };
+
+            const roleDisplay = roleLower === 'super-admin' ? 'Super Admin' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'Kasubag / Admin' : 'Tenaga Ahli');
+            const roleBadgeColor = roleLower === 'super-admin' ? 'text-purple-700 bg-purple-100' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'text-blue-700 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
 
             return (
               <div
@@ -91,8 +95,8 @@ export const UserTable: React.FC<UserTableProps> = ({
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${isAdmin ? 'text-amber-700 bg-amber-100' : 'text-indigo-700 bg-indigo-50'}`}>
-                      {user.role === 'admin' ? 'Kasubag' : (user.role === 'user' ? 'Tenaga Ahli' : user.role)}
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${roleBadgeColor}`}>
+                      {roleDisplay}
                     </span>
                     {!isApproved ? (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200">
@@ -187,12 +191,16 @@ export const UserTable: React.FC<UserTableProps> = ({
               </tr>
             ) : (
               users.map((user, idx) => {
-                const isAdmin = ['admin', 'kasubag'].includes(user.role?.toLowerCase() || '');
+                const roleLower = user.role?.toLowerCase() || '';
+                const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(roleLower);
                 const isApproved = isAdmin || user.isApproved;
                 const isCopied = copiedEmail === user.email;
                 const bidangStyle = user.bidang && BIDANG_COLORS[user.bidang]
                   ? BIDANG_COLORS[user.bidang]
                   : { bg: 'bg-slate-100 text-slate-700', border: 'border-slate-200' };
+
+                const roleDisplay = roleLower === 'super-admin' ? 'Super Admin' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'Kasubag / Admin' : 'Tenaga Ahli');
+                const roleBadgeColor = roleLower === 'super-admin' ? 'text-purple-800 bg-purple-100' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
 
                 return (
                   <tr
@@ -237,8 +245,8 @@ export const UserTable: React.FC<UserTableProps> = ({
                       </button>
                     </td>
                     <td className="px-5 py-3.5">
-                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${isAdmin ? 'text-amber-800 bg-amber-100' : 'text-indigo-700 bg-indigo-50'}`}>
-                        {user.role === 'admin' ? 'Kasubag' : (user.role === 'user' ? 'Tenaga Ahli' : user.role)}
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${roleBadgeColor}`}>
+                        {roleDisplay}
                       </span>
                     </td>
                     <td className="px-5 py-3.5">

@@ -104,39 +104,39 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-8 bg-[var(--color-surface)] flex flex-col pb-28 md:pb-6"
+          className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 bg-slate-50/50 flex flex-col"
         >
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center my-auto py-8 text-center max-w-xl mx-auto animate-fade-up">
-              <div className="w-14 h-14 rounded-2xl bg-[var(--color-navy)] flex items-center justify-center mb-4 shadow-md border border-white/10 p-2.5">
-                <img src="/sipenta.svg" alt="SIPENTA" className="w-9 h-9 object-contain" />
+            <div className="flex flex-col items-center justify-center my-auto py-6 text-center max-w-xl mx-auto animate-fade-up">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-600 flex items-center justify-center mb-3 shadow-md shadow-indigo-600/20 text-white p-2.5">
+                <img src="/sipenta.svg" alt="SIPENTA" className="w-8 h-8 object-contain" />
               </div>
-              <h3 className="font-display text-xl md:text-2xl mb-2" style={{ color: 'var(--color-navy)' }}>
+              <h3 className="text-lg sm:text-2xl font-bold text-slate-900 mb-1.5">
                 Konsultasi & Analisis Kinerja AI
               </h3>
-              <p className="text-[14px] leading-relaxed mb-8 max-w-md" style={{ color: 'var(--color-ink-muted)' }}>
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6 max-w-md">
                 Tanyakan progres pekerjaan, evaluasi, atau kendala tenaga ahli. AI akan menganalisis laporan kerja yang tersimpan di sistem dan menyajikan ringkasan terkait.
               </p>
 
               {/* Starter Suggestions */}
-              <div className="w-full text-left space-y-2.5">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-faint)] px-1">
+              <div className="w-full text-left space-y-2">
+                <p className="text-[10.5px] font-bold uppercase tracking-wider text-slate-400 px-1">
                   💡 Saran Pertanyaan Cepat:
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                   {STARTER_PROMPTS.map((item, idx) => (
                     <button
                       key={idx}
                       onClick={() => onSelectPrompt?.(item.prompt)}
-                      className="p-3.5 bg-white border border-black/[0.08] rounded-xl hover:border-[var(--color-gold)] hover:shadow-xs text-left transition-all duration-200 group cursor-pointer flex flex-col justify-between"
+                      className="p-3 sm:p-3.5 bg-white border border-slate-200/80 rounded-xl hover:border-indigo-500 hover:shadow-xs text-left transition-all duration-150 group cursor-pointer flex flex-col justify-between active:scale-[0.98]"
                     >
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <i className={`fas ${item.icon} text-xs text-[var(--color-gold)]`} />
-                        <span className="text-[12px] font-semibold text-[var(--color-navy)] group-hover:text-[var(--color-navy-light)]">
+                      <div className="flex items-center gap-2 mb-1">
+                        <i className={`fas ${item.icon} text-xs text-indigo-600`} />
+                        <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600">
                           {item.title}
                         </span>
                       </div>
-                      <p className="text-[12px] text-[var(--color-ink-muted)] line-clamp-2 leading-snug">
+                      <p className="text-[11.5px] sm:text-xs text-slate-500 line-clamp-2 leading-snug">
                         {item.prompt}
                       </p>
                     </button>
@@ -173,17 +173,14 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
                   )}
 
                   <div
-                    className={`p-4 sm:p-5 text-[14px] sm:text-[15px] leading-relaxed relative ${
+                    className={`p-3.5 sm:p-5 text-[13.5px] sm:text-[14.5px] leading-relaxed relative ${
                       isUser
-                        ? 'rounded-2xl rounded-tr-xs text-white shadow-xs'
-                        : 'rounded-2xl rounded-tl-xs border border-black/[0.08] bg-white text-[var(--color-ink)] shadow-xs'
+                        ? 'rounded-2xl rounded-tr-xs text-white shadow-xs bg-indigo-600'
+                        : 'rounded-2xl rounded-tl-xs border border-slate-200/80 bg-white text-slate-800 shadow-2xs'
                     }`}
-                    style={{
-                      backgroundColor: isUser ? 'var(--color-navy)' : '#fff',
-                    }}
                   >
                     {isUser ? (
-                      <div className="whitespace-pre-wrap">{content}</div>
+                      <div className="whitespace-pre-wrap font-medium">{content}</div>
                     ) : (
                       <div>
                         {sourcesList && sourcesList.length > 0 && (() => {
@@ -207,28 +204,27 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
                           });
 
                           return (
-                            <div className="space-y-2.5 pb-3 mb-4 border-b border-[var(--color-border)]">
-                              <div className="flex flex-wrap gap-2 items-center">
-                                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] flex items-center gap-1">
-                                  <i className="fas fa-bookmark text-[var(--color-gold)] text-[9px]" /> Rujukan Laporan:
+                            <div className="space-y-2.5 pb-3 mb-3.5 border-b border-slate-100">
+                              <div className="flex flex-wrap gap-1.5 items-center">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                                  <i className="fas fa-bookmark text-indigo-500 text-[9px]" /> Rujukan Dokumen:
                                 </span>
                                 {uniqueSources.map((src: any, srcIdx: number) => (
                                   <span
                                     key={srcIdx}
-                                    className="text-[11px] font-medium px-2.5 py-1 rounded-sm flex items-center gap-1.5 border border-amber-200/60"
-                                    style={{ backgroundColor: 'var(--color-gold-pale)', color: 'var(--color-navy)' }}
+                                    className="text-[10.5px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200/60"
                                   >
-                                    <i className="fas fa-file-pdf text-[10px]"></i>
+                                    <i className="fas fa-file-pdf text-[9.5px]"></i>
                                     {src._label}
                                   </span>
                                 ))}
                               </div>
 
                               {allImages.length > 0 && (
-                                <div className="pt-1.5">
-                                  <div className="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5 flex items-center gap-1.5">
-                                    <i className="fas fa-camera text-amber-500 text-[10px]" />
-                                    <span>Foto / Dokumentasi Terlampir ({allImages.length}):</span>
+                                <div className="pt-1">
+                                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+                                    <i className="fas fa-camera text-amber-500 text-[9.5px]" />
+                                    <span>Dokumentasi Terlampir ({allImages.length}):</span>
                                   </div>
                                   <div className="flex flex-wrap gap-2">
                                     {allImages.map((img: any, imgIdx: number) => {
@@ -241,7 +237,7 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
                                         <div
                                           key={imgIdx}
                                           onClick={() => setSelectedLightboxImg({ url: fullUrl, caption: img.caption || img.Caption || `Hal. ${img.pageNumber || img.PageNumber || 1}` })}
-                                          className="group/img relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 cursor-pointer shadow-xs hover:shadow-md hover:border-amber-400 transition-all shrink-0"
+                                          className="group/img relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 cursor-pointer shadow-2xs hover:shadow-md hover:border-indigo-400 transition-all shrink-0"
                                           title={img.caption || img.Caption || 'Klik untuk memperbesar'}
                                         >
                                           <img
@@ -270,25 +266,25 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
                     )}
                   </div>
                   
-                  {/* Quick Copy Action Bar - MOVED OUTSIDE THE MESSAGE BUBBLE */}
+                  {/* Quick Copy Action Bar */}
                   <div
-                    className={`flex items-center gap-1 mt-1.5 text-[11px] transition-opacity duration-200 ${
+                    className={`flex items-center gap-1 mt-1 text-[11px] transition-opacity duration-200 ${
                       isUser
                         ? 'text-slate-400 justify-end'
-                        : 'text-[var(--color-ink-faint)] justify-between w-full'
+                        : 'text-slate-400 justify-between w-full'
                     }`}
                   >
                     {!isUser && (
-                      <span className="text-[10px] uppercase tracking-wider text-[var(--color-ink-faint)] ml-1">
-                        Analisis Laporan Tenaga Ahli
+                      <span className="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400 ml-1">
+                        Analisis AI Laporan Tenaga Ahli
                       </span>
                     )}
                     <button
                       onClick={() => handleCopy(content, index)}
-                      className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] transition-all cursor-pointer ${
+                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium transition-all cursor-pointer ${
                         isUser
-                          ? 'hover:bg-black/5 text-slate-500'
-                          : 'hover:bg-[var(--color-surface-2)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]'
+                          ? 'hover:bg-slate-100 text-slate-500'
+                          : 'hover:bg-slate-100 text-slate-500 hover:text-slate-800'
                       }`}
                       title="Salin pesan ke clipboard"
                     >
@@ -305,24 +301,23 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
           {isSending && (
             <div className="max-w-[90%] sm:max-w-[85%] w-fit self-start mr-auto relative z-10 animate-fade-up flex flex-col">
               <div className="flex items-center gap-2 mb-1.5 ml-1">
-                <div className="w-5 h-5 rounded-xs flex items-center justify-center shadow-xs" style={{ backgroundColor: 'var(--color-navy)' }}>
-                  <i className="fas fa-robot text-[9px]" style={{ color: 'var(--color-gold)' }}></i>
+                <div className="w-5 h-5 rounded-md bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                  <i className="fas fa-robot text-[9px]"></i>
                 </div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-navy)]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">
                   SIPENTA AI Analis
                 </span>
               </div>
               <div
-                className="p-4 sm:p-5 rounded-tr-lg rounded-br-lg rounded-bl-lg border bg-white shadow-xs flex items-center gap-3"
-                style={{ borderColor: 'var(--color-border)' }}
+                className="p-4 rounded-2xl rounded-tl-xs border border-slate-200/80 bg-white shadow-xs flex items-center gap-3"
               >
                 <div className="flex gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[var(--color-navy)] animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                  <span className="w-2 h-2 rounded-full bg-[var(--color-navy)] animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                  <span className="w-2 h-2 rounded-full bg-[var(--color-navy)] animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </div>
-                <span className="text-sm font-medium text-[var(--color-ink-muted)]">
-                  Mencari data laporan & menyusun jawaban...
+                <span className="text-xs font-semibold text-slate-600">
+                  Mencari konteks laporan & menyusun analisis...
                 </span>
               </div>
             </div>
@@ -333,10 +328,10 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
         {showScrollBottom && (
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-20 md:bottom-4 right-6 z-20 w-9 h-9 rounded-full bg-[var(--color-navy)] text-white shadow-md hover:bg-[var(--color-navy-light)] flex items-center justify-center transition-all duration-200 animate-scale-up active:scale-95 cursor-pointer border border-white/20"
+            className="absolute bottom-4 right-4 z-20 w-9 h-9 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 flex items-center justify-center transition-all duration-200 animate-scale-up active:scale-95 cursor-pointer border border-white/20"
             title="Gulir ke pesan terbaru"
           >
-            <i className="fas fa-arrow-down text-xs text-[var(--color-gold)]" />
+            <i className="fas fa-arrow-down text-xs" />
           </button>
         )}
 

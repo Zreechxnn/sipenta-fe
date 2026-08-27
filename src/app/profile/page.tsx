@@ -141,15 +141,24 @@ export default function ProfilePage() {
                 <p className="text-xs mb-3 text-[var(--color-ink-muted)]">@{profile?.username}</p>
 
                 <div className="mb-6">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
-                      ['admin', 'kasubag'].includes(profile?.role?.toLowerCase() || '')
-                        ? 'text-[var(--color-gold)] bg-[var(--color-navy)]'
-                        : 'text-[var(--color-navy)] bg-[var(--color-surface-2)] border border-black/[0.06]'
-                    }`}
-                  >
-                    <i className="fas fa-shield-alt mr-1"></i> {profile?.role === 'admin' ? 'Kasubag' : (profile?.role === 'user' ? 'Tenaga Ahli' : (profile?.role || 'User'))}
-                  </span>
+                  {(() => {
+                    const r = profile?.role?.toLowerCase() || '';
+                    const label = r === 'super-admin' ? 'Super Admin' : (r === 'kasubag' ? 'Kasubag' : (r === 'admin' ? 'Admin' : 'Tenaga Ahli'));
+                    const badgeClass = r === 'super-admin'
+                      ? 'text-purple-700 bg-purple-50 border-purple-200'
+                      : r === 'kasubag'
+                      ? 'text-blue-700 bg-blue-50 border-blue-200'
+                      : r === 'admin'
+                      ? 'text-amber-700 bg-amber-50 border-amber-200'
+                      : 'text-indigo-700 bg-indigo-50 border-indigo-200';
+
+                    return (
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border ${badgeClass}`}>
+                        <i className="fas fa-shield-alt text-[10px]"></i>
+                        <span>{label}</span>
+                      </span>
+                    );
+                  })()}
                 </div>
 
                 <div className="w-full border-t border-black/[0.06] pt-5 text-left space-y-4">

@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function AdminDashboardPage() {
-  const { isLoading: authLoading, isAdmin, user, role } = useAuth(true, false);
+  const { isLoading: authLoading, isAdmin, user, role, bidang } = useAuth(true, false);
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   
@@ -38,28 +38,31 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    if (!authLoading && role !== 'super-admin') {
+    if (!authLoading && !isAdmin) {
       router.push('/dokumen');
     }
-  }, [authLoading, role, router]);
+  }, [authLoading, isAdmin, router]);
 
   useEffect(() => {
-    if (role === 'super-admin') {
+    if (isAdmin) {
       fetchSummary();
     }
-  }, [role, fetchSummary]);
+  }, [isAdmin, fetchSummary]);
 
   const handleDocumentChange = useCallback(() => {
-    if (role === 'super-admin') fetchSummary();
-  }, [role, fetchSummary]);
+    if (isAdmin) fetchSummary();
+  }, [isAdmin, fetchSummary]);
 
   const handleUserChange = useCallback(() => {
-    if (role === 'super-admin') fetchSummary();
-  }, [role, fetchSummary]);
+    if (isAdmin) fetchSummary();
+  }, [isAdmin, fetchSummary]);
 
   const { isConnected: isSignalRConnected } = useDataSignalR(handleDocumentChange, handleUserChange);
 
-  if (authLoading || role !== 'super-admin') return null;
+  if (authLoading || !isAdmin) return null;
+
+  const isSuperAdmin = role === 'super-admin';
+  const isKasubag = !isSuperAdmin;
 
   const formatBytes = (bytes: number, decimals = 2) => {
     if (!+bytes) return '0 Bytes';
@@ -82,11 +85,12 @@ export default function AdminDashboardPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                Admin Dashboard
+                {isKasubag ? `Dashboard Kasubag (${bidang || 'Admin Bidang'})` : 'Super Admin Dashboard'}
               </h1>
             </div>
             <p className="text-sm text-slate-500 mt-1">
-              Selamat Datang, <strong className="text-slate-800">{user?.nama || user?.namaLengkap || 'Administrator'}</strong>. Panel kendali utama Sistem Pelaporan Tenaga Ahli (SIPENTA).
+              Selamat Datang, <strong className="text-slate-800">{user?.fullName || user?.nama || user?.namaLengkap || 'Administrator'}</strong>
+              {bidang ? ` (${bidang})` : ''}. {isKasubag ? 'Panel ringkasan dokumen dan statistik bidang Anda.' : 'Panel kendali utama Sistem Informasi Pelaporan Tenaga Ahli (SIPENTA).'}
             </p>
           </div>
           
