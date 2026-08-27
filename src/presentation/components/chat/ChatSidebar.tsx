@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { ChatSession } from '@/core/domain/chat';
 import { ConfirmModal } from '@/presentation/components/common/ConfirmModal';
 
@@ -23,6 +23,82 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   isOpenMobile = false,
   onCloseMobile,
 }) => {
+  const [dragOffset, setDragOffset] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const touchStartXRef = useRef<number>(0);
+  const touchStartYRef = useRef<number>(0);
+  const isHorizontalSwipeRef = useRef<boolean | null>(null);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (isOpenMobile) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpenMobile]);
+
+  // Reset drag when closing
+  useEffect(() => {
+    if (!isOpenMobile) {
+      setDragOffset(0);
+      setIsDragging(false);
+    }
+  }, [isOpenMobile]);
+
+  // Handle ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpenMobile && onCloseMobile) {
+        onCloseMobile();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpenMobile, onCloseMobile]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+    isHorizontalSwipeRef.current = null;
+    setIsDragging(false);
+  };
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const deltaX = currentX - touchStartXRef.current;
+    const deltaY = currentY - touchStartYRef.current;
+
+    if (isHorizontalSwipeRef.current === null) {
+      if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
+        isHorizontalSwipeRef.current = Math.abs(deltaX) > Math.abs(deltaY);
+      }
+    }
+
+    if (isHorizontalSwipeRef.current) {
+      if (deltaX < 0) {
+        setIsDragging(true);
+        setDragOffset(deltaX);
+      } else {
+        setDragOffset(0);
+      }
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (isDragging && onCloseMobile) {
+      if (dragOffset < -70) {
+        onCloseMobile();
+      }
+      setDragOffset(0);
+      setIsDragging(false);
+    }
+    isHorizontalSwipeRef.current = null;
+  }, [isDragging, dragOffset, onCloseMobile]);
+
   const handleSelect = (id: string) => {
     onSelectSession(id);
     if (onCloseMobile) onCloseMobile();
@@ -42,14 +118,29 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     }
   };
 
+  const drawerTransform = isOpenMobile
+    ? isDragging
+      ? `translateX(${dragOffset}px)`
+      : 'translateX(0%)'
+    : 'translateX(-105%)';
+
+  const backdropOpacity = isOpenMobile
+    ? isDragging
+      ? Math.max(0.2, 1 + dragOffset / 300)
+      : 1
+    : 0;
+
   const content = (
     <div className="w-full h-full flex flex-col bg-white">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--color-border)] flex justify-between items-center shrink-0 bg-[var(--color-surface)]">
+      <div className="p-4 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/80">
         <div className="flex items-center gap-2">
-          <h3 className="font-display text-base text-[var(--color-navy)]">Riwayat Sesi</h3>
+          <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+            <i className="fas fa-history" />
+          </div>
+          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-800">Riwayat Sesi</h3>
           {sessions.length > 0 && (
-            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-surface-2)] text-[var(--color-ink-muted)] border border-[var(--color-border)]">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700">
               {sessions.length}
             </span>
           )}
@@ -57,16 +148,17 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             onClick={handleNew}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[12px] font-medium rounded-sm bg-[var(--color-navy)] text-white hover:bg-[var(--color-navy-light)] transition-all shadow-2xs active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-xs active:scale-95 cursor-pointer"
             title="Mulai sesi baru"
           >
-            <i className="fas fa-plus text-[10px] text-[var(--color-gold)]" />
-            <span className="hidden sm:inline">Baru</span>
+            <i className="fas fa-plus text-[10px]" />
+            <span>Baru</span>
           </button>
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="md:hidden w-7 h-7 rounded-sm hover:bg-[var(--color-surface-2)] flex items-center justify-center transition-colors text-[var(--color-ink-muted)]"
+              className="md:hidden w-8 h-8 rounded-lg hover:bg-slate-200/70 flex items-center justify-center transition-colors text-slate-500 hover:text-slate-800 active:scale-95 cursor-pointer"
+              aria-label="Tutup riwayat"
             >
               <i className="fas fa-times text-xs"></i>
             </button>
@@ -77,17 +169,17 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {/* Session list */}
       <div className="flex-1 overflow-y-auto p-2.5 space-y-1">
         {sessions.length === 0 ? (
-          <div className="text-center py-10 px-4 space-y-2 animate-fade-in">
-            <div className="w-8 h-8 rounded-full bg-[var(--color-surface-2)] text-[var(--color-ink-faint)] flex items-center justify-center mx-auto">
-              <i className="fas fa-history text-xs" />
+          <div className="text-center py-10 px-4 space-y-2.5 animate-fadeIn">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
+              <i className="fas fa-comments" />
             </div>
-            <p className="text-[13px] font-medium text-[var(--color-ink-muted)]">Belum ada riwayat</p>
-            <p className="text-[11px] text-[var(--color-ink-faint)]">
-              Pertanyaan yang Anda ajukan akan otomatis tersimpan di sini.
+            <p className="text-xs font-bold text-slate-700">Belum Ada Riwayat Sesi</p>
+            <p className="text-[11px] text-slate-500 max-w-[200px] mx-auto leading-relaxed">
+              Pertanyaan yang Anda ajukan akan otomatis tersimpan dan terkelompok di sini.
             </p>
           </div>
         ) : (
-          sessions.map(session => {
+          sessions.map((session, idx) => {
             const id = session.id || session.Id || '';
             const title = session.title || session.Title || 'Analisis Baru';
             const isSelected = id === currentSessionId;
@@ -96,21 +188,20 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <div
                 key={id}
                 onClick={() => handleSelect(id)}
-                className={`group flex justify-between items-center px-3 py-2.5 rounded-sm cursor-pointer transition-all duration-150 relative overflow-hidden ${
+                style={{
+                  transitionDelay: isOpenMobile ? `${50 + idx * 30}ms` : '0ms',
+                }}
+                className={`group flex justify-between items-center px-3 py-2.5 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98] ${
+                  isOpenMobile ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'
+                } ${
                   isSelected
-                    ? 'bg-[var(--color-surface-2)] shadow-2xs'
-                    : 'hover:bg-[var(--color-surface)]'
+                    ? 'bg-indigo-50 text-indigo-900 border border-indigo-200/80 shadow-2xs font-semibold'
+                    : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
-                {isSelected && (
-                  <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-[var(--color-gold)] animate-fade-in" />
-                )}
-                
-                <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
-                  <i className={`fas fa-comment-alt text-[11px] shrink-0 ${isSelected ? 'text-[var(--color-gold)]' : 'text-[var(--color-ink-faint)]'}`} />
-                  <span 
-                    className={`truncate text-[13px] ${isSelected ? 'font-medium text-[var(--color-navy)]' : 'text-[var(--color-ink)]'}`}
-                  >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+                  <i className={`fas fa-comment-dots text-xs shrink-0 ${isSelected ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <span className="truncate text-xs">
                     {title}
                   </span>
                 </div>
@@ -120,9 +211,9 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     e.stopPropagation();
                     setSessionToDelete({ id, title });
                   }}
-                  className={`w-6 h-6 rounded-xs flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 ${
-                    isSelected ? 'opacity-70 hover:opacity-100' : ''
-                  } text-[var(--color-ink-muted)] hover:text-white hover:bg-[var(--color-error)] active:scale-95`}
+                  className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
+                    isSelected ? 'opacity-70 hover:opacity-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600' : 'opacity-0 group-hover:opacity-100 text-slate-400 hover:bg-rose-50 hover:text-rose-600'
+                  } active:scale-90 cursor-pointer`}
                   title="Hapus sesi"
                 >
                   <i className="fas fa-trash-alt text-[10px]"></i>
@@ -150,25 +241,50 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   return (
     <>
       {/* Desktop view (always visible on md+) */}
-      <div className="hidden md:flex w-72 apple-card bg-white border border-black/[0.07] rounded-2xl shadow-xs flex-col overflow-hidden shrink-0">
+      <div className="hidden md:flex w-72 bg-white border border-slate-200/80 rounded-2xl shadow-xs flex-col overflow-hidden shrink-0">
         {content}
       </div>
 
-      {/* Mobile Drawer view */}
-      {isOpenMobile && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          {/* Overlay backdrop */}
-          <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm cursor-pointer animate-backdrop"
-            onClick={onCloseMobile}
-          ></div>
+      {/* Mobile Drawer view Slider X */}
+      <div
+        className={`md:hidden fixed inset-0 z-50 select-none ${
+          isOpenMobile ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+        style={{
+          visibility: isOpenMobile || isDragging ? 'visible' : 'hidden',
+          transition: 'visibility 0.4s ease',
+        }}
+        aria-hidden={!isOpenMobile}
+      >
+        {/* Overlay backdrop */}
+        <div
+          onClick={onCloseMobile}
+          style={{
+            opacity: backdropOpacity,
+            transition: isDragging ? 'none' : 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs cursor-pointer will-change-[opacity]"
+        />
 
-          {/* Drawer container */}
-          <div className="relative w-[85%] max-w-sm h-full bg-white z-10 flex flex-col animate-slide-left shadow-2xl">
-            {content}
-          </div>
+        {/* Drawer container Slider X */}
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{
+            transform: drawerTransform,
+            transition: isDragging
+              ? 'none'
+              : 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1)',
+            willChange: 'transform',
+          }}
+          className="fixed top-0 left-0 bottom-0 z-10 w-[84%] max-w-[320px] h-full bg-white shadow-2xl flex flex-col overflow-hidden border-r border-slate-200/80 rounded-r-3xl"
+        >
+          {/* Grab handle */}
+          <div className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-12 rounded-full bg-slate-200 pointer-events-none opacity-60" />
+          {content}
         </div>
-      )}
+      </div>
     </>
   );
 };

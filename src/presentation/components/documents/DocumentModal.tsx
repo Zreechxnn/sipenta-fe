@@ -154,6 +154,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
 
     setLoading(true);
 
+    const isSuperAdmin = role === 'super-admin';
     const dto: SaveDocumentDto = isEdit
       ? {
           id: editingDocument?.id,
@@ -161,11 +162,11 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
           namaTenagaAhli,
           jenisDokumen,
           periodeLaporan,
-          bidang: bidang || null,
+          bidang: isSuperAdmin ? (bidang || null) : (userBidang || null),
         }
       : {
           files,
-          bidang: bidang || userBidang || null,
+          bidang: isSuperAdmin ? (bidang || userBidang || null) : (userBidang || null),
         };
 
     try {

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserAccount } from '@/core/domain/user';
 import { useBidangs } from '@/presentation/hooks/useBidangs';
+import { useAuth } from '@/presentation/hooks/useAuth';
 import { BIDANG_LIST } from '@/core/constants/bidang';
 
 interface ApproveUserModalProps {
@@ -20,36 +21,43 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
   onApprove,
   showToast,
 }) => {
+  const { role, bidang: userBidang } = useAuth();
   const { bidangs } = useBidangs(isOpen);
   const [selectedBidang, setSelectedBidang] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
+  const isSuperAdmin = role === 'super-admin';
+  const isBidangAdmin = !isSuperAdmin;
+
   useEffect(() => {
     if (isOpen) {
-      if (bidangs.length > 0) {
+      if (isBidangAdmin && userBidang) {
+        setSelectedBidang(userBidang);
+      } else if (bidangs.length > 0) {
         setSelectedBidang(bidangs[0].nama);
       } else {
         setSelectedBidang(BIDANG_LIST[0]);
       }
     }
-  }, [isOpen, bidangs]);
+  }, [isOpen, bidangs, isBidangAdmin, userBidang]);
 
   if (!isOpen || !user) return null;
 
   const bidangOptions = bidangs.length > 0 ? bidangs.map(b => b.nama) : BIDANG_LIST;
+  const targetBidang = isBidangAdmin && userBidang ? userBidang : selectedBidang;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedBidang) {
+    if (!targetBidang) {
       showToast('Pilih bidang terlebih dahulu', true);
       return;
     }
 
     setLoading(true);
     try {
-      const res = await onApprove(user.id, selectedBidang);
+      const res = await onApprove(user.id, targetBidang);
       if (res.ok) {
-        showToast(`Pengguna @${user.username} berhasil disetujui untuk ${selectedBidang}!`);
+        showToast(`Pengguna @${user.username} berhasil disetujui untuk ${targetBidang}!`);
         onClose();
       } else {
         showToast(res.message || 'Gagal menyetujui pengguna', true);
@@ -71,8 +79,10 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
               <i className="fa-solid fa-user-check text-lg"></i>
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Setujui Pengguna</h3>
-              <p className="text-xs text-slate-500">Tentukan penempatan bidang kerja</p>
+              <h3 className="text-base font-bold text-slate-900">Setujui Tenaga Ahli</h3>
+              <p className="text-xs text-slate-500">
+                {isBidangAdmin ? `Penempatan ke ${userBidang || 'Bidang Anda'}` : 'Tentukan penempatan bidang kerja'}
+              </p>
             </div>
           </div>
           <button
@@ -90,33 +100,45 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
             <p className="text-slate-500">@{user.username} &bull; {user.email}</p>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-              Pilih Bidang Diskominfo <span className="text-rose-500">*</span>
-            </label>
-            <select
-              value={selectedBidang}
-              onChange={(e) => setSelectedBidang(e.target.value)}
-              required
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 transition focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/10"
-            >
-              {bidangOptions.map((bidang) => (
-                <option key={bidang} value={bidang}>
-                  {bidang}
-                </option>
-              ))}
-            </select>
-            <p className="mt-1.5 text-[11px] text-slate-500">
-              Setelah disetujui, pengguna dapat mengunggah laporan dan mengakses seluruh dokumen laporan yang berada di bidang ini.
-            </p>
-          </div>
+          {isBidangAdmin ? (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 text-xs text-emerald-950 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-emerald-800">
+                <i className="fa-solid fa-building-user text-sm"></i>
+                <span>Otomatis Masuk Bidang Anda ({userBidang || 'Bidang Anda'})</span>
+              </div>
+              <p className="text-emerald-900/90 leading-relaxed">
+                Pengguna ini akan langsung disetujui sebagai <strong>Tenaga Ahli</strong> dan secara otomatis menjadi anggota bagian <strong>{userBidang || 'Bidang Anda'}</strong>.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                Pilih Bidang Diskominfo <span className="text-rose-500">*</span>
+              </label>
+              <select
+                value={selectedBidang}
+                onChange={(e) => setSelectedBidang(e.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 transition focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/10"
+              >
+                {bidangOptions.map((bidang) => (
+                  <option key={bidang} value={bidang}>
+                    {bidang}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-[11px] text-slate-500">
+                Setelah disetujui, pengguna dapat mengunggah laporan dan mengakses seluruh dokumen laporan yang berada di bidang ini.
+              </p>
+            </div>
+          )}
 
           <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
             >
               Batal
             </button>
@@ -130,7 +152,7 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
               ) : (
                 <>
                   <i className="fa-solid fa-check text-xs"></i>
-                  <span>Setujui & Beri Akses</span>
+                  <span>{isBidangAdmin ? `Setujui ke ${userBidang || 'Bidang Anda'}` : 'Setujui & Beri Akses'}</span>
                 </>
               )}
             </button>

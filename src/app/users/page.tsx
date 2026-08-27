@@ -17,7 +17,7 @@ import { UserAccount } from '@/core/domain/user';
 import { BIDANG_LIST } from '@/core/constants/bidang';
 
 export default function UsersPage() {
-  const { isLoading: authLoading } = useAuth(true, true); // requireAuth = true, requireAdmin = true
+  const { isLoading: authLoading, role: currentRole, bidang: currentBidang } = useAuth(true, true); // requireAuth = true, requireAdmin = true
   const { toast, showToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -60,7 +60,7 @@ export default function UsersPage() {
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      const isAdmin = ['admin', 'kasubag'].includes(u.role?.toLowerCase() || '');
+      const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(u.role?.toLowerCase() || '');
       const isApproved = isAdmin || u.isApproved;
 
       // Status filter
@@ -92,12 +92,15 @@ export default function UsersPage() {
 
   const stats = useMemo(() => {
     const total = users.length;
-    const pending = users.filter((u) => !['admin', 'kasubag'].includes(u.role?.toLowerCase() || '') && !u.isApproved).length;
+    const pending = users.filter((u) => !['admin', 'kasubag', 'super-admin'].includes(u.role?.toLowerCase() || '') && !u.isApproved).length;
     const approved = total - pending;
     return { total, pending, approved };
   }, [users]);
 
   if (authLoading) return null;
+
+  const isSuperAdmin = currentRole === 'super-admin';
+  const isBidangAdmin = !isSuperAdmin;
 
   const handleOpenAdd = () => {
     setEditingUser(null);
@@ -148,9 +151,13 @@ export default function UsersPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Manajemen Pengguna & Bidang</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+              {isBidangAdmin ? `Manajemen Tenaga Ahli (${currentBidang || 'Admin Bidang'})` : 'Manajemen Pengguna & Bidang'}
+            </h1>
             <p className="text-sm text-slate-500 mt-1">
-              Verifikasi pendaftaran pengguna baru, atur penempatan bidang Diskominfo, dan kelola hak akses.
+              {isBidangAdmin
+                ? `Verifikasi pendaftaran calon tenaga ahli baru dan kelola akun pada ${currentBidang || 'bidang Anda'}.`
+                : 'Verifikasi pendaftaran pengguna baru, atur penempatan bidang Diskominfo, dan kelola hak akses.'}
             </p>
           </div>
           <button
@@ -276,33 +283,40 @@ export default function UsersPage() {
               </button>
             </div>
 
-            {/* Bidang Dropdown */}
-            <div className="w-full md:w-56 shrink-0">
-              <select
-                value={bidangFilter}
-                onChange={(e) => setBidangFilter(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-700 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/10 font-medium"
-              >
-                <option value="all">Semua Bidang</option>
-                <option value="unassigned">-- Belum Ada Bidang --</option>
-                {bidangs.length > 0 ? (
-                  bidangs.map((b) => (
-                    <option key={b.id} value={b.nama}>
-                      {b.nama}
-                    </option>
-                  ))
-                ) : (
-                  <>
-                    <option value="Bidang APTIKA">Bidang APTIKA</option>
-                    <option value="Bidang TIK">Bidang TIK</option>
-                    <option value="Bidang IKP">Bidang IKP</option>
-                    <option value="Bidang Statistik">Bidang Statistik</option>
-                    <option value="Bidang Persandian dan Keamanan Informasi">Bidang Persandian dan Keamanan Informasi</option>
-                    <option value="Sekretariat">Sekretariat</option>
-                  </>
-                )}
-              </select>
-            </div>
+            {/* Bidang Dropdown / Badge */}
+            {isSuperAdmin ? (
+              <div className="w-full md:w-56 shrink-0">
+                <select
+                  value={bidangFilter}
+                  onChange={(e) => setBidangFilter(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-700 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/10 font-medium"
+                >
+                  <option value="all">Semua Bidang</option>
+                  <option value="unassigned">-- Belum Ada Bidang --</option>
+                  {bidangs.length > 0 ? (
+                    bidangs.map((b) => (
+                      <option key={b.id} value={b.nama}>
+                        {b.nama}
+                      </option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Bidang APTIKA">Bidang APTIKA</option>
+                      <option value="Bidang TIK">Bidang TIK</option>
+                      <option value="Bidang IKP">Bidang IKP</option>
+                      <option value="Bidang Statistik">Bidang Statistik</option>
+                      <option value="Bidang Persandian dan Keamanan Informasi">Bidang Persandian dan Keamanan Informasi</option>
+                      <option value="Sekretariat">Sekretariat</option>
+                    </>
+                  )}
+                </select>
+              </div>
+            ) : (
+              <div className="w-full md:w-auto px-3.5 py-2 rounded-xl bg-indigo-50/80 border border-indigo-100/80 text-xs font-semibold text-indigo-900 flex items-center gap-2 shrink-0">
+                <i className="fa-solid fa-building text-indigo-600"></i>
+                <span>{currentBidang || 'Bidang Anda'}</span>
+              </div>
+            )}
           </div>
         </div>
 
