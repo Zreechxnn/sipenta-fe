@@ -15,7 +15,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (!isLoading && token) {
-      const isAdmin = role && ['admin', 'kasubag'].includes(role.toLowerCase());
+      const isAdmin = role && ['admin', 'kasubag', 'super-admin'].includes(role.toLowerCase());
       router.push(isAdmin ? '/dokumen' : '/chat');
     }
   }, [token, role, isLoading, router]);
