@@ -33,7 +33,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast }) => {
       if (result.token || result.sukses !== false) {
         showToast('Pendaftaran akun berhasil!');
         const savedRole = localStorage.getItem('role');
-        const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
+        const isAdmin = savedRole && ['admin', 'kasubag', 'super-admin'].includes(savedRole.toLowerCase());
         setTimeout(() => {
           router.push(isAdmin ? '/dokumen' : '/chat');
         }, 600);
@@ -147,7 +147,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast }) => {
                 if (result.token) {
                   showToast('Pendaftaran dengan Google berhasil!');
                   const savedRole = localStorage.getItem('role');
-                  const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
+                  const isAdmin = savedRole && ['admin', 'kasubag', 'super-admin'].includes(savedRole.toLowerCase());
                   setTimeout(() => {
                     router.push(isAdmin ? '/dokumen' : '/chat');
                   }, 600);

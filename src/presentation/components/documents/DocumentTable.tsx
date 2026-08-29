@@ -28,7 +28,7 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({
   onOpenUpload,
   userRole,
 }) => {
-  const isAdmin = ['admin', 'kasubag'].includes(userRole?.toLowerCase() || '');
+  const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(userRole?.toLowerCase() || '');
 
   if (isLoading) {
     return (

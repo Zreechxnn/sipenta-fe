@@ -35,7 +35,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
       if (result.token) {
         showToast('Login berhasil!');
         const savedRole = localStorage.getItem('role');
-        const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
+        const isAdmin = savedRole && ['admin', 'kasubag', 'super-admin'].includes(savedRole.toLowerCase());
         setTimeout(() => {
           router.push(isAdmin ? '/dokumen' : '/chat');
         }, 600);
@@ -129,7 +129,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
                 if (result.token) {
                   showToast('Login dengan Google berhasil!');
                   const savedRole = localStorage.getItem('role');
-                  const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
+                  const isAdmin = savedRole && ['admin', 'kasubag', 'super-admin'].includes(savedRole.toLowerCase());
                   setTimeout(() => {
                     router.push(isAdmin ? '/dokumen' : '/chat');
                   }, 600);
