@@ -10,6 +10,7 @@ import { useDocuments } from '@/presentation/hooks/useDocuments';
 import { useToast } from '@/presentation/hooks/useToast';
 import { useDataSignalR } from '@/presentation/hooks/useDataSignalR';
 import { DocumentLoadingModal } from '@/presentation/components/documents/DocumentLoadingModal';
+import { formatBytes } from '@/presentation/utils/formatters';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -63,15 +64,6 @@ export default function AdminDashboardPage() {
 
   const isRoleAdmin = role === 'admin';
   const isKasubag = !isRoleAdmin;
-
-  const formatBytes = (bytes: number, decimals = 2) => {
-    if (!+bytes) return '0 Bytes';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50">

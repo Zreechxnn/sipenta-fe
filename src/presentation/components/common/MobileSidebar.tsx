@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/presentation/hooks/useAuth';
+import { NotificationBell } from '@/presentation/components/common/NotificationBell';
 
 interface MobileSidebarProps {
   isOpen: boolean;
@@ -247,6 +248,16 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
           <NavItem index={4} href="/profile" icon="fa-id-card" label="Profil Saya" />
 
           <div className="h-px w-full my-2 bg-slate-100" />
+
+          <div className="px-2 py-1">
+            <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <i className="fa-solid fa-bell text-xs text-indigo-600"></i>
+                <span className="text-xs font-semibold text-slate-700">Notifikasi Perangkat</span>
+              </div>
+              <NotificationBell showLabel={false} />
+            </div>
+          </div>
 
           <button
             onClick={() => {

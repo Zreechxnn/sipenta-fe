@@ -61,6 +61,8 @@ export class SignalRService implements ISignalRService {
     this.connection.on('DocumentCreated', data => callback('DocumentCreated', data));
     this.connection.on('DocumentUpdated', data => callback('DocumentUpdated', data));
     this.connection.on('DocumentDeleted', data => callback('DocumentDeleted', data));
+    this.connection.on('DocumentShared', data => callback('DocumentShared', data));
+    this.connection.on('DocumentAccessRevoked', data => callback('DocumentAccessRevoked', data));
   }
 
   onUserChanged(callback: (event: string, data?: any) => void): void {
@@ -83,6 +85,8 @@ export class SignalRService implements ISignalRService {
       this.connection.off('DocumentCreated');
       this.connection.off('DocumentUpdated');
       this.connection.off('DocumentDeleted');
+      this.connection.off('DocumentShared');
+      this.connection.off('DocumentAccessRevoked');
       this.connection.off('UserRegistered');
       this.connection.off('UserCreated');
       this.connection.off('UserUpdated');

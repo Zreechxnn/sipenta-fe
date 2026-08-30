@@ -13,6 +13,7 @@ interface ShareDocumentModalProps {
   onShare: (documentId: string, username: string) => Promise<{ ok: boolean; message?: string }>;
   onRevoke: (documentId: string, targetUserId: string) => Promise<{ ok: boolean; message?: string }>;
   fetchShares: (documentId: string) => Promise<DocumentAccessUser[]>;
+  lastSignalREvent?: { event: string; data?: any } | null;
 }
 
 export const ShareDocumentModal: React.FC<ShareDocumentModalProps> = ({
@@ -22,6 +23,7 @@ export const ShareDocumentModal: React.FC<ShareDocumentModalProps> = ({
   onShare,
   onRevoke,
   fetchShares,
+  lastSignalREvent,
 }) => {
   const [username, setUsername] = useState('');
   const [searchResults, setSearchResults] = useState<UserAccount[]>([]);
@@ -57,6 +59,19 @@ export const ShareDocumentModal: React.FC<ShareDocumentModalProps> = ({
       loadShares();
     }
   }, [isOpen, document?.id]);
+
+  // Real-time synchronization when access changes via SignalR
+  useEffect(() => {
+    if (isOpen && document?.id && lastSignalREvent) {
+      const docId = lastSignalREvent.data?.documentId || lastSignalREvent.data?.DocumentId;
+      if (
+        (lastSignalREvent.event === 'DocumentShared' || lastSignalREvent.event === 'DocumentAccessRevoked') &&
+        (!docId || String(docId).toLowerCase() === String(document.id).toLowerCase())
+      ) {
+        loadShares();
+      }
+    }
+  }, [lastSignalREvent, isOpen, document?.id]);
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

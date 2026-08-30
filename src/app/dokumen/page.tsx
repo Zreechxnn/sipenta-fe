@@ -115,8 +115,11 @@ export default function DashboardPage() {
     return Array.from(types).sort();
   }, [documents]);
 
+  const [lastSignalREvent, setLastSignalREvent] = useState<{ event: string; data?: any } | null>(null);
+
   // Auto-refresh document list on SignalR events
   const handleDocumentChange = useCallback((event: string, data?: any) => {
+    setLastSignalREvent({ event, data });
     fetchDocuments();
     if (event === 'DocumentCreated') {
       showToast('Dokumen baru telah ditambahkan!');
@@ -125,7 +128,7 @@ export default function DashboardPage() {
     } else if (event === 'DocumentDeleted') {
       showToast('Dokumen telah dihapus!');
     } else if (event === 'DocumentShared') {
-      showToast(`Dokumen berhasil dibagikan!`);
+      showToast('Akses dokumen berhasil dibagikan!');
     } else if (event === 'DocumentAccessRevoked') {
       showToast('Hak akses dokumen dicabut!');
     }
@@ -470,6 +473,7 @@ export default function DashboardPage() {
         onShare={shareDocument}
         onRevoke={revokeShare}
         fetchShares={fetchShares}
+        lastSignalREvent={lastSignalREvent}
       />
 
       {/* Delete Confirmation Modal */}

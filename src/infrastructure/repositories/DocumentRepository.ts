@@ -19,24 +19,6 @@ export class DocumentRepository implements IDocumentRepository {
     return result;
   }
 
-  async getCategories(): Promise<string[]> {
-    try {
-      const res = await authFetch(`${API_ENDPOINTS.DOCUMENTS}/categories`, { headers: getAuthHeaders() });
-      if (!res.ok) return [];
-      const result = await res.json();
-      if (result.sukses && Array.isArray(result.data)) {
-        return result.data;
-      } else if (Array.isArray(result.data)) {
-        return result.data;
-      } else if (Array.isArray(result)) {
-        return result;
-      }
-      return [];
-    } catch {
-      return [];
-    }
-  }
-
   async createDocument(data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }> {
     const formData = new FormData();
     if (data.files && data.files.length > 0) {
