@@ -60,7 +60,7 @@ export default function UsersPage() {
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(u.role?.toLowerCase() || '');
+      const isAdmin = ['admin', 'kasubag'].includes(u.role?.toLowerCase() || '');
       const isApproved = isAdmin || u.isApproved;
 
       // Status filter
@@ -92,15 +92,15 @@ export default function UsersPage() {
 
   const stats = useMemo(() => {
     const total = users.length;
-    const pending = users.filter((u) => !['admin', 'kasubag', 'super-admin'].includes(u.role?.toLowerCase() || '') && !u.isApproved).length;
+    const pending = users.filter((u) => !['admin', 'kasubag'].includes(u.role?.toLowerCase() || '') && !u.isApproved).length;
     const approved = total - pending;
     return { total, pending, approved };
   }, [users]);
 
   if (authLoading) return null;
 
-  const isSuperAdmin = currentRole === 'super-admin';
-  const isBidangAdmin = !isSuperAdmin;
+  const isAdmin = currentRole === 'admin';
+  const isBidangAdmin = currentRole === 'kasubag';
 
   const handleOpenAdd = () => {
     setEditingUser(null);
@@ -284,7 +284,7 @@ export default function UsersPage() {
             </div>
 
             {/* Bidang Dropdown / Badge */}
-            {isSuperAdmin ? (
+            {isAdmin ? (
               <div className="w-full md:w-56 shrink-0">
                 <select
                   value={bidangFilter}

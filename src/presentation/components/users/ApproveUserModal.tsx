@@ -26,12 +26,12 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
   const [selectedBidang, setSelectedBidang] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  const isSuperAdmin = role === 'super-admin';
-  const isBidangAdmin = !isSuperAdmin;
+  const isAdmin = role === 'admin';
+  const isKasubag = role === 'kasubag';
 
   useEffect(() => {
     if (isOpen) {
-      if (isBidangAdmin && userBidang) {
+      if (isKasubag && userBidang) {
         setSelectedBidang(userBidang);
       } else if (bidangs.length > 0) {
         setSelectedBidang(bidangs[0].nama);
@@ -39,12 +39,12 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
         setSelectedBidang(BIDANG_LIST[0]);
       }
     }
-  }, [isOpen, bidangs, isBidangAdmin, userBidang]);
+  }, [isOpen, bidangs, isKasubag, userBidang]);
 
   if (!isOpen || !user) return null;
 
   const bidangOptions = bidangs.length > 0 ? bidangs.map(b => b.nama) : BIDANG_LIST;
-  const targetBidang = isBidangAdmin && userBidang ? userBidang : selectedBidang;
+  const targetBidang = isKasubag && userBidang ? userBidang : selectedBidang;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +81,7 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
             <div>
               <h3 className="text-base font-bold text-slate-900">Setujui Tenaga Ahli</h3>
               <p className="text-xs text-slate-500">
-                {isBidangAdmin ? `Penempatan ke ${userBidang || 'Bidang Anda'}` : 'Tentukan penempatan bidang kerja'}
+                {isKasubag ? `Penempatan ke ${userBidang || 'Bidang Anda'}` : 'Tentukan penempatan bidang kerja'}
               </p>
             </div>
           </div>
@@ -100,7 +100,7 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
             <p className="text-slate-500">@{user.username} &bull; {user.email}</p>
           </div>
 
-          {isBidangAdmin ? (
+          {isKasubag ? (
             <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 text-xs text-emerald-950 space-y-1.5">
               <div className="flex items-center gap-2 font-bold text-emerald-800">
                 <i className="fa-solid fa-building-user text-sm"></i>
@@ -152,7 +152,7 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
               ) : (
                 <>
                   <i className="fa-solid fa-check text-xs"></i>
-                  <span>{isBidangAdmin ? `Setujui ke ${userBidang || 'Bidang Anda'}` : 'Setujui & Beri Akses'}</span>
+                  <span>{isKasubag ? `Setujui ke ${userBidang || 'Bidang Anda'}` : 'Setujui & Beri Akses'}</span>
                 </>
               )}
             </button>

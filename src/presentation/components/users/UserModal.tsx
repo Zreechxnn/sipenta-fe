@@ -34,8 +34,8 @@ export const UserModal: React.FC<UserModalProps> = ({
   const [isApproved, setIsApproved] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
 
-  const isSuperAdmin = userRole === 'super-admin';
-  const isBidangAdmin = !isSuperAdmin;
+  const isAdmin = userRole === 'admin';
+  const isKasubag = userRole === 'kasubag';
 
   useEffect(() => {
     if (editingUser) {
@@ -44,10 +44,10 @@ export const UserModal: React.FC<UserModalProps> = ({
       setEmail(editingUser.email || '');
       setPassword('');
       let currentRoleId = 3;
-      if (editingUser.role?.toLowerCase() === 'super-admin') currentRoleId = 4;
-      else if (editingUser.role?.toLowerCase() === 'admin' || editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
+      if (editingUser.role?.toLowerCase() === 'admin') currentRoleId = 2;
+      else if (editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
       setRoleId(currentRoleId);
-      setBidang(isBidangAdmin ? (userBidang || '') : (editingUser.bidang || ''));
+      setBidang(isKasubag ? (userBidang || '') : (editingUser.bidang || ''));
       setIsApproved(editingUser.isApproved ?? true);
     } else {
       setFullName('');
@@ -55,10 +55,10 @@ export const UserModal: React.FC<UserModalProps> = ({
       setEmail('');
       setPassword('');
       setRoleId(3);
-      setBidang(isBidangAdmin ? (userBidang || '') : '');
+      setBidang(isKasubag ? (userBidang || '') : '');
       setIsApproved(true);
     }
-  }, [editingUser, bidangs, isBidangAdmin, userBidang]);
+  }, [editingUser, bidangs, isKasubag, userBidang]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -126,11 +126,11 @@ export const UserModal: React.FC<UserModalProps> = ({
     setLoading(true);
 
     let finalBidang = bidang;
-    if (isBidangAdmin) {
+    if (isKasubag) {
       finalBidang = userBidang || '';
     }
 
-    const finalRoleId = isBidangAdmin ? 3 : roleId;
+    const finalRoleId = isKasubag ? 3 : roleId;
 
     try {
       if (isEdit) {
@@ -253,13 +253,13 @@ export const UserModal: React.FC<UserModalProps> = ({
                 Bidang Diskominfo
               </label>
               <select
-                value={isBidangAdmin ? (currentUser?.bidang || userBidang || '') : bidang}
+                value={isKasubag ? (currentUser?.bidang || userBidang || '') : bidang}
                 onChange={handleBidangChange}
-                disabled={isBidangAdmin}
+                disabled={isKasubag}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {!isBidangAdmin && <option value="">-- Belum Ditentukan --</option>}
-                {isBidangAdmin ? (
+                {!isKasubag && <option value="">-- Belum Ditentukan --</option>}
+                {isKasubag ? (
                   <option value={currentUser?.bidang || userBidang || ''}>{currentUser?.bidang || userBidang || ''}</option>
                 ) : bidangs.length > 0 ? (
                   <>
@@ -268,7 +268,7 @@ export const UserModal: React.FC<UserModalProps> = ({
                         {b.nama}
                       </option>
                     ))}
-                    {isSuperAdmin && <option value="ADD_NEW">+ Tambah Bidang Baru...</option>}
+                    {isAdmin && <option value="ADD_NEW">+ Tambah Bidang Baru...</option>}
                   </>
                 ) : (
                   <>
@@ -278,7 +278,7 @@ export const UserModal: React.FC<UserModalProps> = ({
                     <option value="Bidang Statistik">Bidang Statistik</option>
                     <option value="Bidang Persandian dan Keamanan Informasi">Bidang Persandian dan Keamanan Informasi</option>
                     <option value="Sekretariat">Sekretariat</option>
-                    {isSuperAdmin && <option value="ADD_NEW">+ Tambah Bidang Baru...</option>}
+                    {isAdmin && <option value="ADD_NEW">+ Tambah Bidang Baru...</option>}
                   </>
                 )}
               </select>
@@ -291,16 +291,16 @@ export const UserModal: React.FC<UserModalProps> = ({
                 </label>
                 <select
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                  value={isBidangAdmin ? 3 : roleId}
+                  value={isKasubag ? 3 : roleId}
                   onChange={(e) => setRoleId(Number(e.target.value))}
-                  disabled={isBidangAdmin}
+                  disabled={isKasubag}
                   required
                 >
-                  {isSuperAdmin && (
-                    <option value={4}>Superadmin</option>
+                  {isAdmin && (
+                    <option value={2}>Admin</option>
                   )}
-                  {isSuperAdmin && (
-                    <option value={1}>Kasubag/Admin</option>
+                  {isAdmin && (
+                    <option value={1}>Kasubag</option>
                   )}
                   <option value={3}>Tenaga Ahli</option>
                 </select>

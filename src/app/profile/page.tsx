@@ -143,14 +143,12 @@ export default function ProfilePage() {
                 <div className="mb-6">
                   {(() => {
                     const r = profile?.role?.toLowerCase() || '';
-                    const label = r === 'super-admin' ? 'Super Admin' : (r === 'kasubag' ? 'Kasubag' : (r === 'admin' ? 'Admin' : 'Tenaga Ahli'));
-                    const badgeClass = r === 'super-admin'
-                      ? 'text-purple-700 bg-purple-50 border-purple-200'
+                    const label = r === 'admin' ? 'Admin' : (r === 'kasubag' ? 'Kasubag' : 'Tenaga Ahli');
+                    const badgeClass = r === 'admin'
+                      ? 'bg-purple-100 text-purple-700 border-purple-200'
                       : r === 'kasubag'
-                      ? 'text-blue-700 bg-blue-50 border-blue-200'
-                      : r === 'admin'
-                      ? 'text-amber-700 bg-amber-50 border-amber-200'
-                      : 'text-indigo-700 bg-indigo-50 border-indigo-200';
+                      ? 'bg-blue-100 text-blue-700 border-blue-200'
+                      : 'bg-indigo-100 text-indigo-700 border-indigo-200';
 
                     return (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border ${badgeClass}`}>
