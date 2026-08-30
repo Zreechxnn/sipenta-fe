@@ -15,7 +15,6 @@ interface NavItemConfig {
   label: string;
   icon: string;
   adminOnly?: boolean;
-  superAdminOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
@@ -49,7 +48,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
   const navRef = useRef<HTMLElement>(null);
   const availableNavItems = useMemo(
     () => NAV_ITEMS.filter(item => {
-      if (item.superAdminOnly) return role === 'super-admin';
       if (item.adminOnly) return isAdmin;
       return true;
     }),

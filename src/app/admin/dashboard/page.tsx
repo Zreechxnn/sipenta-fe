@@ -61,8 +61,8 @@ export default function AdminDashboardPage() {
 
   if (authLoading || !isAdmin) return null;
 
-  const isSuperAdmin = role === 'super-admin';
-  const isKasubag = !isSuperAdmin;
+  const isRoleAdmin = role === 'admin';
+  const isKasubag = !isRoleAdmin;
 
   const formatBytes = (bytes: number, decimals = 2) => {
     if (!+bytes) return '0 Bytes';
@@ -85,7 +85,7 @@ export default function AdminDashboardPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                {isKasubag ? `Dashboard Kasubag (${bidang || 'Admin Bidang'})` : 'Super Admin Dashboard'}
+                {isKasubag ? `Dashboard Kasubag (${bidang || 'Admin Bidang'})` : 'Admin Dashboard'}
               </h1>
             </div>
             <p className="text-sm text-slate-500 mt-1">

@@ -94,12 +94,10 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     isHorizontalSwipeRef.current = null;
   }, [isDragging, dragOffset, onClose]);
 
-  const roleDisplay = role === 'super-admin'
-    ? 'Super Admin'
+  const roleDisplay = role === 'admin'
+    ? 'Admin'
     : role === 'kasubag'
     ? 'Kasubag'
-    : role === 'admin'
-    ? 'Admin'
     : 'Tenaga Ahli';
 
   const NavItem = ({ href, icon, label, index }: { href: string; icon: string; label: string; index: number }) => {

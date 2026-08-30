@@ -324,13 +324,13 @@ export default function DashboardPage() {
           {/* Bidang Dropdown Filter */}
           <div className="relative w-full sm:w-auto min-w-[170px]">
             <select
-              value={role !== 'super-admin' ? (userBidang || '') : bidang}
+              value={role !== 'admin' ? (userBidang || '') : bidang}
               onChange={e => setBidang(e.target.value)}
-              disabled={role !== 'super-admin'}
+              disabled={role !== 'admin'}
               className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:outline-none focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all text-slate-700 cursor-pointer font-medium disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {role === 'super-admin' && <option value="">Semua Bidang</option>}
-              {role !== 'super-admin' ? (
+              {role === 'admin' && <option value="">Semua Bidang</option>}
+              {role !== 'admin' ? (
                 <option value={userBidang || ''}>{userBidang || 'Belum Ditentukan'}</option>
               ) : bidangs.length > 0 ? (
                 bidangs.map(b => (

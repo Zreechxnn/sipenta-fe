@@ -64,14 +64,14 @@ export const UserTable: React.FC<UserTableProps> = ({
         ) : (
           users.map((user, idx) => {
             const roleLower = user.role?.toLowerCase() || '';
-            const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(roleLower);
+            const isAdmin = ['admin', 'kasubag'].includes(roleLower);
             const isApproved = isAdmin || user.isApproved;
             const bidangStyle = user.bidang && BIDANG_COLORS[user.bidang]
               ? BIDANG_COLORS[user.bidang]
               : { bg: 'bg-slate-100 text-slate-700', border: 'border-slate-200' };
 
-            const roleDisplay = roleLower === 'super-admin' ? 'Super Admin' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'Kasubag / Admin' : 'Tenaga Ahli');
-            const roleBadgeColor = roleLower === 'super-admin' ? 'text-purple-700 bg-purple-100' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'text-blue-700 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
+            const roleDisplay = roleLower === 'admin' ? 'Admin' : (roleLower === 'kasubag' ? 'Kasubag' : 'Tenaga Ahli');
+            const roleBadgeColor = roleLower === 'admin' ? 'text-purple-800 bg-purple-100' : (roleLower === 'kasubag' ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
 
             return (
               <div
@@ -192,15 +192,15 @@ export const UserTable: React.FC<UserTableProps> = ({
             ) : (
               users.map((user, idx) => {
                 const roleLower = user.role?.toLowerCase() || '';
-                const isAdmin = ['admin', 'kasubag', 'super-admin'].includes(roleLower);
+                const isAdmin = ['admin', 'kasubag'].includes(roleLower);
                 const isApproved = isAdmin || user.isApproved;
                 const isCopied = copiedEmail === user.email;
                 const bidangStyle = user.bidang && BIDANG_COLORS[user.bidang]
                   ? BIDANG_COLORS[user.bidang]
                   : { bg: 'bg-slate-100 text-slate-700', border: 'border-slate-200' };
 
-                const roleDisplay = roleLower === 'super-admin' ? 'Super Admin' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'Kasubag / Admin' : 'Tenaga Ahli');
-                const roleBadgeColor = roleLower === 'super-admin' ? 'text-purple-800 bg-purple-100' : (roleLower === 'kasubag' || roleLower === 'admin' ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
+                const roleDisplay = roleLower === 'admin' ? 'Admin' : (roleLower === 'kasubag' ? 'Kasubag' : 'Tenaga Ahli');
+                const roleBadgeColor = roleLower === 'admin' ? 'text-purple-800 bg-purple-100' : (roleLower === 'kasubag' ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
 
                 return (
                   <tr
