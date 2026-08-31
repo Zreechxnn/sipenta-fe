@@ -192,7 +192,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   transitionDelay: isOpenMobile ? `${50 + idx * 30}ms` : '0ms',
                 }}
                 className={`group flex justify-between items-center px-3 py-2.5 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98] ${
-                  isOpenMobile ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'
+                  isOpenMobile ? 'translate-x-0 opacity-100' : 'md:translate-x-0 md:opacity-100 max-md:-translate-x-2 max-md:opacity-0'
                 } ${
                   isSelected
                     ? 'bg-indigo-50 text-indigo-900 border border-indigo-200/80 shadow-2xs font-semibold'

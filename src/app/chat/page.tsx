@@ -14,7 +14,7 @@ import { useToast } from '@/presentation/hooks/useToast';
 import { useDataSignalR } from '@/presentation/hooks/useDataSignalR';
 
 export default function ChatPage() {
-  const { isLoading: authLoading, isPendingApproval, checkAuth, refreshProfile } = useAuth(true, false);
+  const { isLoading: authLoading, isPendingApproval, refreshProfile } = useAuth(true, false);
   const { toast, showToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileChatHistoryOpen, setMobileChatHistoryOpen] = useState(false);

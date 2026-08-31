@@ -8,10 +8,6 @@ export class DocumentUseCases {
     return await this.docRepo.getDocuments(params);
   }
 
-  async fetchCategories(): Promise<string[]> {
-    return await this.docRepo.getCategories();
-  }
-
   async saveDocument(data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }> {
     if (data.id) {
       return await this.docRepo.updateDocument(data.id, data);

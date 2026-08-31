@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/presentation/hooks/useAuth';
+import { NotificationBell } from '@/presentation/components/common/NotificationBell';
 
 interface HeaderProps {
   onToggleMobileSidebar?: () => void;
@@ -241,6 +242,10 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
 
               <div className="w-px h-5 mx-0.5 bg-black/[0.1]" />
 
+              <NotificationBell />
+
+              <div className="w-px h-5 mx-0.5 bg-black/[0.1]" />
+
               <button
                 onClick={logout}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-full transition-all cursor-pointer text-[var(--color-error)] hover:bg-red-50/80 active:scale-95"
@@ -253,15 +258,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
           )}
         </div>
 
-        {/* Mobile hamburger (only when logged in) */}
+        {/* Mobile action bar (bell + hamburger when logged in) */}
         {token && (
-          <button
-            onClick={onToggleMobileSidebar}
-            className="md:hidden p-2 rounded-full cursor-pointer transition-all text-[var(--color-ink-muted)] hover:bg-black/[0.05] active:scale-95"
-            aria-label="Buka menu navigasi"
-          >
-            <i className="fas fa-bars text-base" />
-          </button>
+          <div className="flex md:hidden items-center gap-2">
+            <NotificationBell />
+            <button
+              onClick={onToggleMobileSidebar}
+              className="p-2 rounded-full cursor-pointer transition-all text-[var(--color-ink-muted)] hover:bg-black/[0.05] active:scale-95"
+              aria-label="Buka menu navigasi"
+            >
+              <i className="fas fa-bars text-base" />
+            </button>
+          </div>
         )}
       </div>
     </header>

@@ -16,6 +16,8 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token?: string;
+  Token?: string;
+  TOKEN?: string;
   user?: {
     id?: string;
     username?: string;
@@ -34,6 +36,10 @@ export interface LoginResponse {
     IsApproved?: boolean;
   };
   message?: string;
+  isLockedOut?: boolean;
+  retryAfterSeconds?: number;
+  remainingAttempts?: number;
+  [key: string]: any;
 }
 
 export interface RegisterRequest {
@@ -45,6 +51,8 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   token?: string;
+  Token?: string;
+  TOKEN?: string;
   user?: {
     id?: string;
     username?: string;
@@ -66,4 +74,5 @@ export interface RegisterResponse {
   sukses?: boolean;
   pesan?: string;
   message?: string;
+  [key: string]: any;
 }

@@ -2,7 +2,6 @@ import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentCh
 
 export interface IDocumentRepository {
   getDocuments(params: DocumentQueryParams): Promise<DocumentPagedResponse>;
-  getCategories(): Promise<string[]>;
   createDocument(data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }>;
   updateDocument(id: string, data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }>;
   deleteDocument(id: string): Promise<{ ok: boolean; message?: string }>;
