@@ -6,6 +6,7 @@ import { authRepository } from '@/infrastructure/repositories/AuthRepository';
 import { AuthUseCases } from '@/core/usecases/authUseCases';
 import { LoginRequest, RegisterRequest } from '@/core/domain/auth';
 import { userRepository } from '@/infrastructure/repositories/UserRepository';
+import { isTokenExpired } from '@/infrastructure/api/apiClient';
 
 const authUseCases = new AuthUseCases(authRepository);
 
@@ -23,6 +24,24 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
 
   const checkAuth = useCallback(() => {
     const auth = authUseCases.getAuthState();
+
+    if (auth.token && auth.token !== 'hidden-httponly-token' && auth.token !== 'session-active') {
+      if (isTokenExpired(auth.token)) {
+        authUseCases.logout();
+        setToken(null);
+        setRole(null);
+        setUser(null);
+        setBidangId(null);
+        setBidang(null);
+        setIsApproved(false);
+        setIsAdmin(false);
+        if (requireAuth) {
+          router.push('/login?reason=expired');
+        }
+        return false;
+      }
+    }
+
     setToken(auth.token);
     setRole(auth.role);
     setUser(auth.user);

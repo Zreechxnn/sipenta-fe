@@ -37,8 +37,14 @@ export function handleAutoLogout(reason = 'expired'): void {
     deleteCookie('sipenta_bidang');
     deleteCookie('sipenta_isApproved');
 
-    // Clean any legacy localStorage keys
+    // Clean localStorage keys
     try {
+      localStorage.removeItem('sipenta_token');
+      localStorage.removeItem('sipenta_role');
+      localStorage.removeItem('sipenta_user');
+      localStorage.removeItem('sipenta_bidangId');
+      localStorage.removeItem('sipenta_bidang');
+      localStorage.removeItem('sipenta_isApproved');
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('user');
@@ -55,27 +61,45 @@ export function handleAutoLogout(reason = 'expired'): void {
 
 export function getAuthHeaders(isJson = false): Record<string, string> {
   const headers: Record<string, string> = {};
-  // Note: We don't manually append the Authorization header here
-  // because the backend handles it via HttpOnly cookies and credentials='include'
   if (isJson) {
     headers['Content-Type'] = 'application/json';
+  }
+  if (typeof window !== 'undefined') {
+    const token = getCookie('sipenta_token') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_token') : null);
+    if (token && token !== 'hidden-httponly-token' && token !== 'session-active' && !isTokenExpired(token)) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
   }
   return headers;
 }
 
 export async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  // We can't check the HttpOnly token's expiration directly from JS.
-  // We rely on the role cookie as a proxy for 'is logged in'.
+  let token: string | null = null;
   if (typeof window !== 'undefined') {
-    const role = getCookie('sipenta_role');
-    if (!role) {
+    token = getCookie('sipenta_token') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_token') : null);
+    const role = getCookie('sipenta_role') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_role') : null);
+
+    // If valid token is present and expired, trigger auto-logout
+    if (token && token !== 'hidden-httponly-token' && token !== 'session-active' && isTokenExpired(token)) {
+      handleAutoLogout('expired');
+      throw new Error('Session expired');
+    }
+
+    // If neither token nor role cookie exists, user is unauthenticated
+    if (!token && !role) {
       handleAutoLogout('expired');
       throw new Error('Session missing or expired');
     }
   }
 
+  const headers = new Headers(init?.headers || {});
+  if (token && token !== 'hidden-httponly-token' && token !== 'session-active' && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
   const fetchInit: RequestInit = {
     ...init,
+    headers,
     credentials: init?.credentials || 'include',
   };
 

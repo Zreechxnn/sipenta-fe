@@ -63,18 +63,24 @@ export class AuthRepository implements IAuthRepository {
 
   getToken(): string | null {
     if (typeof window === 'undefined') return null;
-    // We cannot read sipenta_token because it's HttpOnly.
-    // Instead, we check if the role cookie exists as a proxy for the session.
+    const cookieToken = getCookie('sipenta_token');
+    if (cookieToken) return cookieToken;
+
+    try {
+      const localToken = localStorage.getItem('sipenta_token');
+      if (localToken) return localToken;
+    } catch {}
+
     const role = getCookie('sipenta_role');
     if (role) {
-      return 'hidden-httponly-token';
+      return 'session-active';
     }
     return null;
   }
 
   getRole(): string | null {
     if (typeof window === 'undefined') return null;
-    const role = getCookie('sipenta_role');
+    const role = getCookie('sipenta_role') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_role') : null);
     if (!role) {
       this.logout();
       return null;
@@ -84,7 +90,7 @@ export class AuthRepository implements IAuthRepository {
 
   getUser(): any {
     if (typeof window === 'undefined') return null;
-    const userStr = getCookie('sipenta_user');
+    const userStr = getCookie('sipenta_user') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_user') : null);
     if (!userStr) return null;
     try {
       return JSON.parse(userStr);
@@ -95,28 +101,45 @@ export class AuthRepository implements IAuthRepository {
 
   setAuth(token: string, role: string, user?: any): void {
     if (typeof window === 'undefined') return;
-    // We do NOT set 'sipenta_token' because the backend sets it as an HttpOnly cookie.
-    setCookie('sipenta_role', role, 7);
-    if (user) {
-      setCookie('sipenta_user', JSON.stringify(user), 7);
-      if (user.bidangId) setCookie('sipenta_bidangId', String(user.bidangId), 7);
-      else deleteCookie('sipenta_bidangId');
 
-      if (user.bidang) setCookie('sipenta_bidang', user.bidang, 7);
-      else deleteCookie('sipenta_bidang');
-
-      setCookie('sipenta_isApproved', String(user.isApproved ?? false), 7);
+    if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
+      setCookie('sipenta_token', token, 7);
+      try {
+        localStorage.setItem('sipenta_token', token);
+      } catch {}
     }
 
-    // Clean legacy localStorage keys to ensure zero JWT residual in localStorage
+    setCookie('sipenta_role', role, 7);
     try {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('user');
-      localStorage.removeItem('bidangId');
-      localStorage.removeItem('bidang');
-      localStorage.removeItem('isApproved');
+      localStorage.setItem('sipenta_role', role);
     } catch {}
+
+    if (user) {
+      const userJson = JSON.stringify(user);
+      setCookie('sipenta_user', userJson, 7);
+      try {
+        localStorage.setItem('sipenta_user', userJson);
+      } catch {}
+
+      if (user.bidangId) {
+        setCookie('sipenta_bidangId', String(user.bidangId), 7);
+        try { localStorage.setItem('sipenta_bidangId', String(user.bidangId)); } catch {}
+      } else {
+        deleteCookie('sipenta_bidangId');
+        try { localStorage.removeItem('sipenta_bidangId'); } catch {}
+      }
+
+      if (user.bidang) {
+        setCookie('sipenta_bidang', user.bidang, 7);
+        try { localStorage.setItem('sipenta_bidang', user.bidang); } catch {}
+      } else {
+        deleteCookie('sipenta_bidang');
+        try { localStorage.removeItem('sipenta_bidang'); } catch {}
+      }
+
+      setCookie('sipenta_isApproved', String(user.isApproved ?? false), 7);
+      try { localStorage.setItem('sipenta_isApproved', String(user.isApproved ?? false)); } catch {}
+    }
   }
 
   logout(): void {
@@ -136,8 +159,14 @@ export class AuthRepository implements IAuthRepository {
     deleteCookie('sipenta_bidang');
     deleteCookie('sipenta_isApproved');
 
-    // Clean legacy localStorage keys
+    // Clean localStorage keys
     try {
+      localStorage.removeItem('sipenta_token');
+      localStorage.removeItem('sipenta_role');
+      localStorage.removeItem('sipenta_user');
+      localStorage.removeItem('sipenta_bidangId');
+      localStorage.removeItem('sipenta_bidang');
+      localStorage.removeItem('sipenta_isApproved');
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('user');
