@@ -32,8 +32,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast }) => {
       });
       if (result.token || result.sukses !== false) {
         showToast('Pendaftaran akun berhasil!');
-        const savedRole = localStorage.getItem('role');
-        const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
+        const userRole = result.user?.role || result.User?.Role || 'user';
+        const isAdmin = ['admin', 'kasubag'].includes(userRole.toLowerCase());
         setTimeout(() => {
           router.push(isAdmin ? '/dokumen' : '/chat');
         }, 600);
@@ -146,8 +146,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast }) => {
                 const result = await googleLogin(credentialResponse.credential);
                 if (result.token) {
                   showToast('Pendaftaran dengan Google berhasil!');
-                  const savedRole = localStorage.getItem('role');
-                  const isAdmin = savedRole && ['admin', 'kasubag'].includes(savedRole.toLowerCase());
+                  const userRole = result.user?.role || result.User?.Role || 'user';
+                  const isAdmin = ['admin', 'kasubag'].includes(userRole.toLowerCase());
                   setTimeout(() => {
                     router.push(isAdmin ? '/dokumen' : '/chat');
                   }, 600);

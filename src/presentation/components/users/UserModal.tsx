@@ -84,12 +84,11 @@ export const UserModal: React.FC<UserModalProps> = ({
       }
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/Bidang', {
+        const { authFetch, API_ENDPOINTS } = await import('@/infrastructure/api/apiClient');
+        const res = await authFetch(`${API_ENDPOINTS.BIDANG}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ nama: newBidangName, kode: newBidangName.substring(0, 5).toUpperCase(), deskripsi: newBidangName })
         });

@@ -34,6 +34,9 @@ export interface LoginResponse {
     IsApproved?: boolean;
   };
   message?: string;
+  isLockedOut?: boolean;
+  retryAfterSeconds?: number;
+  remainingAttempts?: number;
 }
 
 export interface RegisterRequest {

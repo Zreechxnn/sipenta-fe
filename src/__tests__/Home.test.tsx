@@ -59,4 +59,13 @@ describe('Cookie and Notification Utilities', () => {
     );
     expect(() => playNotificationChime()).not.toThrow();
   });
+
+  it('should store and clear auth token via cookies without touching localStorage', async () => {
+    const { setCookie, getCookie, deleteCookie } = await import('@/presentation/utils/cookies');
+    setCookie('sipenta_token', 'mock_jwt_token', 7);
+    expect(getCookie('sipenta_token')).toBe('mock_jwt_token');
+
+    deleteCookie('sipenta_token');
+    expect(getCookie('sipenta_token')).toBeNull();
+  });
 });

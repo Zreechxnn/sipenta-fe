@@ -1,17 +1,18 @@
 import * as signalR from '@microsoft/signalr';
 import { ISignalRService } from '@/core/services/ISignalRService';
 import { getApiBaseUrl } from '../api/apiClient';
+import { getCookie } from '@/presentation/utils/cookies';
 
 export class SignalRService implements ISignalRService {
   private connection: signalR.HubConnection | null = null;
 
   private getHubUrl(): string {
-    const baseUrl = getApiBaseUrl();
-    return baseUrl.replace(/\/api\/?$/, '') + '/hubs/data';
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    return apiBaseUrl.replace(/\/api\/?$/, '') + '/hubs/data';
   }
 
   async startConnection(): Promise<void> {
-    if (this.connection && this.connection.state !== signalR.HubConnectionState.Disconnected) {
+    if (this.connection) {
       return;
     }
 
@@ -20,10 +21,11 @@ export class SignalRService implements ISignalRService {
       .withUrl(hubUrl, {
         accessTokenFactory: () => {
           if (typeof window !== 'undefined') {
-            return localStorage.getItem('token') || '';
+            return getCookie('sipenta_token') || '';
           }
           return '';
         },
+        withCredentials: true,
         skipNegotiation: false,
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
       })
