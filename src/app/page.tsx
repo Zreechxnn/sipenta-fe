@@ -87,15 +87,15 @@ export default function HomePage() {
 
     let charCount = 0;
     const timer = setInterval(() => {
-      charCount += 1;
-      if (charCount <= fullText.length) {
+      charCount += 3;
+      if (charCount < fullText.length) {
         setDisplayedText(fullText.slice(0, charCount));
       } else {
         setDisplayedText(fullText);
         setIsTyping(false);
         clearInterval(timer);
       }
-    }, 12);
+    }, 24);
 
     return () => clearInterval(timer);
   }, [selectedPromptIdx]);
@@ -285,7 +285,7 @@ export default function HomePage() {
 
       {/* ─── Hero Section ───────────────────────────────────── */}
       <section className="relative pt-14 pb-12 md:pt-20 md:pb-18 px-4 overflow-hidden apple-glow">
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[760px] h-[360px] bg-gradient-to-tr from-blue-200/35 via-teal-100/40 to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[760px] h-[360px] bg-gradient-to-tr from-blue-200/35 via-teal-100/40 to-transparent rounded-full blur-3xl -z-10 pointer-events-none transform-gpu" />
 
         <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
           {/* Status Live Indicator Badge */}

@@ -130,7 +130,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       : 1
     : 0;
 
-  const content = (
+  const renderContent = (isMobileView: boolean) => (
     <div className="w-full h-full flex flex-col bg-white">
       {/* Header */}
       <div className="p-4 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/80">
@@ -148,13 +148,13 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             onClick={handleNew}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-all shadow-xs active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-xs active:scale-95 cursor-pointer"
             title="Mulai sesi baru"
           >
             <i className="fas fa-plus text-[10px]" />
             <span>Baru</span>
           </button>
-          {onCloseMobile && (
+          {isMobileView && onCloseMobile && (
             <button
               onClick={onCloseMobile}
               className="md:hidden w-8 h-8 rounded-lg hover:bg-slate-200/70 flex items-center justify-center transition-colors text-slate-500 hover:text-slate-800 active:scale-95 cursor-pointer"
@@ -188,12 +188,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               <div
                 key={id}
                 onClick={() => handleSelect(id)}
-                style={{
-                  transitionDelay: isOpenMobile ? `${50 + idx * 30}ms` : '0ms',
-                }}
-                className={`group flex justify-between items-center px-3 py-2.5 rounded-2xl cursor-pointer transition-all duration-300 relative overflow-hidden active:scale-[0.98] ${
-                  isOpenMobile ? 'translate-x-0 opacity-100' : 'md:translate-x-0 md:opacity-100 max-md:-translate-x-2 max-md:opacity-0'
-                } ${
+                className={`group flex justify-between items-center px-3 py-2.5 rounded-2xl cursor-pointer transition-colors duration-150 relative overflow-hidden active:scale-[0.98] ${
                   isSelected
                     ? 'bg-indigo-50 text-indigo-900 border border-indigo-200/80 shadow-2xs font-semibold'
                     : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
@@ -211,7 +206,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     e.stopPropagation();
                     setSessionToDelete({ id, title });
                   }}
-                  className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
+                  className={`w-6 h-6 rounded-lg flex items-center justify-center transition-opacity duration-150 ${
                     isSelected ? 'opacity-70 hover:opacity-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600' : 'opacity-0 group-hover:opacity-100 text-slate-400 hover:bg-rose-50 hover:text-rose-600'
                   } active:scale-90 cursor-pointer`}
                   title="Hapus sesi"
@@ -242,7 +237,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     <>
       {/* Desktop view (always visible on md+) */}
       <div className="hidden md:flex w-72 bg-white border border-slate-200/80 rounded-2xl shadow-xs flex-col overflow-hidden shrink-0">
-        {content}
+        {renderContent(false)}
       </div>
 
       {/* Mobile Drawer view Slider X */}
@@ -282,7 +277,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
         >
           {/* Grab handle */}
           <div className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-12 rounded-full bg-slate-200 pointer-events-none opacity-60" />
-          {content}
+          {renderContent(true)}
         </div>
       </div>
     </>
