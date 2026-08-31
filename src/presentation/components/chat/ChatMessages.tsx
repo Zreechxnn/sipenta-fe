@@ -91,7 +91,7 @@ const MessageBubble = React.memo<MessageBubbleProps>(({ msg, index, isCopied, on
       )}
 
       <div
-        className={`p-3.5 sm:p-5 text-[13.5px] sm:text-[14.5px] leading-relaxed relative ${
+        className={`p-3 sm:p-4 md:p-5 text-[13px] sm:text-[14px] leading-relaxed relative ${
           isUser
             ? 'rounded-2xl rounded-tr-xs text-white shadow-xs bg-indigo-600'
             : 'rounded-2xl rounded-tl-xs border border-slate-200/80 bg-white text-slate-800 shadow-2xs'
@@ -229,23 +229,23 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 bg-slate-50/50 flex flex-col"
+          className="flex-1 overflow-y-auto p-2.5 sm:p-5 space-y-3 sm:space-y-5 bg-slate-50/50 flex flex-col"
         >
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center my-auto py-6 text-center max-w-xl mx-auto animate-fade-up">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-600 flex items-center justify-center mb-3 shadow-md shadow-indigo-600/20 text-white p-2.5">
-                <img src="/sipenta.svg" alt="SIPENTA" className="w-8 h-8 object-contain" />
+            <div className="flex flex-col items-center justify-center my-auto py-3 sm:py-6 text-center max-w-xl mx-auto animate-fade-up">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-indigo-600 flex items-center justify-center mb-2.5 sm:mb-3 shadow-md shadow-indigo-600/20 text-white p-2">
+                <img src="/sipenta.svg" alt="SIPENTA" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
               </div>
-              <h3 className="text-lg sm:text-2xl font-bold text-slate-900 mb-1.5">
+              <h3 className="text-base sm:text-2xl font-bold text-slate-900 mb-1">
                 Konsultasi & Analisis Kinerja AI
               </h3>
-              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mb-6 max-w-md">
+              <p className="text-[11.5px] sm:text-sm text-slate-500 leading-relaxed mb-4 sm:mb-6 max-w-md px-2">
                 Tanyakan progres pekerjaan, evaluasi, atau kendala tenaga ahli. AI akan menganalisis laporan kerja yang tersimpan di sistem dan menyajikan ringkasan terkait.
               </p>
 
               {/* Starter Suggestions */}
-              <div className="w-full text-left space-y-2">
-                <p className="text-[10.5px] font-bold uppercase tracking-wider text-slate-400 px-1">
+              <div className="w-full text-left space-y-1.5 sm:space-y-2">
+                <p className="text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider text-slate-400 px-1">
                   💡 Saran Pertanyaan Cepat:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
@@ -253,15 +253,15 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
                     <button
                       key={idx}
                       onClick={() => onSelectPrompt?.(item.prompt)}
-                      className="p-3 sm:p-3.5 bg-white border border-slate-200/80 rounded-xl hover:border-indigo-500 hover:shadow-xs text-left transition-all duration-150 group cursor-pointer flex flex-col justify-between active:scale-[0.98]"
+                      className="p-2.5 sm:p-3.5 bg-white border border-slate-200/80 rounded-xl hover:border-indigo-500 hover:shadow-xs text-left transition-all duration-150 group cursor-pointer flex flex-col justify-between active:scale-[0.98]"
                     >
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
                         <i className={`fas ${item.icon} text-xs text-indigo-600`} />
                         <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600">
                           {item.title}
                         </span>
                       </div>
-                      <p className="text-[11.5px] sm:text-xs text-slate-500 line-clamp-2 leading-snug">
+                      <p className="text-[11px] sm:text-xs text-slate-500 line-clamp-2 leading-snug">
                         {item.prompt}
                       </p>
                     </button>

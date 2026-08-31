@@ -67,8 +67,8 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
 
     // Detect if this is horizontal swipe
     if (isHorizontalSwipeRef.current === null) {
-      if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
-        isHorizontalSwipeRef.current = Math.abs(deltaX) > Math.abs(deltaY);
+      if (Math.abs(deltaX) > 12 || Math.abs(deltaY) > 12) {
+        isHorizontalSwipeRef.current = Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0;
       }
     }
 
@@ -96,21 +96,22 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
   }, [isDragging, dragOffset, onClose]);
 
   const roleDisplay = role === 'admin'
-    ? 'Admin'
+    ? 'Administrator'
     : role === 'kasubag'
     ? 'Kasubag'
     : 'Tenaga Ahli';
 
   const NavItem = ({ href, icon, label, index }: { href: string; icon: string; label: string; index: number }) => {
-    const isActive = pathname === href;
+    const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+
     return (
       <Link
         href={href}
         onClick={onClose}
         style={{
-          transitionDelay: isOpen ? `${60 + index * 35}ms` : '0ms',
+          transitionDelay: isOpen ? `${50 + index * 30}ms` : '0ms',
         }}
-        className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl text-xs font-semibold transition-all duration-300 relative overflow-hidden active:scale-[0.97] cursor-pointer ${
+        className={`flex items-center gap-3 px-3.5 py-2.5 sm:py-3 rounded-2xl text-xs font-semibold transition-all duration-300 relative overflow-hidden active:scale-[0.97] cursor-pointer ${
           isOpen ? 'translate-x-0 opacity-100' : '-translate-x-3 opacity-0'
         } ${
           isActive
@@ -148,13 +149,9 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
 
   return (
     <div
-      className={`fixed inset-0 z-50 select-none ${
-        isOpen ? 'pointer-events-auto' : 'pointer-events-none'
+      className={`fixed inset-0 z-50 select-none transition-all duration-300 ${
+        isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0 delay-100'
       }`}
-      style={{
-        visibility: isOpen || isDragging ? 'visible' : 'hidden',
-        transition: 'visibility 0.4s ease',
-      }}
       aria-hidden={!isOpen}
     >
       {/* Backdrop with fluid opacity transition */}
@@ -162,7 +159,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
         onClick={onClose}
         style={{
           opacity: backdropOpacity,
-          transition: isDragging ? 'none' : 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: isDragging ? 'none' : 'opacity 320ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs cursor-pointer will-change-[opacity]"
       />
@@ -176,18 +173,18 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
           transform: drawerTransform,
           transition: isDragging
             ? 'none'
-            : 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1)',
+            : 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
           willChange: 'transform',
         }}
-        className="fixed top-0 left-0 bottom-0 z-10 w-[84%] max-w-[320px] bg-white shadow-2xl flex flex-col overflow-hidden border-r border-slate-200/80 rounded-r-3xl"
+        className="fixed top-0 left-0 bottom-0 z-10 w-[84%] max-w-[320px] h-[100dvh] bg-white shadow-2xl flex flex-col overflow-hidden border-r border-slate-200/80 rounded-r-3xl"
       >
         {/* Visual Grab / Swipe Handle Indicator on edge */}
         <div className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-12 rounded-full bg-slate-200 pointer-events-none opacity-60" />
 
         {/* Header Branding & Close Button */}
-        <div className="p-4.5 flex justify-between items-center shrink-0 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-indigo-50/40">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/25 text-white">
+        <div className="p-4 flex justify-between items-center shrink-0 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-indigo-50/40">
+          <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/25 text-white">
               <img src="/sipenta.svg" alt="SIPENTA" className="w-5 h-5 object-contain" />
             </div>
             <div>
@@ -198,7 +195,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
                 Diskominfo Jabar
               </span>
             </div>
-          </div>
+          </Link>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center transition-all text-slate-400 hover:text-slate-700 active:scale-90 cursor-pointer shadow-2xs"
@@ -210,21 +207,21 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
 
         {/* User Profile Card */}
         {user && (
-          <div className="p-4 border-b border-slate-100 bg-slate-50/70">
+          <div className="p-3.5 border-b border-slate-100 bg-slate-50/70 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
                 {(user.fullName || user.username || 'U').charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-xs text-slate-900 truncate leading-snug">
                   {user.fullName || user.username}
                 </p>
-                <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                   <span className="inline-block px-2 py-0.5 rounded-md text-[9.5px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80">
                     {roleDisplay}
                   </span>
                   {bidang && (
-                    <span className="inline-block px-2 py-0.5 rounded-md text-[9.5px] font-semibold text-slate-600 bg-slate-200/70 truncate max-w-[120px]">
+                    <span className="inline-block px-2 py-0.5 rounded-md text-[9.5px] font-semibold text-slate-600 bg-slate-200/70 truncate max-w-[130px]" title={bidang}>
                       {bidang}
                     </span>
                   )}
@@ -235,25 +232,26 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
         )}
 
         {/* Navigation Items with Stagger Animation */}
-        <nav className="p-3.5 flex flex-col gap-1.5 flex-1 overflow-y-auto">
+        <nav className="p-3 flex flex-col gap-1 flex-1 overflow-y-auto overscroll-contain">
+          <NavItem index={0} href="/" icon="fa-home" label="Beranda" />
           {isAdmin && (
-            <NavItem index={0} href="/admin/dashboard" icon="fa-chart-pie" label={role === 'kasubag' ? 'Dashboard Kasubag' : 'Admin Dashboard'} />
+            <NavItem index={1} href="/admin/dashboard" icon="fa-chart-pie" label={role === 'kasubag' ? 'Dashboard Kasubag' : 'Admin Dashboard'} />
           )}
-          <NavItem index={1} href="/dokumen" icon="fa-file-alt" label="Laporan Kerja" />
+          <NavItem index={2} href="/dokumen" icon="fa-file-alt" label="Laporan Kerja" />
           {isAdmin && (
-            <NavItem index={2} href="/users" icon="fa-users" label="Kelola Pengguna" />
+            <NavItem index={3} href="/users" icon="fa-users" label="Kelola Pengguna" />
           )}
 
-          <NavItem index={3} href="/chat" icon="fa-comments" label="Asisten Analisis AI" />
-          <NavItem index={4} href="/profile" icon="fa-id-card" label="Profil Saya" />
+          <NavItem index={4} href="/chat" icon="fa-comments" label="Asisten Analisis AI" />
+          <NavItem index={5} href="/profile" icon="fa-id-card" label="Profil Saya" />
 
-          <div className="h-px w-full my-2 bg-slate-100" />
+          <div className="h-px w-full my-1.5 bg-slate-100" />
 
-          <div className="px-2 py-1">
+          <div className="px-1 py-0.5">
             <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 <i className="fa-solid fa-bell text-xs text-indigo-600"></i>
-                <span className="text-xs font-semibold text-slate-700">Notifikasi Perangkat</span>
+                <span className="text-xs font-semibold text-slate-700">Notifikasi</span>
               </div>
               <NotificationBell showLabel={false} />
             </div>
@@ -264,7 +262,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
               onClose();
               logout();
             }}
-            className="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-xs font-semibold text-left transition-all text-rose-600 hover:bg-rose-50 active:scale-[0.97] cursor-pointer"
+            className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-left transition-all text-rose-600 hover:bg-rose-50 active:scale-[0.97] cursor-pointer mt-1"
           >
             <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xs shrink-0">
               <i className="fas fa-sign-out-alt"></i>
@@ -274,7 +272,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
         </nav>
 
         {/* Footer info */}
-        <div className="p-3.5 border-t border-slate-100 bg-slate-50 text-center shrink-0">
+        <div className="p-3 border-t border-slate-100 bg-slate-50 text-center shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <p className="text-[10px] text-slate-400 font-mono tracking-wider">
             SIPENTA AI Platform &bull; v2.0
           </p>
