@@ -87,7 +87,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
 
     try {
       const result = await login({ username, password });
-      if (result.token) {
+      if (result.token || result.Token || result.user || result.User) {
         deleteCookie(LOCKOUT_COOKIE_KEY);
         setLockoutSeconds(0);
         setRemainingAttempts(null);
@@ -236,7 +236,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
               setLoading(true);
               try {
                 const result = await googleLogin(credentialResponse.credential);
-                if (result.token) {
+                if (result.token || result.Token || result.user || result.User) {
                   deleteCookie(LOCKOUT_COOKIE_KEY);
                   setLockoutSeconds(0);
                   setRemainingAttempts(null);

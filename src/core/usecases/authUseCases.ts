@@ -6,8 +6,8 @@ export class AuthUseCases {
 
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     const result = await this.authRepo.login(credentials);
-    const token = result.token || result.Token || result.TOKEN;
-    if (token) {
+    const token = result.token || result.Token || result.TOKEN || '';
+    if (token || result.user || result.User) {
       const user = result.user || (result.User as any) || {};
       const userRole = user.role || user.Role || 'User';
       this.authRepo.setAuth(token, userRole, user);
@@ -17,8 +17,8 @@ export class AuthUseCases {
 
   async googleLogin(idToken: string): Promise<LoginResponse> {
     const result = await this.authRepo.googleLogin(idToken);
-    const token = result.token || result.Token || result.TOKEN;
-    if (token) {
+    const token = result.token || result.Token || result.TOKEN || '';
+    if (token || result.user || result.User) {
       const user = result.user || (result.User as any) || {};
       const userRole = user.role || user.Role || 'User';
       this.authRepo.setAuth(token, userRole, user);
@@ -28,8 +28,8 @@ export class AuthUseCases {
 
   async register(data: RegisterRequest): Promise<RegisterResponse> {
     const result = await this.authRepo.register(data);
-    const token = result.token || result.Token || result.TOKEN;
-    if (token) {
+    const token = result.token || result.Token || result.TOKEN || '';
+    if (token || result.user || result.User) {
       const user = result.user || (result.User as any) || {};
       const userRole = user.role || user.Role || 'user';
       this.authRepo.setAuth(token, userRole, user);
