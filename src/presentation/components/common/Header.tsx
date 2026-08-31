@@ -258,19 +258,39 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
           )}
         </div>
 
-        {/* Mobile action bar (bell + hamburger when logged in) */}
-        {token && (
-          <div className="flex md:hidden items-center gap-2">
-            <NotificationBell />
-            <button
-              onClick={onToggleMobileSidebar}
-              className="p-2 rounded-full cursor-pointer transition-all text-[var(--color-ink-muted)] hover:bg-black/[0.05] active:scale-95"
-              aria-label="Buka menu navigasi"
-            >
-              <i className="fas fa-bars text-base" />
-            </button>
-          </div>
-        )}
+        {/* Mobile action bar (bell + hamburger when logged in, or login link for guests) */}
+        <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+          {token ? (
+            <>
+              <NotificationBell />
+              <button
+                onClick={onToggleMobileSidebar}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all text-slate-700 hover:bg-black/[0.05] active:scale-95 border border-black/[0.06] bg-white shadow-2xs"
+                aria-label="Buka menu navigasi"
+              >
+                <i className="fas fa-bars text-sm" />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <Link
+                href="/login"
+                className="px-3 py-1.5 text-xs font-semibold rounded-full text-[var(--color-navy)] bg-slate-100 hover:bg-slate-200 transition-all"
+              >
+                Masuk
+              </Link>
+              {onToggleMobileSidebar && (
+                <button
+                  onClick={onToggleMobileSidebar}
+                  className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer transition-all text-slate-700 hover:bg-black/[0.05] active:scale-95"
+                  aria-label="Buka menu navigasi"
+                >
+                  <i className="fas fa-bars text-sm" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

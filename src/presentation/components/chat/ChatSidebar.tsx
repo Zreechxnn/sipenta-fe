@@ -59,6 +59,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpenMobile, onCloseMobile]);
 
+  // Touch Drag-to-Slide Handlers (Real-time gesture slider X)
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
     touchStartYRef.current = e.touches[0].clientY;
@@ -73,8 +74,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     const deltaY = currentY - touchStartYRef.current;
 
     if (isHorizontalSwipeRef.current === null) {
-      if (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8) {
-        isHorizontalSwipeRef.current = Math.abs(deltaX) > Math.abs(deltaY);
+      if (Math.abs(deltaX) > 12 || Math.abs(deltaY) > 12) {
+        isHorizontalSwipeRef.current = Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0;
       }
     }
 
@@ -133,7 +134,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const renderContent = (isMobileView: boolean) => (
     <div className="w-full h-full flex flex-col bg-white">
       {/* Header */}
-      <div className="p-4 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/80">
+      <div className="p-3.5 sm:p-4 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/80">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
             <i className="fas fa-history" />
@@ -167,7 +168,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       </div>
 
       {/* Session list */}
-      <div className="flex-1 overflow-y-auto p-2.5 space-y-1">
+      <div className="flex-1 overflow-y-auto p-2.5 space-y-1 overscroll-contain">
         {sessions.length === 0 ? (
           <div className="text-center py-10 px-4 space-y-2.5 animate-fadeIn">
             <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
@@ -179,7 +180,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             </p>
           </div>
         ) : (
-          sessions.map((session, idx) => {
+          sessions.map((session) => {
             const id = session.id || session.Id || '';
             const title = session.title || session.Title || 'Analisis Baru';
             const isSelected = id === currentSessionId;
@@ -242,13 +243,9 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
       {/* Mobile Drawer view Slider X */}
       <div
-        className={`md:hidden fixed inset-0 z-50 select-none ${
-          isOpenMobile ? 'pointer-events-auto' : 'pointer-events-none'
+        className={`md:hidden fixed inset-0 z-50 select-none transition-all duration-300 ${
+          isOpenMobile ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0 delay-100'
         }`}
-        style={{
-          visibility: isOpenMobile || isDragging ? 'visible' : 'hidden',
-          transition: 'visibility 0.4s ease',
-        }}
         aria-hidden={!isOpenMobile}
       >
         {/* Overlay backdrop */}
@@ -256,7 +253,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
           onClick={onCloseMobile}
           style={{
             opacity: backdropOpacity,
-            transition: isDragging ? 'none' : 'opacity 380ms cubic-bezier(0.16, 1, 0.3, 1)',
+            transition: isDragging ? 'none' : 'opacity 320ms cubic-bezier(0.16, 1, 0.3, 1)',
           }}
           className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs cursor-pointer will-change-[opacity]"
         />
@@ -270,10 +267,10 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             transform: drawerTransform,
             transition: isDragging
               ? 'none'
-              : 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1)',
+              : 'transform 380ms cubic-bezier(0.16, 1, 0.3, 1)',
             willChange: 'transform',
           }}
-          className="fixed top-0 left-0 bottom-0 z-10 w-[84%] max-w-[320px] h-full bg-white shadow-2xl flex flex-col overflow-hidden border-r border-slate-200/80 rounded-r-3xl"
+          className="fixed top-0 left-0 bottom-0 z-10 w-[84%] max-w-[320px] h-[100dvh] bg-white shadow-2xl flex flex-col overflow-hidden border-r border-slate-200/80 rounded-r-3xl"
         >
           {/* Grab handle */}
           <div className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-12 rounded-full bg-slate-200 pointer-events-none opacity-60" />
