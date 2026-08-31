@@ -27,14 +27,15 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
       <div className="my-2.5 max-w-sm rounded-xl overflow-hidden border border-slate-200/80 bg-white shadow-xs group">
         <div 
           onClick={() => setIsOpen(true)}
-          className="relative cursor-zoom-in overflow-hidden bg-slate-100 max-h-60 flex items-center justify-center"
+          className="relative cursor-zoom-in overflow-hidden bg-slate-100 min-h-[120px] max-h-60 flex items-center justify-center aspect-[16/10]"
         >
           <img
             src={fullUrl}
             alt={alt || 'Foto Dokumentasi'}
             onError={() => setError(true)}
-            className="w-full h-auto max-h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
             <span className="bg-black/75 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs">
@@ -244,7 +245,7 @@ function isTableDivider(line: string): boolean {
   return /^\|?(\s*:?-{2,}:?\s*\|?)+$/.test(trimmed);
 }
 
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
+export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
   content,
   className = '',
 }) => {
@@ -429,12 +430,29 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
               </blockquote>
             );
           } else {
-            // Normal paragraph line
-            renderedElements.push(
-              <p key={i} className="leading-relaxed">
-                {parseInline(line)}
-              </p>
-            );
+            // Check if line contains images or block tokens
+            const imgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+            if (imgMatch) {
+              const [, alt, src] = imgMatch;
+              renderedElements.push(
+                <div key={i} className="my-2">
+                  <ChatImage src={src} alt={alt} />
+                </div>
+              );
+            } else if (/!\[[^\]]*\]\([^)]+\)/.test(line)) {
+              renderedElements.push(
+                <div key={i} className="leading-relaxed">
+                  {parseInline(line)}
+                </div>
+              );
+            } else {
+              // Normal text paragraph
+              renderedElements.push(
+                <p key={i} className="leading-relaxed">
+                  {parseInline(line)}
+                </p>
+              );
+            }
           }
         }
 
@@ -445,4 +463,6 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
       })}
     </div>
   );
-};
+});
+
+MarkdownRenderer.displayName = 'MarkdownRenderer';
