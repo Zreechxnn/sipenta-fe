@@ -66,39 +66,39 @@ export default function ChatPage() {
     chatMessagesRef.current?.scrollToBottom();
   };
 
-  const handleSendMessage = (msg: string) => {
+  const handleSendMessage = (msg: string, mode: string = 'auto') => {
     if (isPendingApproval) {
       showToast('Akun Anda masih menunggu persetujuan Admin/Kasubag sebelum dapat menggunakan Asisten AI.', true);
       return;
     }
-    sendMessage(msg);
+    sendMessage(msg, mode);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/50">
+    <div className="h-screen h-[100dvh] max-h-screen max-h-[100dvh] flex flex-col bg-slate-50/50 overflow-hidden">
       <Header onToggleMobileSidebar={() => setMobileOpen(true)} isLiveSyncing={isSignalRConnected} />
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 lg:px-8 py-2 sm:py-6 flex flex-col min-h-0 animate-fadeIn">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-2 sm:pb-4 flex flex-col min-h-0 overflow-hidden animate-fadeIn">
         {/* Pending Approval Alert */}
         {isPendingApproval && (
-          <div className="mb-2 sm:mb-4">
+          <div className="shrink-0 mb-2 sm:mb-3">
             <PendingApprovalNotice onRefresh={refreshProfile} />
           </div>
         )}
 
-        {/* Header Section - Sleek and Compact on Mobile */}
-        <div className="flex items-center justify-between gap-2 mb-2 sm:mb-6">
+        {/* Header Section - Sleek and Compact */}
+        <div className="shrink-0 flex items-center justify-between gap-2 mb-2 sm:mb-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2 sm:gap-2.5">
-              <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 shrink-0">
-                <i className="fas fa-comment-dots text-xs sm:text-base"></i>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 shrink-0">
+                <i className="fas fa-comment-dots text-xs sm:text-sm"></i>
               </div>
-              <h1 className="text-base sm:text-2xl md:text-3xl font-bold text-slate-900 truncate">
+              <h1 className="text-base sm:text-xl md:text-2xl font-bold text-slate-900 truncate">
                 Asisten AI Dokumen
               </h1>
             </div>
-            <p className="text-[11px] sm:text-sm text-slate-500 hidden sm:block mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-500 hidden sm:block mt-0.5">
               Mencari konteks dokumen laporan kerja bidang Anda secara otomatis.
             </p>
           </div>
@@ -131,8 +131,8 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Chat Body */}
-        <div className="flex flex-col md:flex-row gap-3 md:gap-6 flex-1 h-[calc(100dvh-125px)] sm:h-[calc(100dvh-170px)] md:h-[calc(100vh-210px)] min-h-0">
+        {/* Chat Body - Fixed Container with independent internal scrolling */}
+        <div className="flex flex-col md:flex-row gap-3 md:gap-5 flex-1 min-h-0 overflow-hidden">
           {/* Chat Sessions History Sidebar */}
           <ChatSidebar
             sessions={sessions}
@@ -145,7 +145,7 @@ export default function ChatPage() {
           />
 
           {/* Chat Messages & Input Area */}
-          <div className="flex-1 bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl shadow-xs flex flex-col overflow-hidden relative min-h-0">
+          <div className="flex-1 bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl shadow-xs flex flex-col overflow-hidden relative min-h-0 h-full">
             <ChatMessages 
               ref={chatMessagesRef} 
               messages={messages} 

@@ -132,7 +132,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     : 0;
 
   const renderContent = (isMobileView: boolean) => (
-    <div className="w-full h-full flex flex-col bg-white">
+    <div className="w-full h-full flex flex-col bg-white min-h-0 overflow-hidden">
       {/* Header */}
       <div className="p-3.5 sm:p-4 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/80">
         <div className="flex items-center gap-2">
@@ -168,7 +168,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       </div>
 
       {/* Session list */}
-      <div className="flex-1 overflow-y-auto p-2.5 space-y-1 overscroll-contain">
+      <div className="flex-1 overflow-y-auto min-h-0 p-2.5 space-y-1 overscroll-contain custom-scrollbar">
         {sessions.length === 0 ? (
           <div className="text-center py-10 px-4 space-y-2.5 animate-fadeIn">
             <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
@@ -237,7 +237,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   return (
     <>
       {/* Desktop view (always visible on md+) */}
-      <div className="hidden md:flex w-72 bg-white border border-slate-200/80 rounded-2xl shadow-xs flex-col overflow-hidden shrink-0">
+      <div className="hidden md:flex w-72 h-full min-h-0 bg-white border border-slate-200/80 rounded-2xl shadow-xs flex-col overflow-hidden shrink-0">
         {renderContent(false)}
       </div>
 

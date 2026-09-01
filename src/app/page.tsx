@@ -2,8 +2,12 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/presentation/hooks/useAuth';
 
 export default function HomePage() {
+  const { user, token, role, bidang, isAdmin } = useAuth(false, false);
+  const isAuthenticated = !!token;
+
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [activeTabRole, setActiveTabRole] = useState<'evaluator' | 'expert' | 'admin'>('evaluator');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,69 +34,65 @@ export default function HomePage() {
     }
   }, [mobileMenuOpen]);
 
-  // Interactive AI Demo State reflecting real RAG & Image Extraction capabilities
+  // Contoh simulasi penelusuran dokumen berdasarkan data laporan kerja nyata
   const samplePrompts = [
     {
       id: 'modul-auth',
-      category: '🚀 Bidang APTIKA',
-      label: 'Progres Modul Autentikasi & SSO',
-      q: 'Bagaimana progres integrasi modul autentikasi dan keamanan sistem bulan ini?',
-      a: 'Berdasarkan Laporan Kerja Tenaga Ahli Programmer (Agustus 2026):\n• Modul autentikasi telah diselesaikan 100% dengan standar token JWT dan integrasi Google OAuth 2.0.\n• Proteksi rute berbasis peran (RBAC 3 Level: Admin, Kasubag, Tenaga Ahli) telah aktif.\n• Sistem approval pendaftaran baru berhasil diimplementasikan untuk verifikasi akun instansi.',
-      source: 'Laporan_Kerja_Programmer_Agt2026.pdf',
-      page: 'Halaman 4 - 6',
-      confidence: '99.4% Match',
-      execTime: '0.58s',
-      tags: ['Programmer', 'Bidang APTIKA', 'Agustus 2026', 'Fitur Selesai'],
-      imagePreview: {
-        caption: 'Arsitektur Autentikasi & Alur Approval Pengguna',
-        pageNumber: 5,
-      },
-    },
-    {
-      id: 'infra-server',
-      category: '🌐 Bidang TIK',
-      label: 'Optimalisasi Server & Data Center',
-      q: 'Apa tindakan pemeliharaan infrastruktur dan latensi server yang dilakukan tim jaringan?',
-      a: 'Sesuai Laporan Kerja Tenaga Ahli Jaringan & DevOps (Agustus 2026):\n• Konfigurasi indeks database pgvector dioptimalkan, memangkas latensi kueri vektor hingga 64%.\n• Layanan WebSockets SignalR dipastikan berjalan stabil dengan live sync pembaruan berkas tanpa refresh.\n• Backup snapshot harian otomatis telah terhubung ke cloud storage Google Drive.',
-      source: 'Laporan_Infrastruktur_DevOps_Agt2026.docx',
-      page: 'Halaman 2 - 3',
-      confidence: '98.8% Match',
-      execTime: '0.45s',
-      tags: ['DevOps Engineer', 'Bidang TIK', 'Agustus 2026', 'Infrastruktur'],
-      imagePreview: {
-        caption: 'Topologi Server & Monitoring Latensi SignalR',
-        pageNumber: 2,
-      },
-    },
-    {
-      id: 'qa-bugfix',
-      category: '🛡️ Persandian & Keamanan',
-      label: 'Hasil Audit & Uji Penetrasi',
-      q: 'Bagaimana status pengujian keamanan data dan penanganan kerentanan sistem?',
-      a: 'Berdasarkan Laporan Kerja Tenaga Ahli Keamanan Informasi (Agustus 2026):\n• Sebanyak 32 skenario uji penetrasi dan otorisasi dokumen antar-bidang telah dijalankan.\n• Isolasi data laporan per bidang dipastikan aman dan tidak terjadi kebocoran hak akses antar tenaga ahli.\n• Validasi enkripsi berkas lolos uji audit kepatuhan SPBE.',
-      source: 'Laporan_Audit_Keamanan_Agt2026.pdf',
+      category: 'Bidang APTIKA',
+      label: 'Progres Aplikasi BDS & Penambahan Fitur',
+      q: 'Apa yang dikerjakan tenaga ahli pada tanggal 7 Mei terkait aplikasi BDS?',
+      a: 'Berdasarkan Laporan Kerja Bulanan (Mei 2026):\n• Tenaga ahli melaksanakan koordinasi terkait penambahan fitur di Aplikasi BDS.\n• Memberikan arahan teknis kepada tim pengembang.\n• Memastikan kepatuhan terhadap regulasi pendaftaran Penyelenggara Sistem Elektronik (PSE) Lingkup Publik.',
+      source: 'Laporan_Firman_Muhamad_Sahidin_Mei_2026.pdf',
       page: 'Halaman 8',
-      confidence: '100% Match',
-      execTime: '0.49s',
-      tags: ['Security Analyst', 'Persandian & Siber', 'Agustus 2026', 'Audit Lolos'],
+      status: 'Terverifikasi dalam Laporan',
+      tags: ['Programmer', 'Bidang APTIKA', 'Mei 2026', 'Aplikasi BDS'],
       imagePreview: {
-        caption: 'Hasil Scan Kerentanan & Matriks Otorisasi RBAC',
+        caption: 'Dokumentasi Rapat Koordinasi Penambahan Fitur BDS',
         pageNumber: 8,
       },
     },
     {
-      id: 'rekap-output',
-      category: '📊 Sekretariat & Statistik',
-      label: 'Rekapitulasi Capaian Bulanan',
-      q: 'Tampilkan rekapitulasi capaian output utama seluruh tenaga ahli periode bulan ini.',
-      a: 'Rekapitulasi Capaian Kinerja Tenaga Ahli (Agustus 2026):\n1. Programmer: Rilis modul AI RAG presisi, integrasi dokumen PDF/DOCX, dan multi-sesi chat.\n2. Network Engineer: Peningkatan bandwidth server data center dan konfigurasi backup cloud harian.\n3. Data Specialist: Pembersihan 1.200+ chunk dokumen dan penataan repositori arsip 6 bidang Diskominfo.',
-      source: 'Kompilasi_Laporan_Kinerja_Agt2026.pdf',
-      page: 'Halaman 1 - 4',
-      confidence: '99.1% Match',
-      execTime: '0.67s',
-      tags: ['Sekretariat', 'Kompilasi Laporan', 'Agustus 2026', 'Executive Summary'],
+      id: 'infra-server',
+      category: 'Bidang TIK',
+      label: 'Pemeliharaan Jaringan & Server Data Center',
+      q: 'Apa tindakan pemeliharaan infrastruktur server yang dilakukan tim jaringan bulan ini?',
+      a: 'Sesuai Laporan Kerja Tenaga Ahli Jaringan & Infrastruktur:\n• Pemeliharaan berkala server data center dan optimasi konfigurasi routing jaringan.\n• Pengecekan stabilitas koneksi antar perangkat server dan backup database berkala.\n• Monitoring pemanfaatan kapasitas penyimpanan cloud.',
+      source: 'Laporan_Infrastruktur_Jaringan_2026.pdf',
+      page: 'Halaman 3',
+      status: 'Terverifikasi dalam Laporan',
+      tags: ['Network Engineer', 'Bidang TIK', 'Infrastruktur Data Center'],
       imagePreview: {
-        caption: 'Matriks Capaian Kinerja Tenaga Ahli Seluruh Bidang',
+        caption: 'Dokumentasi Monitoring Server & Perangkat Jaringan',
+        pageNumber: 3,
+      },
+    },
+    {
+      id: 'qa-bugfix',
+      category: 'Bidang Persandian',
+      label: 'Evaluasi Keamanan & Hak Akses Sistem',
+      q: 'Bagaimana hasil peninjauan keamanan informasi dan tata kelola akun pengguna?',
+      a: 'Berdasarkan Laporan Kerja Tenaga Ahli Keamanan Informasi:\n• Peninjauan hak akses pengguna berdasarkan 3 tingkatan peran (Admin, Kasubag, Tenaga Ahli).\n• Memastikan isolasi data dokumen per bidang berjalan dengan aman.\n• Verifikasi mekanisme persetujuan akun baru untuk mencegah akses tanpa otorisasi.',
+      source: 'Laporan_Keamanan_Informasi_2026.pdf',
+      page: 'Halaman 5',
+      status: 'Terverifikasi dalam Laporan',
+      tags: ['Security Analyst', 'Persandian', 'Keamanan Informasi'],
+      imagePreview: {
+        caption: 'Matriks Otorisasi Pengguna & Pembagian Hak Akses',
+        pageNumber: 5,
+      },
+    },
+    {
+      id: 'rekap-output',
+      category: 'Sekretariat & Evaluasi',
+      label: 'Rekapitulasi Capaian Kinerja Bulanan',
+      q: 'Bagaimana ringkasan capaian kinerja tenaga ahli pada periode laporan bulan Mei?',
+      a: 'Rekapitulasi Capaian Kinerja Tenaga Ahli:\n1. Pengembang Aplikasi: Menyelesaikan penyesuaian modul tampilan detail dan integrasi layanan.\n2. Tim Infrastruktur: Melakukan pemeliharaan server dan optimasi jaringan komunikasi daerah.\n3. Tim Keamanan: Menjalankan audit hak akses berkas dan kepatuhan sistem informasi.',
+      source: 'Rekapitulasi_Laporan_Kinerja_Mei_2026.pdf',
+      page: 'Halaman 1 - 4',
+      status: 'Terverifikasi dalam Laporan',
+      tags: ['Sekretariat', 'Kompilasi Laporan', 'Evaluasi Kinerja'],
+      imagePreview: {
+        caption: 'Tabel Rekapitulasi Capaian Kinerja Bulanan',
         pageNumber: 1,
       },
     },
@@ -118,7 +118,7 @@ export default function HomePage() {
         setIsTyping(false);
         clearInterval(timer);
       }
-    }, 24);
+    }, 20);
 
     return () => clearInterval(timer);
   }, [selectedPromptIdx]);
@@ -128,184 +128,238 @@ export default function HomePage() {
       await navigator.clipboard.writeText(samplePrompts[selectedPromptIdx].a);
       setCopiedDemo(true);
       setTimeout(() => setCopiedDemo(false), 2000);
-    } catch {
-      // ignore
-    }
+    } catch {}
   };
 
   const workflowSteps = [
     {
       num: '01',
-      title: 'Unggah Berkas Laporan',
-      desc: 'Tenaga ahli mengunggah laporan bulanan dalam format PDF, Word (DOCX/DOC), atau TXT lengkap dengan metadata bidang dan periode.',
+      title: 'Unggah Laporan Kerja',
+      desc: 'Tenaga ahli mengunggah laporan bulanan dalam format PDF, Word (DOCX/DOC), atau TXT lengkap dengan nama tenaga ahli, periode, dan bidang penugasan.',
       icon: 'fa-cloud-upload-alt',
-      badge: 'Multi-Format PDF & Word',
+      badge: 'Format PDF, DOCX, TXT',
     },
     {
       num: '02',
-      title: 'Ekstraksi Teks & Citra AI',
-      desc: 'Mesin cerdas otomatis mengekstrak konten teks, membedah gambar/foto dokumentasi kegiatan per halaman, dan mengindeks vektor semantik.',
+      title: 'Pemrosesan & Ekstraksi Berkas',
+      desc: 'Sistem membedah teks laporan dan mengekstrak foto dokumentasi kegiatan per halaman agar dapat ditelusuri secara terstruktur.',
       icon: 'fa-layer-group',
-      badge: 'Otomatisasi Teks & Foto',
+      badge: 'Teks & Foto Dokumentasi',
     },
     {
       num: '03',
-      title: 'Konsultasi RAG Multi-Sesi',
-      desc: 'Kasubag dan tim evaluator menanyakan progres, evaluasi kendala, atau capaian pekerjaan dengan riwayat sesi percakapan yang tersimpan rapi.',
+      title: 'Penelusuran Dokumen Interaktif',
+      desc: 'Kasubag dan tim evaluator dapat menanyakan rincian pekerjaan bulanan, progres fitur, atau kendala lapangan melalui ruang konsultasi dokumen.',
       icon: 'fa-comments',
-      badge: 'RAG Cerdas & Riwayat Sesi',
+      badge: 'Pencarian Berbasis Dokumen',
     },
     {
       num: '04',
-      title: 'Verifikasi Rujukan & Bukti Asli',
-      desc: 'Setiap jawaban AI menyertakan rujukan nama dokumen, nomor halaman sah, serta galeri foto dokumentasi kerja dengan pembesar visual Lightbox.',
+      title: 'Verifikasi Rujukan & Bukti Nyata',
+      desc: 'Setiap hasil penelusuran menyertakan kutipan berkas sumber, nomor halaman, dan galeri foto kegiatan yang dapat diperbesar.',
       icon: 'fa-check-circle',
-      badge: '100% Bukti Terverifikasi',
+      badge: 'Rujukan Halaman & Lampiran',
     },
   ];
 
   const bidangList = [
     {
       name: 'Bidang APTIKA',
-      desc: 'Aplikasi Informatika & SPBE',
+      desc: 'Aplikasi Informatika & Layanan SPBE',
       icon: 'fa-code',
       color: 'from-blue-600 to-indigo-600',
-      tag: 'Pengembangan & Integrasi',
+      tag: 'Pengembangan Aplikasi',
     },
     {
       name: 'Bidang TIK',
-      desc: 'Teknologi Informasi & Komunikasi',
+      desc: 'Teknologi Informasi, Infrastruktur & Jaringan',
       icon: 'fa-network-wired',
       color: 'from-cyan-600 to-blue-700',
       tag: 'Infrastruktur & Server',
     },
     {
       name: 'Bidang IKP',
-      desc: 'Informasi & Komunikasi Publik',
+      desc: 'Informasi & Komunikasi Publik Daerah',
       icon: 'fa-bullhorn',
       color: 'from-emerald-600 to-teal-700',
-      tag: 'Media & Komunikasi',
+      tag: 'Publikasi & Media',
     },
     {
       name: 'Bidang Statistik',
-      desc: 'Statistik Sektoral & Satu Data',
+      desc: 'Statistik Sektoral & Tata Kelola Satu Data',
       icon: 'fa-chart-pie',
       color: 'from-amber-600 to-orange-600',
-      tag: 'Pengolahan Data Daerah',
+      tag: 'Pengolahan Data Sektoral',
     },
     {
       name: 'Bidang Persandian',
-      desc: 'Keamanan Informasi & Sandi Siber',
+      desc: 'Keamanan Informasi & Pengamanan Siber',
       icon: 'fa-shield-alt',
       color: 'from-rose-600 to-red-700',
-      tag: 'Audit Siber & Enkripsi',
+      tag: 'Keamanan & Tata Kelola Akun',
     },
     {
       name: 'Sekretariat',
-      desc: 'Tata Usaha & Evaluasi Kinerja',
+      desc: 'Tata Usaha, Kepegawaian & Evaluasi Kinerja',
       icon: 'fa-briefcase',
       color: 'from-slate-700 to-slate-900',
-      tag: 'Administrasi & Kinerja',
+      tag: 'Administrasi & Evaluasi',
     },
   ];
 
   const faqs = [
     {
       q: 'Apa itu platform SIPENTA?',
-      a: 'SIPENTA (Sistem Informasi Pelaporan Tenaga Ahli) adalah sistem cerdas yang dikembangkan khusus untuk instansi Dinas Komunikasi dan Informatika (Diskominfo) guna mengelola, menelusuri, dan mengevaluasi dokumen laporan kerja tenaga ahli secara terpusat dengan bantuan kecerdasan buatan (AI & RAG) yang terhubung dengan basis data cloud.',
+      a: 'SIPENTA (Sistem Informasi Pelaporan Tenaga Ahli) adalah platform resmi Dinas Komunikasi dan Informatika (Diskominfo) untuk mengelola, menghimpun, dan mengevaluasi dokumen laporan kerja tenaga ahli secara terpusat, tertib, dan akuntabel.',
     },
     {
-      q: 'Bagaimana teknologi RAG (Retrieval-Augmented Generation) bekerja di SIPENTA?',
-      a: 'Saat laporan diunggah, dokumen diekstraksi menjadi segmen teks terindeks (vector chunks). Ketika Anda bertanya pada Asisten AI, sistem menelusuri segmen dokumen yang paling relevan sesuai bidang Anda lalu menyusun jawaban presisi dengan melampirkan kutipan berkas sumber dan nomor halaman aslinya.',
+      q: 'Bagaimana cara sistem menelusuri laporan kerja tenaga ahli?',
+      a: 'Saat dokumen diunggah, isi laporan diindeks berdasarkan konteks kalimat dan nomor halamannya. Ketika Anda mengajukan pertanyaan di ruang penelusuran dokumen, sistem mencocokkan kata kunci dan konteks untuk menyajikan ringkasan kegiatan lengkap dengan rujukan berkas aslinya.',
     },
     {
-      q: 'Apakah foto atau gambar dokumentasi kegiatan dalam laporan juga diekstrak?',
-      a: 'Ya. SIPENTA memiliki modul ekstraksi citra otomatis yang mampu mendeteksi dan mengekstrak gambar dokumentasi/screenshot kegiatan dari file PDF atau Word. Foto tersebut dapat dilihat langsung pada rincian dokumen dan muncul sebagai lampiran visual di ruang Chat AI dengan fitur perbesar (Lightbox).',
+      q: 'Apakah foto dokumentasi kegiatan di dalam berkas laporan ikut terbaca?',
+      a: 'Ya. Sistem secara otomatis mengekstrak gambar, bagan, dan screenshot kegiatan yang ada di dalam berkas PDF maupun Word. Foto-foto tersebut dapat dilihat pada rincian dokumen dan ditampilkan sebagai rujukan visual.',
     },
     {
-      q: 'Apakah riwayat sesi percakapan Asisten AI dapat disimpan?',
-      a: 'Sangat bisa. SIPENTA mendukung Multi-Session Chat History. Setiap percakapan disimpan secara otomatis dan terkelompok dalam daftar riwayat sesi di sidebar, memungkinkan Anda membuka kembali analisis sebelumnya, memulai sesi baru, atau menghapus sesi lama kapan saja.',
+      q: 'Apakah riwayat percakapan penelusuran dokumen dapat disimpan?',
+      a: 'Ya, seluruh sesi percakapan tersimpan secara teratur pada riwayat sesi di sidebar. Anda dapat membuka kembali sesi sebelumnya, mengelompokkan topik penelusuran, atau memulai sesi baru kapan saja.',
     },
     {
-      q: 'Bagaimana sistem persetujuan (approval) pendaftaran akun baru?',
-      a: 'Untuk menjaga keamanan dan privasi data instansi, akun pengguna yang baru mendaftar akan berada dalam status Menunggu Persetujuan (Pending Approval). Administrator atau Kasubag akan memverifikasi identitas dan menentukan penempatan Bidang Diskominfo sebelum akun dapat mengunggah laporan atau mengakses Asisten AI.',
+      q: 'Bagaimana mekanisme persetujuan akun pengguna baru?',
+      a: 'Demi menjaga keamanan data instansi, pengguna yang baru mendaftar akan berstatus Menunggu Persetujuan (Pending). Administrator atau Kasubag akan memverifikasi data dan menentukan penempatan bidang sebelum akun dapat mengakses fitur laporan.',
     },
     {
-      q: 'Format berkas dokumen apa saja yang didukung oleh sistem?',
-      a: 'SIPENTA mendukung format dokumen standar perkantoran: PDF (.pdf), Microsoft Word (.doc dan .docx), serta berkas teks (.txt). Dilengkapi fitur pencarian cepat dengan tombol shortcut keyboard "/" dan filter multidimensi (Bidang, Tenaga Ahli, Periode, dan Jenis Dokumen).',
+      q: 'Format berkas apa saja yang didukung oleh sistem?',
+      a: 'SIPENTA mendukung berkas PDF (.pdf), Microsoft Word (.doc dan .docx), serta berkas teks (.txt). Dilengkapi fitur pencarian instan dan filter berdasarkan Bidang, Nama Tenaga Ahli, dan Periode Bulan.',
     },
   ];
 
+  const userInitial = user?.fullName?.charAt(0)?.toUpperCase() || user?.nama?.charAt(0)?.toUpperCase() || 'U';
+  const userDisplayName = user?.fullName || user?.nama || user?.namaLengkap || 'Pengguna';
+
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-surface)] selection:bg-[var(--color-gold-pale)] selection:text-[var(--color-navy)]">
-      {/* ─── Modern Frosted Header ───────────────────────────── */}
-      <header className="sticky top-0 z-50 apple-glass border-b border-black/[0.06] transition-all">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group select-none min-w-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[var(--color-navy)] flex items-center justify-center shadow-xs transition-transform duration-200 group-hover:scale-105 shrink-0">
-              <img src="/sipenta.svg" alt="SIPENTA Logo" className="w-5 h-5 sm:w-6 sm:h-6 object-contain" />
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
+      {/* ─── Header / Navbar ─────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          {/* Logo & Brand */}
+          <Link href="/" className="flex items-center gap-3 group select-none min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center shadow-xs transition-transform duration-200 group-hover:scale-105 shrink-0">
+              <img src="/sipenta.svg" alt="SIPENTA Logo" className="w-5 h-5 object-contain" />
             </div>
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="font-display text-lg sm:text-xl tracking-wide text-[var(--color-navy)] leading-none">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-lg tracking-tight text-slate-900 leading-none">
                   SIPENTA
                 </span>
-                <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-bold bg-[var(--color-gold-pale)] text-[var(--color-navy)] tracking-wider uppercase border border-amber-200/80 shrink-0">
-                  AI v2.0
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700 tracking-wider uppercase border border-indigo-100 shrink-0">
+                  Diskominfo
                 </span>
               </div>
-              <span className="text-[9.5px] sm:text-[10px] text-[var(--color-ink-faint)] tracking-wider sm:tracking-widest uppercase font-sans mt-0.5 truncate">
-                Diskominfo • Pelaporan Tenaga Ahli
+              <span className="text-[10px] text-slate-500 tracking-wider uppercase font-medium mt-0.5 truncate">
+                Sistem Pelaporan Tenaga Ahli
               </span>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-7 text-[13.5px] font-medium text-[var(--color-ink-muted)]">
-            <a href="#fitur" className="hover:text-[var(--color-navy)] transition-colors">
-              Fitur Unggulan
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-6 text-[13px] font-semibold text-slate-600">
+            <a href="#fitur" className="hover:text-slate-900 transition-colors">
+              Fitur Utama
             </a>
-            <a href="#demo" className="hover:text-[var(--color-navy)] transition-colors">
-              Simulasi AI
+            <a href="#simulasi" className="hover:text-slate-900 transition-colors">
+              Simulasi
             </a>
-            <a href="#bidang" className="hover:text-[var(--color-navy)] transition-colors">
+            <a href="#bidang" className="hover:text-slate-900 transition-colors">
               6 Bidang
             </a>
-            <a href="#cara-kerja" className="hover:text-[var(--color-navy)] transition-colors">
-              Cara Kerja
+            <a href="#alur-kerja" className="hover:text-slate-900 transition-colors">
+              Alur Kerja
             </a>
-            <a href="#peran" className="hover:text-[var(--color-navy)] transition-colors">
-              Manfaat Peran
+            <a href="#peran" className="hover:text-slate-900 transition-colors">
+              Panduan Peran
             </a>
-            <a href="#faq" className="hover:text-[var(--color-navy)] transition-colors">
+            <a href="#faq" className="hover:text-slate-900 transition-colors">
               FAQ
             </a>
           </nav>
 
-          <div className="flex items-center gap-1.5 sm:gap-3">
-            <Link
-              href="/login"
-              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] hover:bg-black/[0.04] transition-all"
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/chat"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full text-xs font-semibold bg-white text-[var(--color-navy)] border border-black/[0.08] shadow-2xs hover:bg-[var(--color-surface-2)] transition-all"
-            >
-              <i className="fas fa-comment-dots text-xs text-indigo-600" />
-              <span>Asisten AI</span>
-            </Link>
-            <Link
-              href="/dokumen"
-              className="inline-flex items-center gap-1.5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs font-semibold bg-[var(--color-navy)] text-white shadow-xs hover:bg-[var(--color-navy-light)] hover:shadow-md active:scale-95 transition-all"
-            >
-              <span>Dashboard</span>
-              <i className="fas fa-arrow-right text-[8px] sm:text-[9px] text-[var(--color-gold)]" />
-            </Link>
-            {/* Mobile Navigation Menu Toggle */}
+          {/* Right Action Buttons: Dynamic based on Auth State */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {isAuthenticated ? (
+              /* User is Logged In: Show Profile Icon + Dashboard/App Navigation */
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dokumen"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all"
+                  title="Lihat dokumen laporan"
+                >
+                  <i className="fas fa-file-lines text-xs text-indigo-600" />
+                  <span>Dokumen</span>
+                </Link>
+
+                <Link
+                  href="/chat"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 transition-all"
+                  title="Buka asisten penelusuran dokumen"
+                >
+                  <i className="fas fa-comment-dots text-xs text-indigo-600" />
+                  <span>Asisten AI</span>
+                </Link>
+
+                {isAdmin && (
+                  <Link
+                    href="/admin/dashboard"
+                    className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all"
+                    title="Dashboard Administrator"
+                  >
+                    <i className="fas fa-chart-pie text-xs text-amber-400" />
+                    <span>Dashboard</span>
+                  </Link>
+                )}
+
+                {/* Profile Avatar Icon Link */}
+                <Link
+                  href="/profile"
+                  className="inline-flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40 transition-all group"
+                  title={`Profil: ${userDisplayName} (${role || 'Tenaga Ahli'})`}
+                >
+                  <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                    {userInitial}
+                  </div>
+                  <div className="hidden sm:flex flex-col text-left">
+                    <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-600 truncate max-w-[120px]">
+                      {userDisplayName}
+                    </span>
+                    <span className="text-[10px] text-slate-400 capitalize">
+                      {role || 'Pengguna'}
+                    </span>
+                  </div>
+                </Link>
+              </div>
+            ) : (
+              /* User is NOT Logged In: Show Masuk & Daftar Buttons */
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/20 active:scale-95 transition-all"
+                >
+                  <span>Daftar</span>
+                  <i className="fas fa-arrow-right text-[10px]" />
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center text-slate-700 hover:bg-black/[0.05] border border-black/[0.06] bg-white shadow-2xs transition-all active:scale-90 cursor-pointer ml-0.5"
+              className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white shadow-2xs transition-all active:scale-90 cursor-pointer"
               aria-label="Buka menu navigasi"
             >
               <i className="fas fa-bars text-sm" />
@@ -314,7 +368,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ─── Mobile Navigation Drawer for Landing Page ─────────── */}
+      {/* ─── Mobile Navigation Drawer ─────────────────────────── */}
       <div
         className={`lg:hidden fixed inset-0 z-50 transition-all duration-300 ${
           mobileMenuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0 delay-100'
@@ -331,17 +385,20 @@ export default function HomePage() {
             transform: mobileMenuOpen ? 'translateX(0%)' : 'translateX(105%)',
             transition: 'transform 360ms cubic-bezier(0.16, 1, 0.3, 1)',
           }}
-          className="fixed top-0 right-0 bottom-0 z-10 w-[84%] max-w-[320px] h-[100dvh] bg-white shadow-2xl flex flex-col overflow-hidden border-l border-slate-200/80 rounded-l-3xl"
+          className="fixed top-0 right-0 bottom-0 z-10 w-[84%] max-w-[320px] h-[100dvh] bg-white shadow-2xl flex flex-col overflow-hidden border-l border-slate-200"
         >
-          {/* Header */}
-          <div className="p-4 flex justify-between items-center shrink-0 border-b border-slate-100 bg-gradient-to-r from-indigo-50/40 to-slate-50">
+          {/* Drawer Header */}
+          <div className="p-4 flex justify-between items-center shrink-0 border-b border-slate-100 bg-slate-50">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[var(--color-navy)] flex items-center justify-center text-white shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs">
                 <img src="/sipenta.svg" alt="SIPENTA" className="w-4.5 h-4.5 object-contain" />
               </div>
-              <span className="font-display text-base font-bold text-slate-900">
-                Menu SIPENTA
-              </span>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-slate-900">
+                  Menu SIPENTA
+                </span>
+                <span className="text-[10px] text-slate-500">Diskominfo Kab. Bandung</span>
+              </div>
             </div>
             <button
               onClick={() => setMobileMenuOpen(false)}
@@ -352,32 +409,54 @@ export default function HomePage() {
             </button>
           </div>
 
+          {/* User Status Card (If Logged In) */}
+          {isAuthenticated && (
+            <div className="p-3 bg-indigo-50/70 border-b border-indigo-100 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  {userInitial}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-slate-900 truncate">{userDisplayName}</p>
+                  <p className="text-[10px] text-indigo-700 capitalize truncate">{role || 'Pengguna'} {bidang ? `• ${bidang}` : ''}</p>
+                </div>
+              </div>
+              <Link
+                href="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-[11px] font-semibold text-indigo-600 hover:underline shrink-0"
+              >
+                Profil
+              </Link>
+            </div>
+          )}
+
           {/* Navigation Links */}
           <nav className="p-3.5 flex flex-col gap-1 flex-1 overflow-y-auto overscroll-contain">
             <a
               href="#fitur"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
                 <i className="fas fa-layer-group" />
               </div>
-              <span>Fitur Unggulan</span>
+              <span>Fitur Utama</span>
             </a>
             <a
-              href="#demo"
+              href="#simulasi"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
-                <i className="fas fa-sparkles" />
+                <i className="fas fa-search" />
               </div>
-              <span>Simulasi AI RAG</span>
+              <span>Simulasi Penelusuran</span>
             </a>
             <a
               href="#bidang"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-xs">
                 <i className="fas fa-sitemap" />
@@ -385,29 +464,29 @@ export default function HomePage() {
               <span>6 Bidang Diskominfo</span>
             </a>
             <a
-              href="#cara-kerja"
+              href="#alur-kerja"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
                 <i className="fas fa-tasks" />
               </div>
-              <span>Cara Kerja Sistem</span>
+              <span>Alur Kerja Sistem</span>
             </a>
             <a
               href="#peran"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-xs">
                 <i className="fas fa-users" />
               </div>
-              <span>Manfaat Peran</span>
+              <span>Panduan Peran</span>
             </a>
             <a
               href="#faq"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
               <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs">
                 <i className="fas fa-question-circle" />
@@ -417,143 +496,152 @@ export default function HomePage() {
 
             <div className="h-px w-full my-2 bg-slate-100" />
 
-            {/* Quick Actions */}
-            <div className="flex flex-col gap-2 pt-1">
-              <Link
-                href="/chat"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs font-bold shadow-2xs hover:bg-indigo-100 transition-all"
-              >
-                <i className="fas fa-comment-dots" />
-                <span>Asisten AI Dokumen</span>
-              </Link>
-              <Link
-                href="/dokumen"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-[var(--color-navy)] text-white text-xs font-bold shadow-xs hover:bg-[var(--color-navy-light)] transition-all"
-              >
-                <i className="fas fa-file-alt text-[var(--color-gold)]" />
-                <span>Kelola Laporan Kerja</span>
-              </Link>
-            </div>
+            {/* Bottom Actions */}
+            {isAuthenticated ? (
+              <div className="flex flex-col gap-2 pt-1">
+                <Link
+                  href="/dokumen"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-xs hover:bg-slate-800 transition-all"
+                >
+                  <i className="fas fa-file-lines" />
+                  <span>Daftar Dokumen Laporan</span>
+                </Link>
+                <Link
+                  href="/chat"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold hover:bg-indigo-100 transition-all"
+                >
+                  <i className="fas fa-comment-dots" />
+                  <span>Asisten AI Dokumen</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 pt-1">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-bold hover:bg-slate-200 transition-all"
+                >
+                  <i className="fas fa-arrow-right-to-bracket" />
+                  <span>Masuk ke Akun</span>
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-all shadow-xs"
+                >
+                  <i className="fas fa-user-plus" />
+                  <span>Daftar Akun Baru</span>
+                </Link>
+              </div>
+            )}
           </nav>
 
-          {/* Footer Info */}
-          <div className="p-3.5 border-t border-slate-100 bg-slate-50 text-center shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-            <p className="text-[10px] text-slate-400 font-mono tracking-wider">
-              SIPENTA AI Platform &bull; v2.0
+          {/* Drawer Footer */}
+          <div className="p-3 border-t border-slate-100 bg-slate-50 text-center shrink-0">
+            <p className="text-[10px] text-slate-400 font-medium">
+              SIPENTA &bull; Diskominfo Kabupaten Bandung
             </p>
           </div>
         </div>
       </div>
 
       {/* ─── Hero Section ───────────────────────────────────── */}
-      <section className="relative pt-10 pb-10 sm:pt-16 sm:pb-14 md:pt-20 md:pb-18 px-3.5 sm:px-4 overflow-hidden apple-glow">
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[760px] h-[360px] bg-gradient-to-tr from-blue-200/35 via-teal-100/40 to-transparent rounded-full blur-3xl -z-10 pointer-events-none transform-gpu" />
-
+      <section className="relative pt-12 pb-14 sm:pt-20 sm:pb-20 px-4 overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-100/60">
         <div className="max-w-5xl mx-auto text-center relative z-10 flex flex-col items-center">
-          {/* Status Live Indicator Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 mb-5 sm:mb-6 rounded-full border border-black/[0.08] bg-white/90 backdrop-blur-md shadow-xs animate-fade-in max-w-full">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span className="text-[11px] sm:text-xs font-medium text-[var(--color-ink-muted)] truncate sm:whitespace-normal">
-              <span className="hidden sm:inline">Sistem Tata Kelola Laporan Tenaga Ahli Berbasis RAG AI Diskominfo</span>
-              <span className="sm:hidden">Tata Kelola Laporan RAG AI Diskominfo</span>
+          {/* Badge Instansi */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-5 rounded-full border border-slate-200 bg-white shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className="text-xs font-semibold text-slate-600">
+              Sistem Informasi Pelaporan Tenaga Ahli Diskominfo
             </span>
           </div>
 
-          {/* Main Headline */}
-          <h1 className="font-display text-2xl sm:text-4xl md:text-6xl lg:text-7xl leading-[1.18] sm:leading-[1.14] tracking-tight text-[var(--color-navy)] mb-4 sm:mb-6 max-w-4xl animate-fade-up">
-            Evaluasi Laporan Tenaga Ahli. <br className="hidden sm:inline" />
-            <span className="bg-gradient-to-r from-[var(--color-navy)] via-[#1262a4] to-[#009688] bg-clip-text text-transparent">
-              Cepat, Akuntabel, Terverifikasi.
+          {/* Headline Utama */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900 mb-5 max-w-4xl leading-tight">
+            Tata Kelola Laporan Kerja Tenaga Ahli. <br className="hidden sm:inline" />
+            <span className="text-indigo-600">
+              Tertib, Akuntabel, dan Mudah Ditelusuri.
             </span>
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-xs sm:text-base md:text-xl text-[var(--color-ink-muted)] max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed font-normal animate-fade-up stagger-1 px-1">
-            Platform terpadu untuk menelaah dokumen kerja bulanan tenaga ahli dengan teknologi <strong className="font-semibold text-[var(--color-ink)]">RAG AI Presisi</strong>. Temukan capaian progres, ekstraksi bukti foto otomatis, dan verifikasi nomor halaman tanpa membaca manual ratusan lembar.
+          {/* Deskripsi Realistis */}
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed font-normal">
+            Platform terpadu untuk menghimpun, mengarsipkan, dan mengevaluasi laporan kinerja bulanan tenaga ahli lintas 6 bidang tugas. Dilengkapi kemampuan pencarian berbasis konteks dokumen dan ekstraksi foto kegiatan otomatis.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 mb-8 sm:mb-10 w-full sm:w-auto animate-fade-up stagger-2">
+          {/* Tombol Aksi Utama */}
+          <div className="flex flex-col sm:flex-row items-center gap-3 mb-10 w-full sm:w-auto">
             <Link
-              href="/dokumen"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm font-semibold bg-[var(--color-navy)] text-white shadow-sm hover:shadow-lg hover:bg-[var(--color-navy-light)] active:scale-95 transition-all"
+              href={isAuthenticated ? '/dokumen' : '/login'}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm shadow-indigo-600/30 hover:bg-indigo-700 active:scale-95 transition-all"
             >
-              <i className="fas fa-file-alt text-xs text-[var(--color-gold)]" />
-              <span>Kelola Laporan Kerja</span>
+              <i className="fas fa-file-lines text-xs" />
+              <span>Akses Dokumen Laporan</span>
             </Link>
             <Link
-              href="/chat"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm font-semibold bg-white text-[var(--color-navy)] border border-black/[0.08] shadow-xs hover:bg-[var(--color-surface-2)] active:scale-95 transition-all"
+              href={isAuthenticated ? '/chat' : '/login'}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold bg-white text-slate-800 border border-slate-200 shadow-2xs hover:bg-slate-50 hover:border-slate-300 active:scale-95 transition-all"
             >
-              <i className="fas fa-sparkles text-xs text-indigo-600" />
-              <span>Coba Asisten AI Dokumen</span>
+              <i className="fas fa-comment-dots text-xs text-indigo-600" />
+              <span>Buka Asisten Penelusuran</span>
             </Link>
           </div>
 
-          {/* Feature Highlight Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 text-[11px] sm:text-xs text-[var(--color-ink-muted)] animate-fade-up stagger-3">
-            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white border border-black/[0.06] shadow-2xs">
-              <i className="fas fa-brain text-indigo-600 text-[10px] sm:text-[11px]" />
-              RAG AI Anti-Halusinasi
+          {/* Nilai Utama Sistem (Fakta Nyata, Tanpa Hype Palsu) */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-600">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs font-medium">
+              <i className="fas fa-file-pdf text-rose-500 text-xs" />
+              Multi-Format (PDF, Word, Teks)
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white border border-black/[0.06] shadow-2xs">
-              <i className="fas fa-camera text-amber-500 text-[10px] sm:text-[11px]" />
-              Ekstraksi Citra &amp; Foto Bukti
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs font-medium">
+              <i className="fas fa-camera text-amber-500 text-xs" />
+              Ekstraksi Foto & Dokumentasi Kegiatan
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white border border-black/[0.06] shadow-2xs">
-              <i className="fas fa-history text-blue-500 text-[10px] sm:text-[11px]" />
-              Riwayat Sesi Tersimpan
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs font-medium">
+              <i className="fas fa-sitemap text-teal-500 text-xs" />
+              Terstruktur Berdasarkan 6 Bidang
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white border border-black/[0.06] shadow-2xs">
-              <i className="fas fa-shield-alt text-emerald-500 text-[10px] sm:text-[11px]" />
-              Approval Gate &amp; RBAC 3 Level
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white border border-black/[0.06] shadow-2xs">
-              <i className="fas fa-sync-alt text-teal-500 text-[10px] sm:text-[11px]" />
-              Realtime Sync SignalR
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs font-medium">
+              <i className="fas fa-user-shield text-indigo-500 text-xs" />
+              Hak Akses 3 Peran (Admin, Kasubag, Ahli)
             </span>
           </div>
         </div>
 
-        {/* ─── Interactive AI Live Simulation Showcase ──────────── */}
-        <div id="demo" className="max-w-4xl mx-auto mt-8 sm:mt-12 px-1 sm:px-4 animate-scale-up stagger-3">
-          <div className="apple-card overflow-hidden border border-black/[0.1] shadow-2xl rounded-2xl bg-white">
-            {/* Window Titlebar */}
-            <div className="bg-[var(--color-surface-2)]/90 px-3.5 sm:px-4 py-2.5 sm:py-3 border-b border-black/[0.06] flex items-center justify-between select-none">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ff5f56] inline-block border border-black/10" />
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ffbd2e] inline-block border border-black/10" />
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#27c93f] inline-block border border-black/10" />
-                <span className="ml-2 text-[10px] sm:text-[11px] font-mono text-[var(--color-ink-faint)] hidden sm:inline">
-                  sipenta-ai-rag // interactive-demonstrator
+        {/* ─── Simulasi Penelusuran Dokumen Interaktif ───────────── */}
+        <div id="simulasi" className="max-w-4xl mx-auto mt-12 px-2 sm:px-4">
+          <div className="overflow-hidden border border-slate-200 shadow-lg rounded-2xl bg-white">
+            {/* Titlebar */}
+            <div className="bg-slate-100/80 px-4 py-3 border-b border-slate-200 flex items-center justify-between select-none">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-slate-300 inline-block" />
+                <span className="w-3 h-3 rounded-full bg-slate-300 inline-block" />
+                <span className="w-3 h-3 rounded-full bg-slate-300 inline-block" />
+                <span className="ml-2 text-xs font-semibold text-slate-600">
+                  Simulasi Penelusuran Laporan Kerja
                 </span>
               </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <span className="text-[10px] sm:text-[11px] font-mono text-[var(--color-ink-faint)] hidden md:inline">
-                  Latency: {samplePrompts[selectedPromptIdx].execTime}
-                </span>
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-sync" />
-                  <span className="text-[10.5px] sm:text-[11px] font-semibold text-emerald-700">RAG Aktif</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-bold text-emerald-700">Dokumen Terindeks</span>
               </div>
             </div>
 
-            {/* Scenario Selector Pills - Smooth Horizontal Scroll on Mobile */}
-            <div className="p-2.5 sm:p-4 bg-[var(--color-surface)] border-b border-black/[0.05] flex items-center gap-2 overflow-x-auto no-scrollbar">
-              <span className="text-[10px] sm:text-[11px] font-bold text-[var(--color-ink-muted)] uppercase tracking-wider whitespace-nowrap mr-1 shrink-0">
-                Pilih Skenario:
+            {/* Scenario Selector */}
+            <div className="p-3 sm:p-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2 overflow-x-auto no-scrollbar">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap mr-1 shrink-0">
+                Pilih Contoh:
               </span>
               {samplePrompts.map((p, idx) => (
                 <button
                   key={p.id}
                   onClick={() => setSelectedPromptIdx(idx)}
-                  className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                     selectedPromptIdx === idx
-                      ? 'bg-[var(--color-navy)] text-white shadow-xs'
-                      : 'bg-white text-[var(--color-ink-muted)] border border-black/[0.07] hover:border-[var(--color-gold)] hover:text-[var(--color-navy)]'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-400 hover:text-indigo-600'
                   }`}
                 >
                   {p.category}
@@ -561,41 +649,41 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Chat Interaction Area */}
-            <div className="p-3.5 sm:p-7 space-y-4 sm:space-y-5 bg-white">
-              {/* User Question Bubble */}
-              <div className="flex items-start gap-2.5 sm:gap-3 justify-end">
-                <div className="max-w-[85%] sm:max-w-xl bg-indigo-600 text-white p-3 sm:px-4.5 sm:py-3 rounded-2xl rounded-tr-xs text-[12.5px] sm:text-[13.5px] leading-relaxed shadow-xs">
+            {/* Chat Interaction Body */}
+            <div className="p-4 sm:p-6 space-y-4 bg-white">
+              {/* User Question */}
+              <div className="flex items-start gap-2.5 justify-end">
+                <div className="max-w-[85%] sm:max-w-xl bg-indigo-600 text-white p-3 sm:px-4 sm:py-3 rounded-2xl rounded-tr-xs text-xs sm:text-sm leading-relaxed shadow-2xs">
                   <p className="font-medium">{samplePrompts[selectedPromptIdx].q}</p>
                 </div>
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 shadow-2xs text-xs font-bold">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 text-xs font-bold">
                   <i className="fas fa-user-tie text-[11px]" />
                 </div>
               </div>
 
-              {/* AI Answer Bubble */}
-              <div className="flex items-start gap-2.5 sm:gap-3">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[var(--color-navy)] flex items-center justify-center shrink-0 shadow-xs">
-                  <img src="/sipenta.svg" alt="SIPENTA Logo" className="w-4 h-4 sm:w-5 sm:h-5 object-contain" />
+              {/* AI Answer */}
+              <div className="flex items-start gap-2.5">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <img src="/sipenta.svg" alt="SIPENTA" className="w-4 h-4 object-contain" />
                 </div>
-                <div className="max-w-[92%] sm:max-w-2xl flex-1 bg-white text-[var(--color-ink)] p-3.5 sm:p-5 rounded-2xl rounded-tl-xs text-[12.5px] sm:text-[13.5px] leading-relaxed border border-black/[0.08] shadow-xs">
-                  {/* Verified Source Citation Strip */}
-                  <div className="flex flex-wrap items-center justify-between gap-1.5 pb-2.5 sm:pb-3 mb-2.5 sm:mb-3 border-b border-black/[0.06]">
+                <div className="max-w-[92%] sm:max-w-2xl flex-1 bg-slate-50 text-slate-800 p-3.5 sm:p-5 rounded-2xl rounded-tl-xs text-xs sm:text-sm leading-relaxed border border-slate-200 shadow-2xs">
+                  {/* Verified Source Reference */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-3 border-b border-slate-200">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80 max-w-[220px] sm:max-w-none truncate">
-                        <i className="fas fa-file-pdf text-[9px]" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-white text-indigo-700 border border-indigo-200 truncate">
+                        <i className="fas fa-file-pdf text-[10px] text-rose-500" />
                         <span className="truncate">{samplePrompts[selectedPromptIdx].source}</span>
-                        <span className="text-indigo-400 font-normal shrink-0">({samplePrompts[selectedPromptIdx].page})</span>
+                        <span className="text-slate-400 font-normal shrink-0">({samplePrompts[selectedPromptIdx].page})</span>
                       </span>
-                      <span className="text-[10.5px] sm:text-[11px] font-bold text-emerald-600">
+                      <span className="text-[11px] font-bold text-emerald-600">
                         <i className="fas fa-check-circle mr-1" />
-                        {samplePrompts[selectedPromptIdx].confidence}
+                        {samplePrompts[selectedPromptIdx].status}
                       </span>
                     </div>
 
                     <button
                       onClick={handleCopyDemo}
-                      className="text-[11px] sm:text-xs text-[var(--color-ink-muted)] hover:text-[var(--color-navy)] flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded hover:bg-[var(--color-surface-2)] transition-all font-medium"
+                      className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 cursor-pointer px-2 py-0.5 rounded hover:bg-slate-200 transition-all font-medium"
                       title="Salin jawaban ringkasan"
                     >
                       <i className={`fas ${copiedDemo ? 'fa-check text-emerald-600' : 'fa-copy text-[10px]'}`} />
@@ -603,42 +691,42 @@ export default function HomePage() {
                     </button>
                   </div>
 
-                  {/* Document Image Evidence Preview */}
-                  <div className="mb-3 p-2 sm:p-2.5 rounded-xl bg-slate-50 border border-slate-200/70">
-                    <div className="text-[9.5px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
-                      <i className="fas fa-camera text-amber-500 text-[9px]" />
-                      <span>Foto Dokumentasi Terlampir dalam Laporan:</span>
+                  {/* Document Image Reference */}
+                  <div className="mb-3 p-2.5 rounded-xl bg-white border border-slate-200">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
+                      <i className="fas fa-camera text-amber-500 text-[10px]" />
+                      <span>Lampiran Dokumentasi dalam Berkas:</span>
                     </div>
-                    <div className="flex items-center gap-2.5 sm:gap-3">
-                      <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-lg bg-indigo-100/70 border border-indigo-200/80 flex items-center justify-center text-indigo-600 shrink-0 relative overflow-hidden group/img cursor-pointer">
-                        <i className="fas fa-image text-lg sm:text-xl" />
-                        <div className="absolute bottom-0 inset-x-0 bg-black/60 text-[8.5px] sm:text-[9px] text-white text-center py-0.5 font-mono">
+                    <div className="flex items-center gap-3">
+                      <div className="w-14 h-14 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 shrink-0 relative overflow-hidden">
+                        <i className="fas fa-image text-lg" />
+                        <div className="absolute bottom-0 inset-x-0 bg-slate-900/70 text-[8px] text-white text-center py-0.5 font-mono">
                           Hal. {samplePrompts[selectedPromptIdx].imagePreview.pageNumber}
                         </div>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[11.5px] sm:text-xs font-semibold text-slate-800 line-clamp-1">
+                        <p className="text-xs font-semibold text-slate-800 truncate">
                           {samplePrompts[selectedPromptIdx].imagePreview.caption}
                         </p>
-                        <p className="text-[10.5px] sm:text-[11px] text-slate-500 mt-0.5 line-clamp-2 sm:line-clamp-none">
-                          Diekstrak otomatis dari berkas {samplePrompts[selectedPromptIdx].source}.
+                        <p className="text-[11px] text-slate-500 mt-0.5">
+                          Terekstraksi otomatis dari berkas laporan {samplePrompts[selectedPromptIdx].source}.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Answer Text with typing cursor */}
-                  <div className="text-[12.5px] sm:text-[13.5px] leading-relaxed text-[var(--color-ink)] whitespace-pre-line font-normal">
+                  {/* Answer Text */}
+                  <div className="text-xs sm:text-sm leading-relaxed text-slate-800 whitespace-pre-line">
                     {displayedText}
-                    {isTyping && <span className="cursor-blink" />}
+                    {isTyping && <span className="inline-block w-1.5 h-4 bg-indigo-600 ml-0.5 animate-pulse" />}
                   </div>
 
                   {/* Document Tags */}
                   {!isTyping && (
-                    <div className="mt-3 pt-2 sm:pt-2.5 border-t border-black/[0.04] flex flex-wrap gap-1 items-center animate-fade-in">
-                      <span className="text-[10px] text-[var(--color-ink-faint)] mr-0.5">Tags:</span>
+                    <div className="mt-3 pt-2.5 border-t border-slate-200 flex flex-wrap gap-1 items-center">
+                      <span className="text-[10px] text-slate-400 mr-1">Kategori:</span>
                       {samplePrompts[selectedPromptIdx].tags.map(tag => (
-                        <span key={tag} className="px-1.5 sm:px-2 py-0.5 rounded text-[9.5px] sm:text-[10.5px] font-medium bg-[var(--color-surface-2)] text-[var(--color-ink-muted)] border border-black/[0.04]">
+                        <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-semibold bg-white text-slate-600 border border-slate-200">
                           #{tag}
                         </span>
                       ))}
@@ -648,17 +736,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Demo Footer Strip */}
-            <div className="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-[var(--color-surface)] border-t border-black/[0.05] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--color-ink-muted)] text-center sm:text-left">
-              <span className="flex items-center gap-1.5 text-[11px] sm:text-xs">
-                <i className="fas fa-info-circle text-[var(--color-navy)]" />
-                Ingin menanyakan laporan bidang Anda langsung?
-              </span>
+            {/* Footer Prompt */}
+            <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
+              <span>Ingin menelusuri laporan kerja tenaga ahli bidang Anda?</span>
               <Link
-                href="/chat"
-                className="font-bold text-[var(--color-navy)] hover:text-[var(--color-gold)] flex items-center gap-1 transition-colors text-xs"
+                href={isAuthenticated ? '/chat' : '/login'}
+                className="font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"
               >
-                <span>Buka Ruang Asisten AI</span>
+                <span>Buka Asisten Penelusuran</span>
                 <i className="fas fa-chevron-right text-[9px]" />
               </Link>
             </div>
@@ -666,40 +751,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── Numbers / Impact Strip ───────────────────────────── */}
-      <section className="py-8 sm:py-12 bg-white border-y border-black/[0.06]">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 text-center divide-x-0 md:divide-x divide-black/[0.06]">
-            <div className="px-2 sm:px-3">
-              <span className="block font-display text-2xl sm:text-4xl lg:text-5xl text-[var(--color-navy)] mb-1">
-                &lt; 0.8 Detik
-              </span>
-              <span className="text-[11px] sm:text-sm font-medium text-[var(--color-ink-muted)]">
-                Kecepatan Temu Balik RAG
-              </span>
-            </div>
-            <div className="px-2 sm:px-3">
-              <span className="block font-display text-2xl sm:text-4xl lg:text-5xl text-[var(--color-navy)] mb-1">
-                100%
-              </span>
-              <span className="text-[11px] sm:text-sm font-medium text-[var(--color-ink-muted)]">
-                Rujukan Dokumen Sah
-              </span>
-            </div>
-            <div className="px-2 sm:px-3">
-              <span className="block font-display text-2xl sm:text-4xl lg:text-5xl text-[var(--color-navy)] mb-1">
+      {/* ─── Ringkasan Kemampuan Sistem (Clean Facts) ─────────── */}
+      <section className="py-8 bg-white border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x-0 md:divide-x divide-slate-200">
+            <div className="px-2">
+              <span className="block text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
                 6 Bidang
               </span>
-              <span className="text-[11px] sm:text-sm font-medium text-[var(--color-ink-muted)]">
-                Terintegrasi Diskominfo
+              <span className="text-xs text-slate-500 font-medium">
+                Struktur Tugas Diskominfo
               </span>
             </div>
-            <div className="px-2 sm:px-3">
-              <span className="block font-display text-2xl sm:text-4xl lg:text-5xl text-[var(--color-navy)] mb-1">
-                Dual Auth
+            <div className="px-2">
+              <span className="block text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+                Multi-Format
               </span>
-              <span className="text-[11px] sm:text-sm font-medium text-[var(--color-ink-muted)]">
-                JWT + Google OAuth SSO
+              <span className="text-xs text-slate-500 font-medium">
+                Dukungan Berkas PDF, Word & Teks
+              </span>
+            </div>
+            <div className="px-2">
+              <span className="block text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+                3 Tingkat
+              </span>
+              <span className="text-xs text-slate-500 font-medium">
+                Hak Akses (Admin, Kasubag, Ahli)
+              </span>
+            </div>
+            <div className="px-2">
+              <span className="block text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+                Terverifikasi
+              </span>
+              <span className="text-xs text-slate-500 font-medium">
+                Persetujuan Akun Instansi
               </span>
             </div>
           </div>
@@ -707,233 +792,213 @@ export default function HomePage() {
       </section>
 
       {/* ─── 6 Bidang Diskominfo Section ──────────────────────── */}
-      <section id="bidang" className="py-12 sm:py-18 md:py-24 px-3.5 sm:px-4 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--color-gold-pale)] text-[var(--color-navy)] border border-amber-200">
+      <section id="bidang" className="py-14 sm:py-20 px-4 max-w-7xl mx-auto w-full">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
             Struktur Organisasi Diskominfo
           </div>
-          <h2 className="font-display text-2xl sm:text-4xl md:text-5xl text-[var(--color-navy)] mb-2.5 sm:mb-3.5">
-            Dukungan Tata Kelola 6 Bidang Instansi
+          <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
+            Penyelarasan 6 Bidang Kerja Instansi
           </h2>
-          <p className="text-xs sm:text-base text-[var(--color-ink-muted)] leading-relaxed">
-            Arsip dokumen dan analisis AI dikelompokkan secara terstruktur berdasarkan bidang tugas dan fungsi masing-masing di Dinas Komunikasi dan Informatika.
+          <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
+            Arsip dokumen dan penelusuran dikelompokkan secara terstruktur berdasarkan bidang tugas dan fungsi masing-masing di Dinas Komunikasi dan Informatika.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {bidangList.map((b, idx) => (
             <div
               key={idx}
-              className="apple-card p-5 sm:p-6 flex flex-col justify-between group hover:border-[var(--color-navy)] transition-all bg-white"
+              className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-indigo-300 hover:shadow-sm transition-all"
             >
               <div>
-                <div className="flex items-center justify-between mb-3.5 sm:mb-4">
-                  <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br ${b.color} text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}>
-                    <i className={`fas ${b.icon} text-sm sm:text-base`} />
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${b.color} text-white flex items-center justify-center shadow-xs`}>
+                    <i className={`fas ${b.icon} text-base`} />
                   </div>
-                  <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-[10px] font-bold bg-[var(--color-surface-2)] text-[var(--color-ink-muted)] border border-black/[0.05]">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600">
                     {b.tag}
                   </span>
                 </div>
-                <h3 className="font-display text-lg sm:text-xl text-[var(--color-navy)] mb-1">
+                <h3 className="text-lg font-bold text-slate-900 mb-1">
                   {b.name}
                 </h3>
-                <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {b.desc}
                 </p>
               </div>
-              <div className="mt-4 sm:mt-5 pt-3 border-t border-black/[0.04] flex items-center justify-between text-[10.5px] sm:text-[11px] text-[var(--color-ink-faint)]">
-                <span>Terisolasi Hak Akses RBAC</span>
-                <i className="fas fa-lock text-[10px] text-slate-400" />
+              <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                <span>Terisolasi Hak Akses Bidang</span>
+                <i className="fas fa-lock text-[10px]" />
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── Bento Grid Features Section ──────────────────────── */}
-      <section id="fitur" className="py-12 sm:py-18 md:py-26 px-3.5 sm:px-4 bg-white border-y border-black/[0.06]">
+      {/* ─── Fitur Utama Section ──────────────────────────────── */}
+      <section id="fitur" className="py-14 sm:py-20 px-4 bg-white border-y border-slate-200">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-14">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--color-gold-pale)] text-[var(--color-navy)] border border-amber-200">
-              Kapabilitas Canggih
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+              Fitur Utama
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl md:text-5xl text-[var(--color-navy)] mb-2.5 sm:mb-3.5">
-              Fitur Dirancang untuk Efisiensi Penilaian
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
+              Dirancang untuk Kemudahan Pengelolaan Dokumen
             </h2>
-            <p className="text-xs sm:text-base text-[var(--color-ink-muted)] leading-relaxed">
-              Kombinasi teknologi ekstraksi berkas, basis data vektor, kecerdasan buatan, dan sinkronisasi real-time.
+            <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
+              Fokus pada kepraktisan pengunggahan, ketepatan penelusuran, serta keamanan tata kelola akun instansi.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            {/* Card 1 - Large Span RAG */}
-            <div className="md:col-span-2 apple-card p-5 sm:p-7 md:p-9 flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-white via-white to-[var(--color-surface-2)]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Card 1 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[var(--color-navy)] flex items-center justify-center mb-4 sm:mb-5 text-white shadow-xs">
-                  <i className="fas fa-brain text-base sm:text-lg text-[var(--color-gold)]" />
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center mb-4 shadow-xs">
+                  <i className="fas fa-search text-sm" />
                 </div>
-                <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-[var(--color-navy)] mb-2 sm:mb-2.5">
-                  RAG Semantik &amp; Anti-Halusinasi
+                <h3 className="text-base font-bold text-slate-900 mb-2">
+                  Penelusuran Konteks Laporan
                 </h3>
-                <p className="text-xs sm:text-sm md:text-[15px] text-[var(--color-ink-muted)] leading-relaxed max-w-xl">
-                  Dokumen laporan kerja dipecah menjadi segmen vektor terindeks. Asisten AI hanya menjawab berdasarkan fakta sah yang tertulis pada laporan dan menyertakan rujukan nama dokumen serta nomor halaman untuk verifikasi silang.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Menemukan rincian kegiatan bulanan langsung merujuk pada nomor halaman berkas laporan tanpa harus membuka satu per satu secara manual.
                 </p>
               </div>
-
-              <div className="mt-5 sm:mt-7 pt-4 sm:pt-5 border-t border-black/[0.06] flex flex-wrap items-center gap-2 sm:gap-3">
-                <span className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  <i className="fas fa-check-circle mr-1" />
-                  Bebas Halusinasi
-                </span>
-                <span className="text-[11px] sm:text-xs text-[var(--color-ink-faint)]">
-                  Didukung LLM Groq &amp; Embeddings Vektor Teroptimasi
-                </span>
+              <div className="mt-4 pt-3 border-t border-slate-200 text-[11px] font-semibold text-indigo-600">
+                Rujukan Halaman Presisi
               </div>
             </div>
 
-            {/* Card 2 - Ekstraksi Foto Bukti */}
-            <div className="apple-card p-5 sm:p-7 flex flex-col justify-between">
+            {/* Card 2 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center mb-4 sm:mb-5 shadow-xs">
-                  <i className="fas fa-camera text-base sm:text-lg" />
+                <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center mb-4 shadow-xs">
+                  <i className="fas fa-camera text-sm" />
                 </div>
-                <h3 className="font-display text-lg sm:text-xl md:text-2xl text-[var(--color-navy)] mb-2 sm:mb-2.5">
-                  Ekstraksi Foto Bukti &amp; Lightbox
+                <h3 className="text-base font-bold text-slate-900 mb-2">
+                  Ekstraksi Foto Dokumentasi
                 </h3>
-                <p className="text-xs sm:text-sm text-[var(--color-ink-muted)] leading-relaxed">
-                  Foto dan screenshot dokumentasi pekerjaan dalam berkas PDF/Word diekstrak secara otomatis per halaman dan dapat dibuka dalam modal Lightbox resolusi penuh.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Foto rapat, bagan alur, dan screenshot aplikasi yang dilampirkan dalam berkas PDF/Word diekstrak secara otomatis per halaman.
                 </p>
               </div>
-
-              <div className="mt-4 sm:mt-6 pt-3.5 sm:pt-4 border-t border-black/[0.06]">
-                <span className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
-                  <i className="fas fa-images text-[11px]" />
-                  Visual Evidence Ready
-                </span>
+              <div className="mt-4 pt-3 border-t border-slate-200 text-[11px] font-semibold text-amber-700">
+                Galeri Foto & Perbesar Gambar
               </div>
             </div>
 
-            {/* Card 3 - Multi-Session Chat */}
-            <div className="apple-card p-5 sm:p-7 flex flex-col justify-between">
+            {/* Card 3 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center mb-4 sm:mb-5 shadow-xs">
-                  <i className="fas fa-history text-base sm:text-lg" />
+                <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center mb-4 shadow-xs">
+                  <i className="fas fa-history text-sm" />
                 </div>
-                <h3 className="font-display text-lg sm:text-xl md:text-2xl text-[var(--color-navy)] mb-2 sm:mb-2.5">
-                  Multi-Sesi &amp; Riwayat Chat
+                <h3 className="text-base font-bold text-slate-900 mb-2">
+                  Multi-Sesi Percakapan
                 </h3>
-                <p className="text-xs sm:text-sm text-[var(--color-ink-muted)] leading-relaxed">
-                  Kelola banyak sesi percakapan analisis sekaligus. Setiap percakapan tersimpan rapi, bisa dibuka kembali kapan saja, dan tersinkronisasi antar perangkat.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Setiap penelusuran tersimpan dalam daftar riwayat sesi sehingga mempermudah evaluasi berkala dan perbandingan laporan antar-bulan.
                 </p>
               </div>
-
-              <div className="mt-4 sm:mt-6 pt-3.5 sm:pt-4 border-t border-black/[0.06]">
-                <span className="text-xs text-[var(--color-ink-faint)] font-mono">
-                  Sesi Baru &bull; Riwayat &bull; Hapus Sesi
-                </span>
+              <div className="mt-4 pt-3 border-t border-slate-200 text-[11px] font-semibold text-teal-700">
+                Riwayat Sesi Terorganisir
               </div>
             </div>
 
-            {/* Card 4 - Span 2 Security & Approval */}
-            <div className="md:col-span-2 apple-card p-5 sm:p-7 md:p-9 flex flex-col justify-between relative overflow-hidden bg-gradient-to-br from-white via-white to-[var(--color-surface)]">
+            {/* Card 4 */}
+            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[var(--color-navy)] flex items-center justify-center mb-4 sm:mb-5 text-white shadow-xs">
-                  <i className="fas fa-shield-alt text-base sm:text-lg text-[var(--color-gold)]" />
+                <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center mb-4 shadow-xs">
+                  <i className="fas fa-user-shield text-sm" />
                 </div>
-                <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-[var(--color-navy)] mb-2 sm:mb-2.5">
-                  Approval Gate &amp; Keamanan RBAC 3 Level
+                <h3 className="text-base font-bold text-slate-900 mb-2">
+                  Persetujuan & Hak Akses
                 </h3>
-                <p className="text-xs sm:text-sm md:text-[15px] text-[var(--color-ink-muted)] leading-relaxed max-w-xl">
-                  Pendaftaran akun terlindungi sistem persetujuan (approval) oleh Admin/Kasubag. Penerapan isolasi data dokumen antar-bidang, autentikasi ganda Google OAuth 2.0, dan enkripsi token JWT terproteksi.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Pendaftaran akun baru wajib diverifikasi oleh Admin/Kasubag guna menjamin kerahasiaan dan isolasi dokumen per bidang tugas.
                 </p>
               </div>
-
-              <div className="mt-5 sm:mt-7 pt-4 sm:pt-5 border-t border-black/[0.06] flex flex-wrap items-center gap-2 sm:gap-3">
-                <span className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-[var(--color-gold-pale)] text-[var(--color-navy)] border border-amber-200">
-                  Admin &bull; Kasubag &bull; Tenaga Ahli
-                </span>
-                <span className="text-[11px] sm:text-xs text-[var(--color-ink-faint)]">
-                  SignalR Live Sync &amp; Client-Side Route Guard
-                </span>
+              <div className="mt-4 pt-3 border-t border-slate-200 text-[11px] font-semibold text-rose-700">
+                Verifikasi Akun Instansi
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── 4-Step Workflow Section (Cara Kerja) ─────────────── */}
-      <section id="cara-kerja" className="py-12 sm:py-18 md:py-26 px-3.5 sm:px-4 max-w-7xl mx-auto w-full">
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--color-gold-pale)] text-[var(--color-navy)] border border-amber-200">
-            Alur Kerja Sistematis
+      {/* ─── 4 Langkah Alur Kerja ─────────────────────────────── */}
+      <section id="alur-kerja" className="py-14 sm:py-20 px-4 max-w-7xl mx-auto w-full">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+            Alur Kerja Sistem
           </div>
-          <h2 className="font-display text-2xl sm:text-4xl md:text-5xl text-[var(--color-navy)] mb-2.5 sm:mb-3.5">
-            Bagaimana SIPENTA Bekerja?
+          <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
+            Bagaimana SIPENTA Digunakan?
           </h2>
-          <p className="text-xs sm:text-base text-[var(--color-ink-muted)] leading-relaxed">
-            Empat tahapan terstruktur mulai dari pengunggahan laporan hingga verifikasi bukti autentik oleh pimpinan.
+          <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
+            Empat tahapan terstruktur mulai dari pengunggahan laporan bulanan hingga verifikasi dokumen oleh penilai.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {workflowSteps.map((step, idx) => (
             <div
               key={idx}
-              className="apple-card p-5 sm:p-7 flex flex-col justify-between relative group hover:border-[var(--color-gold)] transition-all"
+              className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-indigo-300 transition-all"
             >
               <div>
-                <div className="flex items-center justify-between mb-4 sm:mb-5">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[var(--color-navy)] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                    <i className={`fas ${step.icon} text-base sm:text-lg text-[var(--color-gold)]`} />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs">
+                    <i className={`fas ${step.icon} text-sm`} />
                   </div>
-                  <span className="font-mono text-xl sm:text-2xl font-bold text-black/15">
+                  <span className="font-mono text-xl font-bold text-slate-300">
                     {step.num}
                   </span>
                 </div>
                 <div className="mb-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-[10px] font-semibold bg-[var(--color-surface-2)] text-[var(--color-navy)] border border-black/[0.05]">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
                     {step.badge}
                   </span>
                 </div>
-                <h3 className="font-display text-lg sm:text-xl text-[var(--color-navy)] mb-1.5 sm:mb-2">
+                <h3 className="text-base font-bold text-slate-900 mb-1.5">
                   {step.title}
                 </h3>
-                <p className="text-xs sm:text-[13px] text-[var(--color-ink-muted)] leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {step.desc}
                 </p>
               </div>
 
-              <div className="mt-4 sm:mt-6 pt-3 border-t border-black/[0.05] flex items-center text-[10.5px] sm:text-[11px] text-[var(--color-ink-faint)]">
-                <span>Tahap {idx + 1} dari 4</span>
+              <div className="mt-5 pt-3 border-t border-slate-100 text-[11px] text-slate-400 font-medium">
+                Tahap {idx + 1} dari 4
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── Role-Based Value Proposition ─────────────────────── */}
-      <section id="peran" className="py-12 sm:py-18 md:py-26 px-3.5 sm:px-4 bg-[var(--color-surface-2)]/60 border-y border-black/[0.06]">
+      {/* ─── Panduan Sesuai Peran Pengguna ─────────────────────── */}
+      <section id="peran" className="py-14 sm:py-20 px-4 bg-slate-100/70 border-y border-slate-200">
         <div className="max-w-7xl mx-auto w-full">
-          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--color-gold-pale)] text-[var(--color-navy)] border border-amber-200">
-              Personalisasi Kebutuhan
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+              Panduan Peran
             </div>
-            <h2 className="font-display text-2xl sm:text-4xl md:text-5xl text-[var(--color-navy)] mb-2.5 sm:mb-3.5">
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
               Dirancang untuk Setiap Peran di Instansi
             </h2>
-            <p className="text-xs sm:text-base text-[var(--color-ink-muted)] leading-relaxed">
-              Pengalaman penggunaan yang intuitif sesuai hak wewenang dan tanggung jawab masing-masing pihak.
+            <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
+              Pengalaman penggunaan yang disesuaikan dengan tanggung jawab dan wewenang masing-masing pihak.
             </p>
 
-            {/* Role Toggle 3 Tabs - Horizontal Scroll on Mobile */}
-            <div className="inline-flex max-w-full overflow-x-auto p-1 mt-5 sm:mt-6 bg-white rounded-2xl sm:rounded-full border border-black/[0.08] shadow-2xs no-scrollbar">
+            {/* Role Tabs Toggle */}
+            <div className="inline-flex p-1 mt-6 bg-white rounded-xl border border-slate-200 shadow-2xs">
               <button
                 onClick={() => setActiveTabRole('evaluator')}
-                className={`px-3.5 sm:px-5 py-2 rounded-xl sm:rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTabRole === 'evaluator'
-                    ? 'bg-[var(--color-navy)] text-white shadow-xs'
-                    : 'text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <i className="fas fa-user-tie mr-1.5" />
@@ -941,10 +1006,10 @@ export default function HomePage() {
               </button>
               <button
                 onClick={() => setActiveTabRole('expert')}
-                className={`px-3.5 sm:px-5 py-2 rounded-xl sm:rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTabRole === 'expert'
-                    ? 'bg-[var(--color-navy)] text-white shadow-xs'
-                    : 'text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <i className="fas fa-laptop-code mr-1.5" />
@@ -952,10 +1017,10 @@ export default function HomePage() {
               </button>
               <button
                 onClick={() => setActiveTabRole('admin')}
-                className={`px-3.5 sm:px-5 py-2 rounded-xl sm:rounded-full text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   activeTabRole === 'admin'
-                    ? 'bg-[var(--color-navy)] text-white shadow-xs'
-                    : 'text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]'
+                    ? 'bg-indigo-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <i className="fas fa-shield-alt mr-1.5" />
@@ -966,56 +1031,56 @@ export default function HomePage() {
 
           <div className="max-w-4xl mx-auto">
             {activeTabRole === 'evaluator' && (
-              <div className="apple-card p-5 sm:p-7 md:p-9 bg-white border border-black/[0.08] shadow-md rounded-2xl animate-fade-in">
-                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-blue-50 text-[var(--color-navy)] flex items-center justify-center text-xl sm:text-2xl border border-blue-100 shrink-0">
+              <div className="p-6 sm:p-8 bg-white border border-slate-200 shadow-sm rounded-2xl">
+                <div className="flex items-center gap-3.5 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl shrink-0">
                     <i className="fas fa-chart-line" />
                   </div>
                   <div>
-                    <h3 className="font-display text-lg sm:text-2xl text-[var(--color-navy)]">
-                      Kemudahan untuk Kasubag &amp; Tim Penilai
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                      Kemudahan untuk Kasubag & Tim Penilai
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-[var(--color-ink-muted)]">
-                      Evaluasi komprehensif, cepat, dan objektif berbasis bukti berkas laporan sah
+                    <p className="text-xs text-slate-500">
+                      Evaluasi kinerja bulanan terstruktur berbasis bukti dokumen laporan
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3.5 sm:pt-4 border-t border-black/[0.06]">
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-search-plus text-indigo-600" />
-                      Pencarian &amp; Shortcut Cepat
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-search text-indigo-600" />
+                      Pencarian Dokumen Praktis
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Temukan laporan berdasarkan nama tenaga ahli, periode, atau kata kunci topik dengan shortcut keyboard <kbd className="px-1 py-0.5 bg-slate-200 rounded text-[10px]">/</kbd>.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Temukan laporan tenaga ahli berdasarkan nama, periode bulan, atau kata kunci topik dengan cepat.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
                       <i className="fas fa-tasks text-indigo-600" />
-                      Ringkasan Kinerja Otomatis
+                      Penelusuran Rincian Kegiatan
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      AI merangkum capaian pekerjaan bulanan, hambatan teknis, dan rekomendasi tindak lanjut dalam hitungan detik.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Tanyakan progres pekerjaan tertentu dan dapatkan ringkasan kegiatan lengkap dengan nomor halaman berkas.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-file-check text-indigo-600" />
-                      Verifikasi Rujukan &amp; Bukti Foto
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-image text-indigo-600" />
+                      Verifikasi Foto Kegiatan
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Setiap jawaban AI menyertakan nomor halaman dokumen dan foto dokumentasi kegiatan asli yang dapat diperbesar.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Lihat foto dokumentasi rapat, pemeliharaan server, atau screenshot aplikasi yang terlampir dalam laporan.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
                       <i className="fas fa-user-check text-indigo-600" />
-                      Approval Tenaga Ahli Bidang
+                      Persetujuan Akun Bidang
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Persetujuan akun pendaftar tenaga ahli baru di bawah bidang Anda secara langsung dan terkoordinasi.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Menyetujui pendaftaran akun tenaga ahli yang bertugas di bawah bidang penempatan Anda.
                     </p>
                   </div>
                 </div>
@@ -1023,56 +1088,56 @@ export default function HomePage() {
             )}
 
             {activeTabRole === 'expert' && (
-              <div className="apple-card p-5 sm:p-7 md:p-9 bg-white border border-black/[0.08] shadow-md rounded-2xl animate-fade-in">
-                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-teal-50 text-[var(--color-gold)] flex items-center justify-center text-xl sm:text-2xl border border-teal-100 shrink-0">
-                    <i className="fas fa-file-upload" />
+              <div className="p-6 sm:p-8 bg-white border border-slate-200 shadow-sm rounded-2xl">
+                <div className="flex items-center gap-3.5 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+                    <i className="fas fa-laptop-code" />
                   </div>
                   <div>
-                    <h3 className="font-display text-lg sm:text-2xl text-[var(--color-navy)]">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                       Kemudahan untuk Tenaga Ahli
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-[var(--color-ink-muted)]">
-                      Pengunggahan dokumen praktis, repositori teratur, dan penelusuran riwayat kerja
+                    <p className="text-xs text-slate-500">
+                      Pengunggahan berkas teratur, arsip aman, dan kemudahan melihat riwayat pekerjaan
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3.5 sm:pt-4 border-t border-black/[0.06]">
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-cloud-upload text-[var(--color-gold)]" />
-                      Unggah Berkas Multi-Format
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-cloud-upload-alt text-emerald-600" />
+                      Unggah Dokumen Mudah
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Cukup seret dan lepas (drag-and-drop) berkas PDF, Word (DOCX), atau dokumen teks laporan bulanan Anda.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Cukup seret dan lepas (drag-and-drop) berkas PDF, Word (DOCX/DOC), atau TXT laporan bulanan Anda.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-database text-[var(--color-gold)]" />
-                      Penyimpanan Cloud Aman
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-folder-open text-emerald-600" />
+                      Repositori Laporan Terarsip
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Laporan tersimpan di cloud storage Google Drive terintegrasi dengan penandaan periode bidang yang rapi.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Seluruh berkas tersimpan rapi berdasarkan nama tenaga ahli, periode laporan, dan bidang tugas.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-magic text-[var(--color-gold)]" />
-                      Ekstraksi Teks &amp; Foto Otomatis
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-eye text-emerald-600" />
+                      Pratinjau & Unduh Berkas
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Sistem AI otomatis membedah poin pekerjaan dan foto lampiran tanpa perlu mengetik ulang isi laporan.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Buka pratinjau dokumen langsung di peramban atau unduh kembali berkas laporan kapan saja dibutuhkan.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-history text-[var(--color-gold)]" />
-                      Riwayat &amp; Asisten AI Pribadi
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-comment-dots text-emerald-600" />
+                      Penelusuran Riwayat Pribadi
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Tanyakan konteks laporan bulan-bulan sebelumnya untuk menyusun laporan baru dengan bantuan Asisten AI.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Gunakan ruang tanya jawab untuk memeriksa kembali catatan kegiatan bulan-bulan sebelumnya.
                     </p>
                   </div>
                 </div>
@@ -1080,56 +1145,56 @@ export default function HomePage() {
             )}
 
             {activeTabRole === 'admin' && (
-              <div className="apple-card p-5 sm:p-7 md:p-9 bg-white border border-black/[0.08] shadow-md rounded-2xl animate-fade-in">
-                <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  <div className="w-10 h-10 sm:w-13 sm:h-13 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl sm:text-2xl border border-amber-100 shrink-0">
+              <div className="p-6 sm:p-8 bg-white border border-slate-200 shadow-sm rounded-2xl">
+                <div className="flex items-center gap-3.5 mb-5">
+                  <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl shrink-0">
                     <i className="fas fa-shield-alt" />
                   </div>
                   <div>
-                    <h3 className="font-display text-lg sm:text-2xl text-[var(--color-navy)]">
+                    <h3 className="text-lg sm:text-xl font-bold text-slate-900">
                       Kemudahan untuk Administrator
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-[var(--color-ink-muted)]">
-                      Kontrol penuh manajemen pengguna, hak akses RBAC, dan audit sistem
+                    <p className="text-xs text-slate-500">
+                      Kontrol terpusat atas manajemen pengguna, verifikasi pendaftaran, dan audit berkas
                     </p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3.5 sm:pt-4 border-t border-black/[0.06]">
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
                       <i className="fas fa-users-cog text-amber-600" />
-                      Manajemen Pengguna &amp; Bidang
+                      Manajemen Pengguna & Bidang
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Verifikasi pendaftaran pengguna, tentukan penempatan 6 bidang Diskominfo, dan ubah role pengguna.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Verifikasi pendaftaran pengguna baru, tentukan penempatan bidang, dan kelola peran hak akses.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
                       <i className="fas fa-chart-pie text-amber-600" />
-                      Dashboard Metrik Terpadu
+                      Dashboard Statistik Sistem
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Pantau total berkas laporan, sebaran tenaga ahli, pengguna aktif, dan statistik sesi chat AI secara terpusat.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Pantau total dokumen terunggah, beban penyimpanan, antrean verifikasi, dan komposisi per bidang.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
-                      <i className="fas fa-user-shield text-amber-600" />
-                      Gerbang Approval Ketat
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
+                      <i className="fas fa-shield-alt text-amber-600" />
+                      Isolasi Keamanan Data
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Filter status akun (Menunggu, Disetujui, Ditolak) untuk mencegah akses data yang tidak berwenang.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Memastikan dokumen antar-bidang terlindungi dan hanya dapat diakses oleh pihak yang berwenang.
                     </p>
                   </div>
-                  <div className="p-3.5 sm:p-4 rounded-xl bg-[var(--color-surface)] border border-black/[0.04]">
-                    <div className="text-[var(--color-navy)] font-bold text-xs sm:text-sm mb-1 flex items-center gap-2">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div className="text-slate-900 font-bold text-xs mb-1 flex items-center gap-2">
                       <i className="fas fa-sync text-amber-600" />
-                      Sinkronisasi Live SignalR
+                      Sinkronisasi Data Real-Time
                     </div>
-                    <p className="text-xs text-[var(--color-ink-muted)] leading-relaxed">
-                      Setiap aksi approval, unggahan baru, atau perubahan user langsung tersinkronisasi instan ke seluruh antarmuka.
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Setiap perubahan persetujuan akun atau unggahan berkas baru langsung tersinkronisasi otomatis.
                     </p>
                   </div>
                 </div>
@@ -1139,44 +1204,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── FAQ Accordion ───────────────────────────────────── */}
-      <section id="faq" className="py-12 sm:py-18 md:py-26 px-3.5 sm:px-4 max-w-4xl mx-auto w-full">
-        <div className="text-center mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--color-gold-pale)] text-[var(--color-navy)] border border-amber-200">
+      {/* ─── Tanya Jawab (FAQ) ────────────────────────────────── */}
+      <section id="faq" className="py-14 sm:py-20 px-4 max-w-4xl mx-auto w-full">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
             Tanya Jawab
           </div>
-          <h2 className="font-display text-2xl sm:text-4xl text-[var(--color-navy)] mb-2.5 sm:mb-3">
+          <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3">
             Pertanyaan yang Sering Diajukan
           </h2>
-          <p className="text-xs sm:text-base text-[var(--color-ink-muted)]">
-            Semua hal yang perlu Anda ketahui mengenai penggunaan dan integrasi platform SIPENTA.
+          <p className="text-xs sm:text-base text-slate-600">
+            Informasi penting seputar penggunaan dan tata kelola platform SIPENTA.
           </p>
         </div>
 
-        <div className="space-y-2.5 sm:space-y-3">
+        <div className="space-y-3">
           {faqs.map((faq, idx) => {
             const isOpen = activeFaq === idx;
             return (
               <div
                 key={idx}
-                className="apple-card overflow-hidden border border-black/[0.06] rounded-xl transition-all"
+                className="overflow-hidden border border-slate-200 rounded-xl bg-white transition-all"
               >
                 <button
                   type="button"
                   onClick={() => setActiveFaq(isOpen ? null : idx)}
-                  className="w-full p-4 sm:p-5 text-left flex justify-between items-center gap-3.5 cursor-pointer hover:bg-[var(--color-surface)]/50 transition-colors"
+                  className="w-full p-4 sm:p-5 text-left flex justify-between items-center gap-3.5 cursor-pointer hover:bg-slate-50 transition-colors"
                 >
-                  <span className="font-display text-xs sm:text-base text-[var(--color-navy)] font-bold">
+                  <span className="text-xs sm:text-sm font-bold text-slate-900">
                     {faq.q}
                   </span>
                   <i
-                    className={`fas fa-chevron-down text-xs text-[var(--color-ink-faint)] shrink-0 transition-transform duration-300 ${
-                      isOpen ? 'rotate-180 text-[var(--color-gold)]' : ''
+                    className={`fas fa-chevron-down text-xs text-slate-400 shrink-0 transition-transform duration-200 ${
+                      isOpen ? 'rotate-180 text-indigo-600' : ''
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-1 text-xs sm:text-sm text-[var(--color-ink-muted)] leading-relaxed border-t border-black/[0.04] animate-fade-in">
+                  <div className="px-4 sm:px-5 pb-4 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100">
                     {faq.a}
                   </div>
                 )}
@@ -1186,76 +1251,84 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── Bottom Call to Action Banner ─────────────────────── */}
-      <section className="py-12 sm:py-18 px-3.5 sm:px-4 bg-[var(--color-navy)] text-white text-center relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[var(--color-gold)]/20 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-4xl mx-auto relative z-10 flex flex-col items-center">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-4 sm:mb-5 shadow-sm border border-white/20">
-            <img src="/sipenta.svg" alt="SIPENTA Logo" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
+      {/* ─── Bottom Call to Action ────────────────────────────── */}
+      <section className="py-14 sm:py-16 px-4 bg-slate-900 text-white text-center">
+        <div className="max-w-4xl mx-auto flex flex-col items-center">
+          <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mb-4 border border-white/20">
+            <img src="/sipenta.svg" alt="SIPENTA Logo" className="w-6 h-6 object-contain" />
           </div>
-          <h2 className="font-display text-xl sm:text-3xl md:text-5xl mb-3 sm:mb-4 leading-tight px-1">
-            Mulai Transformasi Evaluasi Tenaga Ahli Sekarang
+          <h2 className="text-2xl sm:text-4xl font-bold mb-3 leading-tight">
+            Mulai Pengelolaan Laporan Tenaga Ahli
           </h2>
-          <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto mb-6 sm:mb-8 leading-relaxed font-light px-2">
-            Tingkatkan efisiensi penelaahan dokumen kerja dan akuntabilitas evaluasi kinerja instansi Diskominfo dengan teknologi RAG AI terkini.
+          <p className="text-xs sm:text-base text-slate-300 max-w-xl mx-auto mb-7 leading-relaxed font-normal">
+            Tingkatkan efisiensi dan akuntabilitas penelaahan dokumen kerja di lingkungan Dinas Komunikasi dan Informatika.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <Link
-              href="/dokumen"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm font-semibold bg-[var(--color-gold)] text-[var(--color-navy)] shadow-md hover:bg-[var(--color-gold-light)] active:scale-95 transition-all"
+              href={isAuthenticated ? '/dokumen' : '/login'}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md active:scale-95 transition-all"
             >
-              <span>Akses Dashboard Laporan</span>
-              <i className="fas fa-arrow-right text-xs" />
+              <i className="fas fa-file-lines text-xs" />
+              <span>Akses Dokumen Laporan</span>
             </Link>
             <Link
-              href="/chat"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-xs sm:text-sm font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all"
+              href={isAuthenticated ? '/chat' : '/login'}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 active:scale-95 transition-all"
             >
-              <i className="fas fa-comment-dots text-xs text-[var(--color-gold)]" />
-              <span>Buka Asisten AI</span>
+              <i className="fas fa-comment-dots text-xs text-amber-400" />
+              <span>Buka Asisten Penelusuran</span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ─── Professional Footer ──────────────────────────────── */}
-      <footer className="bg-white py-8 sm:py-10 px-3.5 sm:px-4 border-t border-black/[0.06]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
+      {/* ─── Footer Resmi ─────────────────────────────────────── */}
+      <footer className="bg-white py-8 px-4 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-navy)] flex items-center justify-center shadow-xs shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shadow-xs shrink-0">
               <img src="/sipenta.svg" alt="SIPENTA Logo" className="w-4.5 h-4.5 object-contain" />
             </div>
             <div>
-              <span className="font-display text-sm sm:text-base tracking-wide text-[var(--color-navy)] block leading-tight">
-                SIPENTA &bull; Sistem Pelaporan Tenaga Ahli
+              <span className="text-sm font-bold text-slate-900 block leading-tight">
+                SIPENTA &bull; Sistem Informasi Pelaporan Tenaga Ahli
               </span>
-              <span className="text-[10px] sm:text-[11px] text-[var(--color-ink-faint)]">
+              <span className="text-[11px] text-slate-500">
                 Dinas Komunikasi dan Informatika (Diskominfo)
               </span>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 text-xs text-[var(--color-ink-muted)]">
-            <Link href="/dokumen" className="hover:text-[var(--color-navy)] transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-600">
+            <Link href="/dokumen" className="hover:text-slate-900 transition-colors">
               Laporan Kerja
             </Link>
-            <Link href="/chat" className="hover:text-[var(--color-navy)] transition-colors">
-              Chat AI
+            <Link href="/chat" className="hover:text-slate-900 transition-colors">
+              Asisten AI
             </Link>
-            <Link href="/admin/dashboard" className="hover:text-[var(--color-navy)] transition-colors">
-              Dashboard
-            </Link>
-            <Link href="/login" className="hover:text-[var(--color-navy)] transition-colors">
-              Masuk
-            </Link>
-            <Link href="/register" className="hover:text-[var(--color-navy)] transition-colors">
-              Daftar
-            </Link>
+            {isAdmin && (
+              <Link href="/admin/dashboard" className="hover:text-slate-900 transition-colors">
+                Dashboard
+              </Link>
+            )}
+            {!isAuthenticated ? (
+              <>
+                <Link href="/login" className="hover:text-slate-900 transition-colors">
+                  Masuk
+                </Link>
+                <Link href="/register" className="hover:text-slate-900 transition-colors">
+                  Daftar
+                </Link>
+              </>
+            ) : (
+              <Link href="/profile" className="hover:text-slate-900 transition-colors">
+                Profil Saya
+              </Link>
+            )}
           </div>
 
-          <p className="text-[11px] sm:text-xs text-[var(--color-ink-faint)] text-center md:text-right">
-            &copy; {new Date().getFullYear()} Dinas Komunikasi dan Informatika. Seluruh Hak Cipta Dilindungi.
+          <p className="text-xs text-slate-400 text-center md:text-right">
+            &copy; {new Date().getFullYear()} Dinas Komunikasi dan Informatika.
           </p>
         </div>
       </footer>

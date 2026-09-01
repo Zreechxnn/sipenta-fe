@@ -2,8 +2,46 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
+export type ModelMode = 'auto' | 'text' | 'vision';
+
+interface ModelOption {
+  id: ModelMode;
+  name: string;
+  badge: string;
+  icon: string;
+  color: string;
+  description: string;
+}
+
+const MODEL_OPTIONS: ModelOption[] = [
+  {
+    id: 'auto',
+    name: 'Auto (Hybrid)',
+    badge: 'Rekomendasi',
+    icon: 'fa-wand-magic-sparkles',
+    color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+    description: 'Deteksi gambar otomatis menggunakan Vision AI & penalaran teks',
+  },
+  {
+    id: 'text',
+    name: 'Model Teks (120B)',
+    badge: 'Penalaran',
+    icon: 'fa-file-lines',
+    color: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+    description: 'Analisis mendalam laporan kerja, tabel, & rekapitulasi data',
+  },
+  {
+    id: 'vision',
+    name: 'Model Vision (Qwen)',
+    badge: 'Visual & Kode',
+    icon: 'fa-eye',
+    color: 'text-amber-600 bg-amber-50 border-amber-200',
+    description: 'Fokus membaca gambar dokumen, screenshot IDE/kode, & UI',
+  },
+];
+
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (message: string, modelMode: ModelMode) => void;
   isSending: boolean;
   onFocus?: () => void;
   disabled?: boolean;
@@ -16,7 +54,35 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   disabled = false,
 }) => {
   const [input, setInput] = useState('');
+  const [modelMode, setModelMode] = useState<ModelMode>('auto');
+  const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Load saved model preference
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('siap_chat_model_mode') as ModelMode;
+      if (saved && (saved === 'auto' || saved === 'text' || saved === 'vision')) {
+        setModelMode(saved);
+      }
+    } catch {}
+  }, []);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsModelDropdownOpen(false);
+      }
+    };
+    if (isModelDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModelDropdownOpen]);
 
   // Auto-resize textarea smoothly based on content
   useEffect(() => {
@@ -31,9 +97,17 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   }, [input]);
 
+  const handleSelectModel = (mode: ModelMode) => {
+    setModelMode(mode);
+    setIsModelDropdownOpen(false);
+    try {
+      localStorage.setItem('siap_chat_model_mode', mode);
+    } catch {}
+  };
+
   const handleSend = () => {
     if (!input.trim() || isSending || disabled) return;
-    onSend(input.trim());
+    onSend(input.trim(), modelMode);
     setInput('');
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -50,6 +124,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       handleSend();
     }
   };
+
+  const activeOption = MODEL_OPTIONS.find(m => m.id === modelMode) || MODEL_OPTIONS[0];
 
   return (
     <div className="shrink-0 p-2 sm:p-3 bg-white border-t border-slate-100 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
@@ -85,13 +161,75 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </button>
       </div>
 
-      <div className="hidden sm:flex items-center justify-between px-2 pt-1.5 text-[10.5px] text-slate-400">
-        <span>
-          Tekan <kbd className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[9.5px]">Enter</kbd> untuk kirim, <kbd className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[9.5px]">Shift + Enter</kbd> baris baru
-        </span>
-        <span className="ml-auto text-[10px] text-slate-400">
-          AI menggunakan basis data dokumen bidang Anda
-        </span>
+      {/* Bottom Bar: Model Selector + Shortcuts Info */}
+      <div className="flex items-center justify-between px-1.5 pt-2 text-[10.5px] text-slate-500 gap-2 relative">
+        {/* Model Selector Dropdown Button */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            type="button"
+            onClick={() => setIsModelDropdownOpen(prev => !prev)}
+            disabled={disabled || isSending}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer shadow-2xs hover:shadow-xs active:scale-95 ${activeOption.color}`}
+            title="Klik untuk memilih model AI"
+          >
+            <i className={`fas ${activeOption.icon} text-[10px]`}></i>
+            <span>{activeOption.name}</span>
+            <i className={`fas fa-chevron-down text-[8px] transition-transform duration-200 ${isModelDropdownOpen ? 'rotate-180' : ''}`}></i>
+          </button>
+
+          {/* Dropdown Menu */}
+          {isModelDropdownOpen && (
+            <div className="absolute bottom-full left-0 mb-2 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 animate-scaleUp">
+              <div className="px-2.5 py-1.5 border-b border-slate-100 flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-700">Pilih Model AI</span>
+                <span className="text-[9.5px] text-slate-400">SIAP Multimodal</span>
+              </div>
+              <div className="space-y-1 pt-1">
+                {MODEL_OPTIONS.map(opt => {
+                  const isSelected = opt.id === modelMode;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => handleSelectModel(opt.id)}
+                      className={`w-full text-left p-2 rounded-xl transition-all flex items-start gap-2.5 cursor-pointer ${
+                        isSelected ? 'bg-indigo-50/80 border border-indigo-100' : 'hover:bg-slate-50 border border-transparent'
+                      }`}
+                    >
+                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+                      }`}>
+                        <i className={`fas ${opt.icon} text-[10px]`}></i>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className={`text-[11.5px] font-bold ${isSelected ? 'text-indigo-900' : 'text-slate-800'}`}>
+                            {opt.name}
+                          </span>
+                          <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-medium ${
+                            isSelected ? 'bg-indigo-200 text-indigo-800' : 'bg-slate-100 text-slate-500'
+                          }`}>
+                            {opt.badge}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-500 line-clamp-2 mt-0.5 leading-tight">
+                          {opt.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Keyboard hints & info */}
+        <div className="hidden sm:flex items-center gap-2 ml-auto text-[10px] text-slate-400">
+          <span>
+            <kbd className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[9px]">Enter</kbd> kirim, <kbd className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[9px]">Shift+Enter</kbd> baris baru
+          </span>
+        </div>
       </div>
     </div>
   );

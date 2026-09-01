@@ -21,6 +21,7 @@ export interface SendMessagePayload {
   message: string;
   topK?: number;
   sessionId?: string | null;
+  modelMode?: string;
 }
 
 export interface ChatApiResponse {
