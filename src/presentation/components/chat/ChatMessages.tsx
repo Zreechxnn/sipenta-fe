@@ -225,11 +225,11 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
     }, []);
 
     return (
-      <div className="flex-1 relative flex flex-col min-h-0">
+      <div className="flex-1 relative flex flex-col min-h-0 h-full overflow-hidden">
         <div
           ref={containerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto p-2.5 sm:p-5 space-y-3 sm:space-y-5 bg-slate-50/50 flex flex-col"
+          className="flex-1 overflow-y-auto min-h-0 p-2.5 sm:p-5 space-y-3 sm:space-y-5 bg-slate-50/50 flex flex-col overscroll-contain"
         >
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center my-auto py-3 sm:py-6 text-center max-w-xl mx-auto animate-fade-up">

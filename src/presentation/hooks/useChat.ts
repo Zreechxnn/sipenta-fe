@@ -55,7 +55,7 @@ export function useChat() {
     return res;
   };
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = async (text: string, modelMode: string = 'auto') => {
     if (!text.trim() || isSending) return;
 
     const userMessage: ChatMessage = {
@@ -72,6 +72,7 @@ export function useChat() {
         message: text,
         topK: 5,
         sessionId: currentSessionId,
+        modelMode: modelMode,
       });
 
       if (result.sukses || result.Sukses) {
