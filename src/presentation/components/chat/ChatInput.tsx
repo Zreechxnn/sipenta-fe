@@ -125,44 +125,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
+  const handleFocus = () => {
+    setIsModelDropdownOpen(false);
+    onFocus?.();
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+      setTimeout(() => {
+        onFocus?.();
+      }, 250);
+    }
+  };
+
   const activeOption = MODEL_OPTIONS.find(m => m.id === modelMode) || MODEL_OPTIONS[0];
 
   return (
-    <div className="shrink-0 p-2 sm:p-3 bg-white border-t border-slate-100 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-      <div className="flex items-end gap-1.5 sm:gap-2.5 bg-slate-50 border border-slate-200/90 rounded-xl sm:rounded-2xl p-1 sm:p-1.5 focus-within:border-indigo-500 focus-within:bg-white focus-within:ring-2 sm:focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-2xs">
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onFocus={onFocus}
-          placeholder={
-            disabled
-              ? 'Menunggu persetujuan akun...'
-              : 'Tanyakan mengenai laporan kerja...'
-          }
-          disabled={disabled || isSending}
-          rows={1}
-          className="flex-1 bg-transparent px-2.5 sm:px-3 py-1.5 sm:py-2 text-base sm:text-sm text-slate-800 focus:outline-none resize-none overflow-y-auto leading-relaxed min-h-[38px] max-h-[100px] sm:max-h-[140px] disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400 placeholder:text-xs sm:placeholder:text-sm"
-        />
-
-        <button
-          onClick={handleSend}
-          disabled={disabled || isSending || !input.trim()}
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white flex items-center justify-center transition-all shadow-sm shadow-indigo-600/20 disabled:opacity-35 disabled:shadow-none disabled:cursor-not-allowed shrink-0 cursor-pointer mb-0.5"
-          title="Kirim pesan"
-          aria-label="Kirim pesan"
-        >
-          {isSending ? (
-            <i className="fa-solid fa-circle-notch fa-spin text-xs sm:text-sm"></i>
-          ) : (
-            <i className="fas fa-arrow-up text-xs sm:text-sm"></i>
-          )}
-        </button>
-      </div>
-
-      {/* Bottom Bar: Model Selector + Shortcuts Info */}
-      <div className="flex items-center justify-between px-1.5 pt-2 text-[10.5px] text-slate-500 gap-2 relative">
+    <div className="shrink-0 p-2 sm:p-3 bg-white border-t border-slate-100/90 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      {/* Top Bar (Above Field Chat): Model Selector + Shortcuts Info */}
+      <div className="flex items-center justify-between px-0.5 pb-1.5 sm:pb-2 text-[10.5px] text-slate-500 gap-2 relative">
         {/* Model Selector Dropdown Button */}
         <div className="relative" ref={dropdownRef}>
           <button
@@ -177,9 +156,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             <i className={`fas fa-chevron-down text-[8px] transition-transform duration-200 ${isModelDropdownOpen ? 'rotate-180' : ''}`}></i>
           </button>
 
-          {/* Dropdown Menu */}
+          {/* Dropdown Menu - Opens Upward over messages */}
           {isModelDropdownOpen && (
-            <div className="absolute bottom-full left-0 mb-2 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 animate-scaleUp">
+            <div className="absolute bottom-full left-0 mb-1.5 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 animate-scaleUp">
               <div className="px-2.5 py-1.5 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-700">Pilih Model AI</span>
                 <span className="text-[9.5px] text-slate-400">SIAP Multimodal</span>
@@ -225,11 +204,49 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </div>
 
         {/* Keyboard hints & info */}
-        <div className="hidden sm:flex items-center gap-2 ml-auto text-[10px] text-slate-400">
-          <span>
+        <div className="flex items-center gap-2 text-[10px] text-slate-400">
+          <span className="hidden sm:inline">
             <kbd className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[9px]">Enter</kbd> kirim, <kbd className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[9px]">Shift+Enter</kbd> baris baru
           </span>
+          <span className="sm:hidden text-[10px] text-slate-400 font-medium flex items-center gap-1">
+            <i className="fas fa-sparkles text-[9px] text-indigo-500"></i>
+            SIAP AI
+          </span>
         </div>
+      </div>
+
+      {/* Main Chat Input Field Container */}
+      <div className="flex items-end gap-1.5 sm:gap-2.5 bg-slate-50 border border-slate-200/90 rounded-xl sm:rounded-2xl p-1 sm:p-1.5 focus-within:border-indigo-500 focus-within:bg-white focus-within:ring-2 sm:focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-2xs">
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          placeholder={
+            disabled
+              ? 'Menunggu persetujuan akun...'
+              : 'Tanyakan mengenai laporan kerja...'
+          }
+          disabled={disabled || isSending}
+          rows={1}
+          enterKeyHint="send"
+          className="flex-1 bg-transparent px-2.5 sm:px-3 py-1.5 sm:py-2 text-[16px] sm:text-sm text-slate-800 focus:outline-none resize-none overflow-y-auto leading-relaxed min-h-[38px] max-h-[100px] sm:max-h-[140px] disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-slate-400 placeholder:text-xs sm:placeholder:text-sm"
+        />
+
+        <button
+          onClick={handleSend}
+          disabled={disabled || isSending || !input.trim()}
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white flex items-center justify-center transition-all shadow-sm shadow-indigo-600/20 disabled:opacity-35 disabled:shadow-none disabled:cursor-not-allowed shrink-0 cursor-pointer mb-0.5"
+          title="Kirim pesan"
+          aria-label="Kirim pesan"
+        >
+          {isSending ? (
+            <i className="fa-solid fa-circle-notch fa-spin text-xs sm:text-sm"></i>
+          ) : (
+            <i className="fas fa-arrow-up text-xs sm:text-sm"></i>
+          )}
+        </button>
       </div>
     </div>
   );
