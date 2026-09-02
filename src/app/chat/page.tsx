@@ -53,6 +53,25 @@ export default function ChatPage() {
     }
   }, [authLoading, isPendingApproval, fetchSessions]);
 
+  // Handle mobile visual viewport resize (virtual keyboard opens / closes)
+  useEffect(() => {
+    const handleViewportChange = () => {
+      if (typeof window !== 'undefined') {
+        window.scrollTo(0, 0);
+        chatMessagesRef.current?.scrollToBottom();
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+      window.visualViewport.addEventListener('scroll', handleViewportChange);
+      return () => {
+        window.visualViewport?.removeEventListener('resize', handleViewportChange);
+        window.visualViewport?.removeEventListener('scroll', handleViewportChange);
+      };
+    }
+  }, []);
+
   if (authLoading) return null;
 
   const handleDeleteSession = async (id: string) => {
@@ -63,6 +82,9 @@ export default function ChatPage() {
   };
 
   const handleInputFocus = () => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     chatMessagesRef.current?.scrollToBottom();
   };
 
@@ -75,7 +97,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="h-screen h-[100dvh] max-h-screen max-h-[100dvh] flex flex-col bg-slate-50/50 overflow-hidden">
+    <div className="fixed inset-0 w-full h-full h-[100dvh] max-h-[100dvh] flex flex-col bg-slate-50/50 overflow-hidden select-none sm:select-auto">
       <Header onToggleMobileSidebar={() => setMobileOpen(true)} isLiveSyncing={isSignalRConnected} />
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
