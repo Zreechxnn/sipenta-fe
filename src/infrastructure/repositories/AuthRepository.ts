@@ -77,13 +77,15 @@ export class AuthRepository implements IAuthRepository {
   getToken(): string | null {
     if (typeof window === 'undefined') return null;
 
-    const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
-    if (role) {
-      return 'session-active';
+    const token = sessionStorage.getItem('sipenta_token') || getCookie('sipenta_token');
+    if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
+      return token;
     }
 
-    const cookieToken = getCookie('sipenta_token');
-    if (cookieToken) return cookieToken;
+    const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
+    if (role) {
+      return token || 'session-active';
+    }
 
     return null;
   }
@@ -108,7 +110,7 @@ export class AuthRepository implements IAuthRepository {
     }
   }
 
-  setAuth(token: string, role: string, user?: any, expiresAt?: string): void {
+  setAuth(token: string, role: string, user?: any, expiresAt?: string, refreshToken?: string): void {
     if (typeof window === 'undefined') return;
 
     // Clean legacy persistent localStorage so browser closure logs out user properly
@@ -119,18 +121,31 @@ export class AuthRepository implements IAuthRepository {
       localStorage.removeItem('sipenta_bidangId');
       localStorage.removeItem('sipenta_bidang');
       localStorage.removeItem('sipenta_isApproved');
+      localStorage.removeItem('sipenta_refresh_token');
+      localStorage.removeItem('sipenta_expires_at');
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('user');
     } catch {}
 
-    // Pure browser Session Cookies (no days / expires specified).
-    // Note: The real JWT token is set directly by the server as an encrypted HttpOnly cookie.
-    // We do NOT store real JWT tokens in client storage.
     setCookie('sipenta_role', role);
     try {
       sessionStorage.setItem('sipenta_role', role);
     } catch {}
+
+    if (token && token !== 'hidden-httponly-token') {
+      setCookie('sipenta_token', token);
+      try {
+        sessionStorage.setItem('sipenta_token', token);
+      } catch {}
+    }
+
+    if (refreshToken) {
+      setCookie('sipenta_refresh_token', refreshToken);
+      try {
+        sessionStorage.setItem('sipenta_refresh_token', refreshToken);
+      } catch {}
+    }
 
     if (expiresAt) {
       const exp = String(expiresAt);
@@ -171,7 +186,9 @@ export class AuthRepository implements IAuthRepository {
   logout(): void {
     if (typeof window === 'undefined') return;
 
-    // Call backend to revoke refresh token and clear HttpOnly cookie
+    const currentRefreshToken = sessionStorage.getItem('sipenta_refresh_token') || getCookie('sipenta_refresh_token') || '';
+
+    // Call backend to revoke refresh token and clear session cookie
     fetch(`${API_ENDPOINTS.AUTH}/logout`, {
       method: 'POST',
       headers: {
@@ -180,7 +197,7 @@ export class AuthRepository implements IAuthRepository {
       },
       credentials: 'include',
       keepalive: true,
-      body: JSON.stringify({}),
+      body: JSON.stringify({ refreshToken: currentRefreshToken }),
     }).catch(() => {});
 
     // Clear client session cookies
@@ -203,13 +220,13 @@ export class AuthRepository implements IAuthRepository {
       localStorage.removeItem('sipenta_bidangId');
       localStorage.removeItem('sipenta_bidang');
       localStorage.removeItem('sipenta_isApproved');
+      localStorage.removeItem('sipenta_refresh_token');
       localStorage.removeItem('sipenta_expires_at');
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('user');
       localStorage.removeItem('bidangId');
       localStorage.removeItem('bidang');
-      localStorage.removeItem('isApproved');
     } catch {}
   }
 }
