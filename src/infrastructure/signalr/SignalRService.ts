@@ -21,7 +21,7 @@ export class SignalRService implements ISignalRService {
       .withUrl(hubUrl, {
         accessTokenFactory: () => {
           if (typeof window !== 'undefined') {
-            const token = getCookie('sipenta_token') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_token') : null);
+            const token = getCookie('sipenta_token') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_token') : null);
             if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
               return token;
             }
