@@ -10,7 +10,7 @@ export class AuthUseCases {
     if (token || result.user || result.User) {
       const user = result.user || (result.User as any) || {};
       const userRole = user.role || user.Role || 'User';
-      this.authRepo.setAuth(token, userRole, user);
+      this.authRepo.setAuth(token, userRole, user, result.expiresAt || result.ExpiresAt);
     }
     return result;
   }
@@ -21,7 +21,7 @@ export class AuthUseCases {
     if (token || result.user || result.User) {
       const user = result.user || (result.User as any) || {};
       const userRole = user.role || user.Role || 'User';
-      this.authRepo.setAuth(token, userRole, user);
+      this.authRepo.setAuth(token, userRole, user, result.expiresAt || result.ExpiresAt);
     }
     return result;
   }
@@ -32,7 +32,7 @@ export class AuthUseCases {
     if (token || result.user || result.User) {
       const user = result.user || (result.User as any) || {};
       const userRole = user.role || user.Role || 'user';
-      this.authRepo.setAuth(token, userRole, user);
+      this.authRepo.setAuth(token, userRole, user, result.expiresAt || result.ExpiresAt);
     }
     return result;
   }

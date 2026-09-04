@@ -6,7 +6,19 @@ export function getApiBaseUrl(): string {
 
 export function isTokenExpired(token: string | null): boolean {
   if (!token) return true;
-  if (token === 'hidden-httponly-token' || token === 'session-active') return false;
+  if (token === 'hidden-httponly-token' || token === 'session-active') {
+    if (typeof window !== 'undefined') {
+      const expStr = sessionStorage.getItem('sipenta_expires_at') || getCookie('sipenta_expires_at');
+      if (expStr) {
+        const expTime = new Date(expStr).getTime();
+        if (!isNaN(expTime)) {
+          // Token is considered expired 30 seconds before actual expiration for proactive refresh
+          return Date.now() >= expTime - 30000;
+        }
+      }
+    }
+    return false;
+  }
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return true;
@@ -39,6 +51,7 @@ export function handleAutoLogout(reason = 'expired'): void {
     deleteCookie('sipenta_bidangId');
     deleteCookie('sipenta_bidang');
     deleteCookie('sipenta_isApproved');
+    deleteCookie('sipenta_expires_at');
 
     // Clean client storage keys
     try {
@@ -49,6 +62,7 @@ export function handleAutoLogout(reason = 'expired'): void {
       localStorage.removeItem('sipenta_bidangId');
       localStorage.removeItem('sipenta_bidang');
       localStorage.removeItem('sipenta_isApproved');
+      localStorage.removeItem('sipenta_expires_at');
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('user');
@@ -123,6 +137,11 @@ export async function tryRefreshToken(): Promise<boolean> {
           }
           setCookie('sipenta_isApproved', String(user.isApproved ?? false));
           try { sessionStorage.setItem('sipenta_isApproved', String(user.isApproved ?? false)); } catch {}
+        }
+        if (result.expiresAt || result.ExpiresAt) {
+          const exp = String(result.expiresAt || result.ExpiresAt);
+          setCookie('sipenta_expires_at', exp);
+          try { sessionStorage.setItem('sipenta_expires_at', exp); } catch {}
         }
         return true;
       }
