@@ -37,6 +37,10 @@ export class AuthUseCases {
     return result;
   }
 
+  async refreshToken(): Promise<boolean> {
+    return await this.authRepo.refreshToken();
+  }
+
   logout(): void {
     this.authRepo.logout();
   }

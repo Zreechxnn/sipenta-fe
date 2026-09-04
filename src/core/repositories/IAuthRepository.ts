@@ -8,5 +8,6 @@ export interface IAuthRepository {
   getRole(): string | null;
   getUser(): any;
   setAuth(token: string, role: string, user?: any): void;
+  refreshToken(): Promise<boolean>;
   logout(): void;
 }

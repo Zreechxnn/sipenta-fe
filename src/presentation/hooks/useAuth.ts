@@ -22,23 +22,29 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const checkAuth = useCallback(() => {
-    const auth = authUseCases.getAuthState();
+  const checkAuth = useCallback(async () => {
+    let auth = authUseCases.getAuthState();
 
     if (auth.token && auth.token !== 'hidden-httponly-token' && auth.token !== 'session-active') {
       if (isTokenExpired(auth.token)) {
-        authUseCases.logout();
-        setToken(null);
-        setRole(null);
-        setUser(null);
-        setBidangId(null);
-        setBidang(null);
-        setIsApproved(false);
-        setIsAdmin(false);
-        if (requireAuth) {
-          router.push('/login?reason=expired');
+        // Access token expired (after 30 min): attempt silent refresh using 7-day refresh token
+        const refreshed = await authUseCases.refreshToken();
+        if (refreshed) {
+          auth = authUseCases.getAuthState();
+        } else {
+          authUseCases.logout();
+          setToken(null);
+          setRole(null);
+          setUser(null);
+          setBidangId(null);
+          setBidang(null);
+          setIsApproved(false);
+          setIsAdmin(false);
+          if (requireAuth) {
+            router.push('/login?reason=expired');
+          }
+          return false;
         }
-        return false;
       }
     }
 
@@ -69,7 +75,7 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
       const updatedUser = await userRepository.getProfile();
       if (updatedUser) {
         authRepository.setAuth(token, updatedUser.role || role || 'user', updatedUser);
-        checkAuth();
+        await checkAuth();
       }
     } catch (error) {
       console.error('Failed to refresh profile', error);
@@ -80,10 +86,10 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
     checkAuth();
     setIsLoading(false);
 
-    // Periodic check every 10 seconds for token expiration
+    // Periodic check every 15 seconds for token expiration & silent refresh
     const interval = setInterval(() => {
       checkAuth();
-    }, 10000);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, [checkAuth, pathname]);

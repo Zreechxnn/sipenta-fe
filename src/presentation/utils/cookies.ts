@@ -19,12 +19,12 @@ export function getCookie(name: string): string | null {
 export function setCookie(
   name: string,
   value: string,
-  days = 365,
+  days?: number | null,
   path = '/'
 ): void {
   if (typeof document === 'undefined') return;
   let expires = '';
-  if (days) {
+  if (days && days > 0) {
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = '; expires=' + date.toUTCString();

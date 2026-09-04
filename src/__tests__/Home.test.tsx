@@ -68,4 +68,13 @@ describe('Cookie and Notification Utilities', () => {
     deleteCookie('sipenta_token');
     expect(getCookie('sipenta_token')).toBeNull();
   });
+
+  it('should support session cookies when days is omitted', async () => {
+    const { setCookie, getCookie, deleteCookie } = await import('@/presentation/utils/cookies');
+    setCookie('session_cookie', 'session_val');
+    expect(getCookie('session_cookie')).toBe('session_val');
+
+    deleteCookie('session_cookie');
+    expect(getCookie('session_cookie')).toBeNull();
+  });
 });

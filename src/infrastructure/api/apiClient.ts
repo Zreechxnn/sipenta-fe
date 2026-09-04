@@ -1,4 +1,4 @@
-import { getCookie, deleteCookie } from '@/presentation/utils/cookies';
+import { getCookie, setCookie, deleteCookie } from '@/presentation/utils/cookies';
 
 export function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -6,6 +6,7 @@ export function getApiBaseUrl(): string {
 
 export function isTokenExpired(token: string | null): boolean {
   if (!token) return true;
+  if (token === 'hidden-httponly-token' || token === 'session-active') return false;
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return true;
@@ -31,14 +32,17 @@ export function isTokenExpired(token: string | null): boolean {
 export function handleAutoLogout(reason = 'expired'): void {
   if (typeof window !== 'undefined') {
     deleteCookie('sipenta_token');
+    deleteCookie('sipenta_refresh_token');
+    deleteCookie('sipenta_csrf');
     deleteCookie('sipenta_role');
     deleteCookie('sipenta_user');
     deleteCookie('sipenta_bidangId');
     deleteCookie('sipenta_bidang');
     deleteCookie('sipenta_isApproved');
 
-    // Clean localStorage keys
+    // Clean client storage keys
     try {
+      sessionStorage.clear();
       localStorage.removeItem('sipenta_token');
       localStorage.removeItem('sipenta_role');
       localStorage.removeItem('sipenta_user');
@@ -59,42 +63,107 @@ export function handleAutoLogout(reason = 'expired'): void {
   }
 }
 
+export function getCsrfHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-Protection': '1',
+  };
+
+  if (typeof window !== 'undefined') {
+    const csrfToken = getCookie('sipenta_csrf');
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
+    }
+  }
+
+  return headers;
+}
+
+let refreshPromise: Promise<boolean> | null = null;
+
+export async function tryRefreshToken(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${API_ENDPOINTS.AUTH}/refresh-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getCsrfHeaders(),
+        },
+        credentials: 'include',
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const result = await response.json().catch(() => ({}));
+      if (result && (result.token || result.user)) {
+        const user = result.user || result.User;
+        if (user) {
+          const role = user.role || user.Role || 'user';
+          setCookie('sipenta_role', role);
+          setCookie('sipenta_user', JSON.stringify(user));
+          try {
+            sessionStorage.setItem('sipenta_role', role);
+            sessionStorage.setItem('sipenta_user', JSON.stringify(user));
+          } catch {}
+
+          if (user.bidangId) {
+            setCookie('sipenta_bidangId', String(user.bidangId));
+            try { sessionStorage.setItem('sipenta_bidangId', String(user.bidangId)); } catch {}
+          }
+          if (user.bidang) {
+            setCookie('sipenta_bidang', user.bidang);
+            try { sessionStorage.setItem('sipenta_bidang', user.bidang); } catch {}
+          }
+          setCookie('sipenta_isApproved', String(user.isApproved ?? false));
+          try { sessionStorage.setItem('sipenta_isApproved', String(user.isApproved ?? false)); } catch {}
+        }
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
 export function getAuthHeaders(isJson = false): Record<string, string> {
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {
+    ...getCsrfHeaders(),
+  };
   if (isJson) {
     headers['Content-Type'] = 'application/json';
-  }
-  if (typeof window !== 'undefined') {
-    const token = getCookie('sipenta_token') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_token') : null);
-    if (token && token !== 'hidden-httponly-token' && token !== 'session-active' && !isTokenExpired(token)) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
   }
   return headers;
 }
 
 export async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  let token: string | null = null;
   if (typeof window !== 'undefined') {
-    token = getCookie('sipenta_token') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_token') : null);
-    const role = getCookie('sipenta_role') || (typeof localStorage !== 'undefined' ? localStorage.getItem('sipenta_role') : null);
+    const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
 
-    // If valid token is present and expired, trigger auto-logout
-    if (token && token !== 'hidden-httponly-token' && token !== 'session-active' && isTokenExpired(token)) {
-      handleAutoLogout('expired');
-      throw new Error('Session expired');
-    }
-
-    // If neither token nor role cookie exists, user is unauthenticated
-    if (!token && !role) {
+    // If no role cookie exists, user is unauthenticated
+    if (!role) {
       handleAutoLogout('expired');
       throw new Error('Session missing or expired');
     }
   }
 
   const headers = new Headers(init?.headers || {});
-  if (token && token !== 'hidden-httponly-token' && token !== 'session-active' && !headers.has('Authorization')) {
-    headers.set('Authorization', `Bearer ${token}`);
+  const csrf = getCsrfHeaders();
+  for (const [k, v] of Object.entries(csrf)) {
+    if (!headers.has(k)) {
+      headers.set(k, v);
+    }
   }
 
   const fetchInit: RequestInit = {
@@ -103,10 +172,28 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
     credentials: init?.credentials || 'include',
   };
 
-  const response = await fetch(input, fetchInit);
-  if (response.status === 401) {
-    handleAutoLogout('unauthorized');
+  let response = await fetch(input, fetchInit);
+
+  // If 401 received (e.g. 30-min JWT expired), attempt silent refresh using HttpOnly cookie and retry request
+  if (response.status === 401 && typeof window !== 'undefined') {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      const retryCsrf = getCsrfHeaders();
+      for (const [k, v] of Object.entries(retryCsrf)) {
+        headers.set(k, v);
+      }
+      response = await fetch(input, {
+        ...init,
+        headers,
+        credentials: init?.credentials || 'include',
+      });
+    }
+
+    if (response.status === 401) {
+      handleAutoLogout('unauthorized');
+    }
   }
+
   return response;
 }
 
