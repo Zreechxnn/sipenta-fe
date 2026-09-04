@@ -22,6 +22,11 @@ export class SignalRService implements ISignalRService {
         withCredentials: true,
         skipNegotiation: false,
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+        accessTokenFactory: () => {
+          if (typeof window === 'undefined') return '';
+          const token = sessionStorage.getItem('sipenta_token') || getCookie('sipenta_token');
+          return (token && token !== 'hidden-httponly-token' && token !== 'session-active') ? token : '';
+        },
       })
       .withAutomaticReconnect({
         nextRetryDelayInMilliseconds: retryContext => {
