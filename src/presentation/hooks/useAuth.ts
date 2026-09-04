@@ -25,7 +25,7 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
   const checkAuth = useCallback(async () => {
     let auth = authUseCases.getAuthState();
 
-    if (auth.token && auth.token !== 'hidden-httponly-token' && auth.token !== 'session-active') {
+    if (auth.token) {
       if (isTokenExpired(auth.token)) {
         // Access token expired (after 30 min): attempt silent refresh using 7-day refresh token
         const refreshed = await authUseCases.refreshToken();

@@ -1,6 +1,6 @@
 import { IAuthRepository } from '@/core/repositories/IAuthRepository';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/core/domain/auth';
-import { API_ENDPOINTS, getCsrfHeaders } from '../api/apiClient';
+import { API_ENDPOINTS, getCsrfHeaders, tryRefreshToken } from '../api/apiClient';
 import { getCookie, setCookie, deleteCookie } from '@/presentation/utils/cookies';
 
 export class AuthRepository implements IAuthRepository {
@@ -71,33 +71,7 @@ export class AuthRepository implements IAuthRepository {
   }
 
   async refreshToken(): Promise<boolean> {
-    try {
-      const response = await fetch(`${API_ENDPOINTS.AUTH}/refresh-token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getCsrfHeaders(),
-        },
-        credentials: 'include',
-        body: JSON.stringify({}),
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const result = await response.json().catch(() => ({}));
-      const token = result.token || result.Token || 'session-active';
-      if (token) {
-        const user = result.user || result.User || this.getUser();
-        const role = user?.role || user?.Role || this.getRole() || 'user';
-        this.setAuth(token, role, user);
-        return true;
-      }
-      return false;
-    } catch {
-      return false;
-    }
+    return await tryRefreshToken();
   }
 
   getToken(): string | null {
@@ -134,7 +108,7 @@ export class AuthRepository implements IAuthRepository {
     }
   }
 
-  setAuth(token: string, role: string, user?: any): void {
+  setAuth(token: string, role: string, user?: any, expiresAt?: string): void {
     if (typeof window === 'undefined') return;
 
     // Clean legacy persistent localStorage so browser closure logs out user properly
@@ -157,6 +131,14 @@ export class AuthRepository implements IAuthRepository {
     try {
       sessionStorage.setItem('sipenta_role', role);
     } catch {}
+
+    if (expiresAt) {
+      const exp = String(expiresAt);
+      setCookie('sipenta_expires_at', exp);
+      try {
+        sessionStorage.setItem('sipenta_expires_at', exp);
+      } catch {}
+    }
 
     if (user) {
       const userJson = JSON.stringify(user);
@@ -210,6 +192,7 @@ export class AuthRepository implements IAuthRepository {
     deleteCookie('sipenta_bidangId');
     deleteCookie('sipenta_bidang');
     deleteCookie('sipenta_isApproved');
+    deleteCookie('sipenta_expires_at');
 
     // Clean sessionStorage and legacy localStorage
     try {
@@ -220,6 +203,7 @@ export class AuthRepository implements IAuthRepository {
       localStorage.removeItem('sipenta_bidangId');
       localStorage.removeItem('sipenta_bidang');
       localStorage.removeItem('sipenta_isApproved');
+      localStorage.removeItem('sipenta_expires_at');
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('user');

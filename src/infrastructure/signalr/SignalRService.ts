@@ -19,15 +19,6 @@ export class SignalRService implements ISignalRService {
     const hubUrl = this.getHubUrl();
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(hubUrl, {
-        accessTokenFactory: () => {
-          if (typeof window !== 'undefined') {
-            const token = getCookie('sipenta_token') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_token') : null);
-            if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
-              return token;
-            }
-          }
-          return '';
-        },
         withCredentials: true,
         skipNegotiation: false,
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
