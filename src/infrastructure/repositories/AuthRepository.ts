@@ -1,6 +1,6 @@
 import { IAuthRepository } from '@/core/repositories/IAuthRepository';
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/core/domain/auth';
-import { API_ENDPOINTS, getCsrfHeaders, tryRefreshToken } from '../api/apiClient';
+import { API_ENDPOINTS, getCsrfHeaders, tryRefreshToken, getAccessToken, setAccessToken } from '../api/apiClient';
 import { getCookie, setCookie, deleteCookie } from '@/presentation/utils/cookies';
 
 export class AuthRepository implements IAuthRepository {
@@ -77,14 +77,21 @@ export class AuthRepository implements IAuthRepository {
   getToken(): string | null {
     if (typeof window === 'undefined') return null;
 
-    const token = sessionStorage.getItem('sipenta_token') || getCookie('sipenta_token');
-    if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
-      return token;
+    // 1. Check in-memory access token first (RAM)
+    const inMem = getAccessToken();
+    if (inMem) return inMem;
+
+    // 2. Fallback check from storage if present (e.g. legacy session)
+    const storedToken = sessionStorage.getItem('sipenta_token') || getCookie('sipenta_token');
+    if (storedToken && storedToken !== 'hidden-httponly-token' && storedToken !== 'session-active') {
+      setAccessToken(storedToken);
+      return storedToken;
     }
 
+    // 3. If session role exists, session is active (silent refresh will populate in-memory token)
     const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
     if (role) {
-      return token || 'session-active';
+      return 'session-active';
     }
 
     return null;
@@ -110,11 +117,21 @@ export class AuthRepository implements IAuthRepository {
     }
   }
 
-  setAuth(token: string, role: string, user?: any, expiresAt?: string, refreshToken?: string): void {
+  setAuth(token: string, role: string, user?: any, expiresAt?: string, _refreshToken?: string): void {
     if (typeof window === 'undefined') return;
 
-    // Clean legacy persistent localStorage so browser closure logs out user properly
+    // 1. Store JWT strictly in memory (RAM), NEVER in sessionStorage / localStorage / document.cookie
+    if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
+      setAccessToken(token);
+    }
+
+    // 2. Purge tokens and legacy items from client-accessible storage
     try {
+      sessionStorage.removeItem('sipenta_token');
+      sessionStorage.removeItem('sipenta_refresh_token');
+      deleteCookie('sipenta_token');
+      deleteCookie('sipenta_refresh_token');
+
       localStorage.removeItem('sipenta_token');
       localStorage.removeItem('sipenta_role');
       localStorage.removeItem('sipenta_user');
@@ -128,24 +145,11 @@ export class AuthRepository implements IAuthRepository {
       localStorage.removeItem('user');
     } catch {}
 
+    // 3. Keep non-sensitive session metadata for UI routing & role guards
     setCookie('sipenta_role', role);
     try {
       sessionStorage.setItem('sipenta_role', role);
     } catch {}
-
-    if (token && token !== 'hidden-httponly-token') {
-      setCookie('sipenta_token', token);
-      try {
-        sessionStorage.setItem('sipenta_token', token);
-      } catch {}
-    }
-
-    if (refreshToken) {
-      setCookie('sipenta_refresh_token', refreshToken);
-      try {
-        sessionStorage.setItem('sipenta_refresh_token', refreshToken);
-      } catch {}
-    }
 
     if (expiresAt) {
       const exp = String(expiresAt);
@@ -186,7 +190,7 @@ export class AuthRepository implements IAuthRepository {
   logout(): void {
     if (typeof window === 'undefined') return;
 
-    const currentRefreshToken = sessionStorage.getItem('sipenta_refresh_token') || getCookie('sipenta_refresh_token') || '';
+    setAccessToken(null);
 
     // Call backend to revoke refresh token and clear session cookie
     fetch(`${API_ENDPOINTS.AUTH}/logout`, {
@@ -197,7 +201,7 @@ export class AuthRepository implements IAuthRepository {
       },
       credentials: 'include',
       keepalive: true,
-      body: JSON.stringify({ refreshToken: currentRefreshToken }),
+      body: JSON.stringify({}),
     }).catch(() => {});
 
     // Clear client session cookies

@@ -1,7 +1,6 @@
 import * as signalR from '@microsoft/signalr';
 import { ISignalRService } from '@/core/services/ISignalRService';
-import { getApiBaseUrl } from '../api/apiClient';
-import { getCookie } from '@/presentation/utils/cookies';
+import { getApiBaseUrl, getAccessToken, tryRefreshToken } from '../api/apiClient';
 
 export class SignalRService implements ISignalRService {
   private connection: signalR.HubConnection | null = null;
@@ -22,10 +21,14 @@ export class SignalRService implements ISignalRService {
         withCredentials: true,
         skipNegotiation: false,
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
-        accessTokenFactory: () => {
+        accessTokenFactory: async () => {
           if (typeof window === 'undefined') return '';
-          const token = sessionStorage.getItem('sipenta_token') || getCookie('sipenta_token');
-          return (token && token !== 'hidden-httponly-token' && token !== 'session-active') ? token : '';
+          let token = getAccessToken();
+          if (!token) {
+            await tryRefreshToken();
+            token = getAccessToken();
+          }
+          return token || '';
         },
       })
       .withAutomaticReconnect({
