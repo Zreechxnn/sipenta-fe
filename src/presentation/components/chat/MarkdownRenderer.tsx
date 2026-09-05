@@ -13,13 +13,17 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState(false);
 
-  const cleanSrc = (src || '').replace(/^url\s*=\s*/i, '').trim();
+  const rawSrc = (src || '').replace(/^url\s*=\s*/i, '').trim();
+  let cleanSrc = rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`;
+  if (cleanSrc.startsWith('/Documents/images/')) {
+    cleanSrc = `/api${cleanSrc}`;
+  }
+  const baseUrl = getApiBaseUrl().replace(/\/api\/?$/, '');
+  const fullUrl = rawSrc.startsWith('http')
+    ? rawSrc
+    : `${baseUrl}${cleanSrc}`;
 
-  const fullUrl = cleanSrc.startsWith('http')
-    ? cleanSrc
-    : `${getApiBaseUrl()}${cleanSrc.startsWith('/') ? '' : '/'}${cleanSrc}`;
-
-  if (error) {
+  if (error || !rawSrc) {
     return (
       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 text-slate-500 rounded border border-slate-200 my-1">
         <i className="fas fa-image text-slate-400 text-xs" />
