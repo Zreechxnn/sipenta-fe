@@ -26,7 +26,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Check existing lockout state from cookie/storage on mount
   useEffect(() => {
     const lockoutUntilStr = getCookie(LOCKOUT_COOKIE_KEY);
     if (lockoutUntilStr) {
@@ -41,7 +40,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
     }
   }, []);
 
-  // Cooldown countdown timer ticker
   useEffect(() => {
     if (lockoutSeconds > 0) {
       timerRef.current = setInterval(() => {
@@ -99,7 +97,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
           router.push(isAdmin ? '/dokumen' : '/chat');
         }, 600);
       } else {
-        // Handle lockout or failed attempt warning
         if (result.isLockedOut) {
           const sec = result.retryAfterSeconds || 300;
           setLockoutSeconds(sec);

@@ -59,7 +59,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
 
   const currentTargetHref = hoveredHref || (availableNavItems.find(i => i.href === pathname)?.href || '');
 
-  // Update slider coordinates whenever target, pathname, or window changes
   useEffect(() => {
     if (!token) return;
 
@@ -73,7 +72,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
         opacity: 1,
       });
     } else {
-      // Check if current pathname matches any item
       const isAnyActive = availableNavItems.some(item => item.href === pathname);
       if (!isAnyActive && !hoveredHref) {
         setSliderStyle(prev => ({ ...prev, opacity: 0 }));
@@ -81,7 +79,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
     }
   }, [currentTargetHref, pathname, availableNavItems, token]);
 
-  // Window resize handler
   useEffect(() => {
     const handleResize = () => {
       const activeEl = itemRefs.current[currentTargetHref];
@@ -100,7 +97,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
     return () => window.removeEventListener('resize', handleResize);
   }, [currentTargetHref]);
 
-  // Scroll detection for header elevation
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 8);

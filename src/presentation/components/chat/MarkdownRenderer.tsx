@@ -9,7 +9,6 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-// Component for rendering images with click-to-enlarge lightbox
 const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState(false);
@@ -18,9 +17,16 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
 
   const fullUrl = cleanSrc.startsWith('http')
     ? cleanSrc
-    : `${getApiBaseUrl().replace(/\/api\/?$/, '')}${cleanSrc.startsWith('/') ? '' : '/'}${cleanSrc}`;
+    : `${getApiBaseUrl()}${cleanSrc.startsWith('/') ? '' : '/'}${cleanSrc}`;
 
-  if (error || !cleanSrc) return null;
+  if (error) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-slate-100 text-slate-500 rounded border border-slate-200 my-1">
+        <i className="fas fa-image text-slate-400 text-xs" />
+        <span className="italic">{alt || 'Gambar lampiran tidak dapat dimuat'}</span>
+      </span>
+    );
+  }
 
   return (
     <>
@@ -251,7 +257,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
 }) => {
   if (!content) return null;
 
-  // Split content by code blocks first
   const blocks = content.split(/(```[\s\S]*?```)/g);
 
   return (
@@ -259,7 +264,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
       {blocks.map((block, blockIndex) => {
         if (!block) return null;
 
-        // Fenced code block
         if (block.startsWith('```') && block.endsWith('```')) {
           const match = block.match(/^```([a-zA-Z0-9_-]*)\n([\s\S]*?)```$/);
           const lang = match ? match[1] : '';
@@ -268,7 +272,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
           return <CodeBlock key={blockIndex} code={code} lang={lang} />;
         }
 
-        // Standard text lines
         const lines = block.split('\n');
         const renderedElements: React.ReactNode[] = [];
         let currentListItems: React.ReactNode[] = [];
@@ -304,7 +307,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
             continue;
           }
 
-          // Check if this is the start of a Markdown Table
           if (
             trimmed.includes('|') &&
             i + 1 < lines.length &&
@@ -323,37 +325,31 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
             i--;
 
             renderedElements.push(
-              <div
-                key={`table-${renderedElements.length}`}
-                className="overflow-x-auto my-3 border border-[var(--color-border)] bg-white rounded-sm shadow-xs"
-              >
-                <table className="min-w-full border-collapse text-xs sm:text-sm text-left">
-                  <thead>
-                    <tr className="bg-[var(--color-surface)] border-b border-[var(--color-border)]">
-                      {headerRow.map((headerText, colIdx) => (
+              <div key={`table-${i}`} className="my-3 overflow-x-auto rounded border border-[var(--color-border)] shadow-2xs">
+                <table className="w-full text-xs text-left border-collapse">
+                  <thead className="bg-[var(--color-surface)] text-[var(--color-navy)] font-semibold border-b border-[var(--color-border)]">
+                    <tr>
+                      {headerRow.map((cell, cIdx) => (
                         <th
-                          key={colIdx}
-                          className="py-2.5 px-3.5 font-semibold text-[var(--color-navy)] uppercase tracking-wider text-[11px]"
-                          style={{ textAlign: alignments[colIdx] || 'left' }}
+                          key={cIdx}
+                          style={{ textAlign: alignments[cIdx] || 'left' }}
+                          className="px-3 py-2 border-r last:border-r-0 border-[var(--color-border)]"
                         >
-                          {parseInline(headerText)}
+                          {parseInline(cell)}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--color-border)]">
-                    {bodyRows.map((rowCells, rowIdx) => (
-                      <tr
-                        key={rowIdx}
-                        className="hover:bg-[var(--color-surface)] transition-colors"
-                      >
-                        {rowCells.map((cellText, cellIdx) => (
+                  <tbody className="divide-y divide-[var(--color-border)] bg-white">
+                    {bodyRows.map((row, rIdx) => (
+                      <tr key={rIdx} className="hover:bg-slate-50/50">
+                        {row.map((cell, cIdx) => (
                           <td
-                            key={cellIdx}
-                            className="py-2.5 px-3.5 align-top leading-relaxed"
-                            style={{ textAlign: alignments[cellIdx] || 'left' }}
+                            key={cIdx}
+                            style={{ textAlign: alignments[cIdx] || 'left' }}
+                            className="px-3 py-2 border-r last:border-r-0 border-[var(--color-border)] text-[var(--color-ink)]"
                           >
-                            {parseInline(cellText)}
+                            {parseInline(cell)}
                           </td>
                         ))}
                       </tr>
@@ -365,7 +361,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
             continue;
           }
 
-          // Unordered List (- or * or +)
           const unorderedMatch = line.match(/^(\s*)([-*+])\s+(.+)$/);
           if (unorderedMatch) {
             if (isOrderedList && currentListItems.length > 0) {
@@ -382,7 +377,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
             continue;
           }
 
-          // Ordered List (1. 2. etc)
           const orderedMatch = line.match(/^(\s*)(\d+)\.\s+(.+)$/);
           if (orderedMatch) {
             if (!isOrderedList && currentListItems.length > 0) {
@@ -398,10 +392,8 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
             continue;
           }
 
-          // Not a list item, flush any active list
           flushList();
 
-          // Headings
           if (line.startsWith('### ')) {
             renderedElements.push(
               <h3 key={i} className="text-[15px] font-semibold text-[var(--color-navy)] mt-3 mb-1 font-display">
@@ -430,7 +422,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
               </blockquote>
             );
           } else {
-            // Check if line contains images or block tokens
             const imgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
             if (imgMatch) {
               const [, alt, src] = imgMatch;
@@ -446,7 +437,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
                 </div>
               );
             } else {
-              // Normal text paragraph
               renderedElements.push(
                 <p key={i} className="leading-relaxed">
                   {parseInline(line)}
@@ -456,7 +446,6 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
           }
         }
 
-        // Flush remaining list if any
         flushList();
 
         return <React.Fragment key={blockIndex}>{renderedElements}</React.Fragment>;

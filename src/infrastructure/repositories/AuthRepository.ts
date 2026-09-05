@@ -77,18 +77,15 @@ export class AuthRepository implements IAuthRepository {
   getToken(): string | null {
     if (typeof window === 'undefined') return null;
 
-    // 1. Check in-memory access token first (RAM)
     const inMem = getAccessToken();
     if (inMem) return inMem;
 
-    // 2. Fallback check from storage if present (e.g. legacy session)
     const storedToken = sessionStorage.getItem('sipenta_token') || getCookie('sipenta_token');
     if (storedToken && storedToken !== 'hidden-httponly-token' && storedToken !== 'session-active') {
       setAccessToken(storedToken);
       return storedToken;
     }
 
-    // 3. If session role exists, session is active (silent refresh will populate in-memory token)
     const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
     if (role) {
       return 'session-active';
@@ -120,12 +117,10 @@ export class AuthRepository implements IAuthRepository {
   setAuth(token: string, role: string, user?: any, expiresAt?: string, _refreshToken?: string): void {
     if (typeof window === 'undefined') return;
 
-    // 1. Store JWT strictly in memory (RAM), NEVER in sessionStorage / localStorage / document.cookie
     if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
       setAccessToken(token);
     }
 
-    // 2. Purge tokens and legacy items from client-accessible storage
     try {
       sessionStorage.removeItem('sipenta_token');
       sessionStorage.removeItem('sipenta_refresh_token');
@@ -145,7 +140,6 @@ export class AuthRepository implements IAuthRepository {
       localStorage.removeItem('user');
     } catch {}
 
-    // 3. Keep non-sensitive session metadata for UI routing & role guards
     setCookie('sipenta_role', role);
     try {
       sessionStorage.setItem('sipenta_role', role);
@@ -192,7 +186,6 @@ export class AuthRepository implements IAuthRepository {
 
     setAccessToken(null);
 
-    // Call backend to revoke refresh token and clear session cookie
     fetch(`${API_ENDPOINTS.AUTH}/logout`, {
       method: 'POST',
       headers: {
@@ -204,7 +197,6 @@ export class AuthRepository implements IAuthRepository {
       body: JSON.stringify({}),
     }).catch(() => {});
 
-    // Clear client session cookies
     deleteCookie('sipenta_token');
     deleteCookie('sipenta_refresh_token');
     deleteCookie('sipenta_csrf');
@@ -215,7 +207,6 @@ export class AuthRepository implements IAuthRepository {
     deleteCookie('sipenta_isApproved');
     deleteCookie('sipenta_expires_at');
 
-    // Clean sessionStorage and legacy localStorage
     try {
       sessionStorage.clear();
       localStorage.removeItem('sipenta_token');

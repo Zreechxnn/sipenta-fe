@@ -21,7 +21,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
   const touchStartYRef = useRef<number>(0);
   const isHorizontalSwipeRef = useRef<boolean | null>(null);
 
-  // Lock body scroll when open
   useEffect(() => {
     if (isOpen) {
       const originalOverflow = document.body.style.overflow;
@@ -32,7 +31,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     }
   }, [isOpen]);
 
-  // Reset drag offset when isOpen changes
   useEffect(() => {
     if (!isOpen) {
       setDragOffset(0);
@@ -40,7 +38,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     }
   }, [isOpen]);
 
-  // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -51,7 +48,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Touch Drag-to-Slide Handlers (Real-time gesture slider X)
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
     touchStartYRef.current = e.touches[0].clientY;
@@ -65,7 +61,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     const deltaX = currentX - touchStartXRef.current;
     const deltaY = currentY - touchStartYRef.current;
 
-    // Detect if this is horizontal swipe
     if (isHorizontalSwipeRef.current === null) {
       if (Math.abs(deltaX) > 12 || Math.abs(deltaY) > 12) {
         isHorizontalSwipeRef.current = Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0;
@@ -73,7 +68,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     }
 
     if (isHorizontalSwipeRef.current) {
-      // Only drag to the left (negative deltaX)
       if (deltaX < 0) {
         setIsDragging(true);
         setDragOffset(deltaX);
@@ -85,7 +79,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
 
   const handleTouchEnd = useCallback(() => {
     if (isDragging) {
-      // If dragged more than 70px to the left, close the drawer
       if (dragOffset < -70) {
         onClose();
       }
@@ -134,7 +127,6 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
     );
   };
 
-  // Compute transform style
   const drawerTransform = isOpen
     ? isDragging
       ? `translateX(${dragOffset}px)`

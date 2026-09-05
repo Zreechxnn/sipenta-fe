@@ -96,14 +96,8 @@ export const UserModal: React.FC<UserModalProps> = ({
           const data = await res.json();
           const createdName = data.data?.nama || newBidangName;
           showToast('Bidang berhasil ditambahkan');
-          // Add locally to the list via state if possible, but for now just setting the string works
-          // because CreateUser/UpdateUser will match it by string or create it. Wait, the backend CreateUser
-          // accepts string `bidang` and creates it if it doesn't exist? Actually Bidang is mostly referenced by ID.
-          // Let's set it to the string.
           setBidang(createdName);
-          // To make it show up in the select, we should either reload window or it will just be selected but not in the list.
-          // Since it's a prompt, it's fine.
-          window.location.reload(); // Simple way to refresh the bidangs list globally
+          window.location.reload();
         } else {
           const err = await res.json();
           showToast(err.message || 'Gagal menambahkan bidang', true);

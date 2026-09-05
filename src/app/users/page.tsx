@@ -17,7 +17,7 @@ import { UserAccount } from '@/core/domain/user';
 import { BIDANG_LIST } from '@/core/constants/bidang';
 
 export default function UsersPage() {
-  const { isLoading: authLoading, role: currentRole, bidang: currentBidang } = useAuth(true, true); // requireAuth = true, requireAdmin = true
+  const { isLoading: authLoading, role: currentRole, bidang: currentBidang } = useAuth(true, true);
   const { toast, showToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -30,12 +30,10 @@ export default function UsersPage() {
   const [userToDelete, setUserToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Filters
   const [searchKeyword, setSearchKeyword] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved'>('all');
   const [bidangFilter, setBidangFilter] = useState<string>('all');
 
-  // Auto-refresh user list on SignalR
   const handleUserChange = useCallback((event: string, data?: any) => {
     fetchUsers();
     if (event === 'UserRegistered') {
@@ -63,11 +61,9 @@ export default function UsersPage() {
       const isAdmin = ['admin', 'kasubag'].includes(u.role?.toLowerCase() || '');
       const isApproved = isAdmin || u.isApproved;
 
-      // Status filter
       if (statusFilter === 'pending' && isApproved) return false;
       if (statusFilter === 'approved' && !isApproved) return false;
 
-      // Bidang filter
       if (bidangFilter !== 'all') {
         if (bidangFilter === 'unassigned') {
           if (u.bidang) return false;
@@ -76,7 +72,6 @@ export default function UsersPage() {
         }
       }
 
-      // Keyword search
       if (searchKeyword.trim()) {
         const kw = searchKeyword.toLowerCase();
         const matchName = u.fullName?.toLowerCase().includes(kw);

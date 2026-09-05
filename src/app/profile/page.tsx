@@ -24,7 +24,6 @@ export default function ProfilePage() {
 
   const { isConnected: isSignalRConnected } = useDataSignalR(undefined, handleUserChange);
 
-  // Form states
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');

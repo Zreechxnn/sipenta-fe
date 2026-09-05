@@ -53,7 +53,6 @@ export function playNotificationChime(): void {
     const ctx = new AudioContextClass();
     const now = ctx.currentTime;
 
-    // Tone 1: High crisp bell note (880Hz - A5)
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
     osc1.type = 'sine';
@@ -65,7 +64,6 @@ export function playNotificationChime(): void {
     osc1.start(now);
     osc1.stop(now + 0.3);
 
-    // Tone 2: Harmonious chime note (1174.66Hz - D6)
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = 'sine';
@@ -77,7 +75,6 @@ export function playNotificationChime(): void {
     osc2.start(now + 0.08);
     osc2.stop(now + 0.5);
   } catch {
-    // Ignore audio autoplay restrictions gracefully
   }
 }
 
@@ -110,10 +107,8 @@ export async function enableDeviceNotifications(): Promise<{
         window.dispatchEvent(new CustomEvent(NOTIFICATION_EVENT_NAME, { detail: { enabled: true } }));
       }
 
-      // Play soft chime sound
       playNotificationChime();
 
-      // Show welcome notification
       try {
         new Notification('SIPENTA - Notifikasi Perangkat Aktif', {
           body: 'Anda akan menerima notifikasi langsung di perangkat saat ada aktivitas baru.',
@@ -121,7 +116,6 @@ export async function enableDeviceNotifications(): Promise<{
           tag: 'sipenta-welcome',
         });
       } catch {
-        // Fallback for browsers that require service workers for new Notification
       }
 
       return {
