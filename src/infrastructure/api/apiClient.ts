@@ -18,7 +18,6 @@ export function isTokenExpired(token: string | null): boolean {
   if (!token) return true;
   if (token === 'hidden-httponly-token' || token === 'session-active') {
     if (typeof window !== 'undefined') {
-      if (!inMemoryAccessToken) return true;
       const expStr = sessionStorage.getItem('sipenta_expires_at') || getCookie('sipenta_expires_at');
       if (expStr) {
         const expTime = new Date(expStr).getTime();

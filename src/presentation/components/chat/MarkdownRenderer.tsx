@@ -34,10 +34,10 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
 
   return (
     <>
-      <div className="my-2.5 max-w-sm rounded-xl overflow-hidden border border-slate-200/80 bg-white shadow-xs group">
+      <div className="my-2.5 w-full max-w-[320px] sm:w-[360px] sm:max-w-[360px] rounded-xl overflow-hidden border border-slate-200/80 bg-white shadow-xs group">
         <div 
           onClick={() => setIsOpen(true)}
-          className="relative cursor-zoom-in overflow-hidden bg-slate-100 min-h-[120px] max-h-60 flex items-center justify-center aspect-[16/10]"
+          className="relative cursor-zoom-in overflow-hidden bg-slate-100 aspect-[16/10] flex items-center justify-center"
         >
           <img
             src={fullUrl}
@@ -48,15 +48,15 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
             decoding="async"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-            <span className="bg-black/75 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs">
+            <span className="bg-black/75 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs shadow-xs">
               <i className="fas fa-search-plus text-[10px]" /> Perbesar
             </span>
           </div>
         </div>
         {alt && (
           <div className="px-3 py-1.5 bg-slate-50/70 border-t border-slate-100 text-[11px] text-slate-600 font-medium truncate flex items-center gap-1.5">
-            <i className="fas fa-image text-slate-400 text-[10px]" />
-            <span>{alt}</span>
+            <i className="fas fa-image text-slate-400 text-[10px] shrink-0" />
+            <span className="truncate">{alt}</span>
           </div>
         )}
       </div>
@@ -64,7 +64,9 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
+          className="fixed inset-0 z-[999] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in chat-image-modal"
+          role="dialog"
+          aria-modal="true"
         >
           <div className="relative max-w-4xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 text-white">
@@ -264,7 +266,7 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
   const blocks = content.split(/(```[\s\S]*?```)/g);
 
   return (
-    <div className={`space-y-3 leading-relaxed font-normal text-[var(--color-ink)] ${className}`}>
+    <div className={`space-y-3 leading-relaxed font-normal text-[var(--color-ink)] min-w-0 break-words ${className}`}>
       {blocks.map((block, blockIndex) => {
         if (!block) return null;
 
@@ -430,7 +432,7 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
             if (imgMatch) {
               const [, alt, src] = imgMatch;
               renderedElements.push(
-                <div key={i} className="my-2">
+                <div key={i} className="my-2 min-w-0">
                   <ChatImage src={src} alt={alt} />
                 </div>
               );

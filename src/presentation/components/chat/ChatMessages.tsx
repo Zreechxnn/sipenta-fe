@@ -73,8 +73,10 @@ const MessageBubble = React.memo<MessageBubbleProps>(({ msg, index, isCopied, on
 
   return (
     <div
-      className={`max-w-[92%] sm:max-w-[85%] w-fit relative z-10 flex flex-col group ${
-        isUser ? 'self-end items-end' : 'self-start items-start'
+      className={`relative z-10 flex flex-col group min-w-0 ${
+        isUser
+          ? 'max-w-[92%] sm:max-w-[85%] w-fit self-end items-end'
+          : 'w-full sm:w-fit sm:max-w-[85%] self-start items-start'
       }`}
     >
       {!isUser && (
@@ -91,7 +93,7 @@ const MessageBubble = React.memo<MessageBubbleProps>(({ msg, index, isCopied, on
       )}
 
       <div
-        className={`p-3 sm:p-4 md:p-5 text-[13px] sm:text-[14px] leading-relaxed relative ${
+        className={`w-full max-w-full min-w-0 p-3 sm:p-4 md:p-5 text-[13px] sm:text-[14px] leading-relaxed relative ${
           isUser
             ? 'rounded-2xl rounded-tr-xs text-white shadow-xs bg-indigo-600'
             : 'rounded-2xl rounded-tl-xs border border-slate-200/80 bg-white text-slate-800 shadow-2xs'
@@ -100,7 +102,7 @@ const MessageBubble = React.memo<MessageBubbleProps>(({ msg, index, isCopied, on
         {isUser ? (
           <div className="whitespace-pre-wrap font-medium">{content}</div>
         ) : (
-          <div>
+          <div className="min-w-0">
             {sourcesList && sourcesList.length > 0 && (() => {
               const uniqueSources: any[] = [];
               const seenLabels = new Set<string>();
@@ -116,18 +118,18 @@ const MessageBubble = React.memo<MessageBubbleProps>(({ msg, index, isCopied, on
               if (uniqueSources.length === 0) return null;
 
               return (
-                <div className="pb-2.5 mb-3 border-b border-slate-100">
-                  <div className="flex flex-wrap gap-1.5 items-center">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <div className="pb-2.5 mb-3 border-b border-slate-100 min-w-0">
+                  <div className="flex flex-wrap gap-1.5 items-center min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1 shrink-0">
                       <i className="fas fa-bookmark text-indigo-500 text-[9px]" /> Rujukan Dokumen:
                     </span>
                     {uniqueSources.map((src: any, srcIdx: number) => (
                       <span
                         key={srcIdx}
-                        className="text-[10.5px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200/60"
+                        className="text-[10.5px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-200/60 max-w-full truncate"
                       >
-                        <i className="fas fa-file-pdf text-[9.5px]"></i>
-                        {src._label}
+                        <i className="fas fa-file-pdf text-[9.5px] shrink-0"></i>
+                        <span className="truncate">{src._label}</span>
                       </span>
                     ))}
                   </div>
