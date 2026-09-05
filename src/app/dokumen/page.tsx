@@ -26,7 +26,6 @@ export default function DashboardPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Document management hook
   const {
     documents,
     currentPage,
@@ -52,7 +51,6 @@ export default function DashboardPage() {
     revokeShare,
   } = useDocuments();
 
-  // Modals state
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [editingDoc, setEditingDoc] = useState<Document | null>(null);
   const [sharingDoc, setSharingDoc] = useState<Document | null>(null);
@@ -60,7 +58,6 @@ export default function DashboardPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [openingDoc, setOpeningDoc] = useState<{ id: string; name?: string } | null>(null);
 
-  // Helper for Indonesian Month & Year conversion
   const MONTH_NAMES_ID = useMemo(() => [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
@@ -93,7 +90,6 @@ export default function DashboardPage() {
     return '';
   }, [MONTH_NAMES_ID]);
 
-  // Generate unique Tenaga Ahli list automatically from registered documents
   const uniqueTenagaAhliList = useMemo(() => {
     const names = new Set<string>();
     documents.forEach(doc => {
@@ -104,7 +100,6 @@ export default function DashboardPage() {
     return Array.from(names).sort();
   }, [documents]);
 
-  // Generate unique Jenis Dokumen list automatically
   const uniqueJenisDokumenList = useMemo(() => {
     const types = new Set<string>();
     documents.forEach(doc => {
@@ -117,7 +112,6 @@ export default function DashboardPage() {
 
   const [lastSignalREvent, setLastSignalREvent] = useState<{ event: string; data?: any } | null>(null);
 
-  // Auto-refresh document list on SignalR events
   const handleDocumentChange = useCallback((event: string, data?: any) => {
     setLastSignalREvent({ event, data });
     fetchDocuments();
@@ -144,7 +138,6 @@ export default function DashboardPage() {
 
   const isInitialMount = useRef(true);
 
-  // Global shortcut '/' to focus search input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (

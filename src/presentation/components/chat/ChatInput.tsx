@@ -59,7 +59,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Load saved model preference
   useEffect(() => {
     try {
       const saved = localStorage.getItem('siap_chat_model_mode') as ModelMode;
@@ -69,7 +68,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     } catch {}
   }, []);
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -84,7 +82,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     };
   }, [isModelDropdownOpen]);
 
-  // Auto-resize textarea smoothly based on content
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {

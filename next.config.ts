@@ -2,10 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  allowedDevOrigins: ["192.168.0.104", "192.168.0.104:3000", "localhost", "localhost:3001", "siap-fe.rechanpage.my.id"],
+  allowedDevOrigins: ["192.168.0.104", "192.168.0.104:3000", "localhost:3000", ".rechanpage.my.id"],
   experimental: {
     serverActions: {
-      allowedOrigins: ["192.168.0.104", "192.168.0.104:3000", "localhost:3000", "siap-fe.rechanpage.my.id"],
+      allowedOrigins: ["192.168.0.104", "192.168.0.104:3000", "localhost:3000", ".rechanpage.my.id"],
     },
   },
   async headers() {

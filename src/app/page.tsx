@@ -12,7 +12,6 @@ export default function HomePage() {
   const [activeTabRole, setActiveTabRole] = useState<'evaluator' | 'expert' | 'admin'>('evaluator');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Close mobile menu on ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && mobileMenuOpen) {
@@ -23,7 +22,6 @@ export default function HomePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [mobileMenuOpen]);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       const originalOverflow = document.body.style.overflow;
@@ -34,7 +32,6 @@ export default function HomePage() {
     }
   }, [mobileMenuOpen]);
 
-  // Contoh simulasi penelusuran dokumen berdasarkan data laporan kerja nyata
   const samplePrompts = [
     {
       id: 'modul-auth',

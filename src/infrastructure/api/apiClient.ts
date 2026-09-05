@@ -65,7 +65,6 @@ export function handleAutoLogout(reason = 'expired'): void {
     deleteCookie('sipenta_isApproved');
     deleteCookie('sipenta_expires_at');
 
-    // Clean client storage keys
     try {
       sessionStorage.clear();
       localStorage.clear();
@@ -179,13 +178,11 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
   if (typeof window !== 'undefined') {
     const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
 
-    // If no role exists in session, user is unauthenticated
     if (!role) {
       handleAutoLogout('expired');
       throw new Error('Session missing or expired');
     }
 
-    // If in-memory token is empty (e.g. fresh page reload), perform silent refresh first
     if (!getAccessToken()) {
       const refreshed = await tryRefreshToken();
       if (!refreshed) {
@@ -216,7 +213,6 @@ export async function authFetch(input: RequestInfo | URL, init?: RequestInit): P
 
   let response = await fetch(input, fetchInit);
 
-  // If 401 received (e.g. 30-min JWT expired), attempt silent refresh and retry request
   if (response.status === 401 && typeof window !== 'undefined') {
     const refreshed = await tryRefreshToken();
     if (refreshed) {
