@@ -119,10 +119,12 @@ export class AuthRepository implements IAuthRepository {
 
     if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
       setAccessToken(token);
+      try {
+        sessionStorage.setItem('sipenta_token', token);
+      } catch {}
     }
 
     try {
-      sessionStorage.removeItem('sipenta_token');
       sessionStorage.removeItem('sipenta_refresh_token');
       deleteCookie('sipenta_token');
       deleteCookie('sipenta_refresh_token');
