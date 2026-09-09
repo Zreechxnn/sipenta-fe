@@ -29,14 +29,18 @@ export function setCookie(
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = '; expires=' + date.toUTCString();
   }
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  const secureFlag = isSecure ? '; Secure' : '';
   document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(
     value
-  )}${expires}; path=${path}; SameSite=Lax`;
+  )}${expires}; path=${path}; SameSite=Lax${secureFlag}`;
 }
 
 export function deleteCookie(name: string, path = '/'): void {
   if (typeof document === 'undefined') return;
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  const secureFlag = isSecure ? '; Secure' : '';
   document.cookie = `${encodeURIComponent(
     name
-  )}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; SameSite=Lax`;
+  )}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; SameSite=Lax${secureFlag}`;
 }
