@@ -208,17 +208,24 @@ function parseInline(text: string): React.ReactNode[] {
     } else if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
       const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (match) {
-        const [, linkText, url] = match;
+        const [, linkText, rawUrl] = match;
+        const trimmedUrl = (rawUrl || '').trim();
+        // Prevent javascript:, data:, vbscript: and other malicious schemes (XSS protection)
+        const isSafeUrl = /^(https?:\/\/|\/|mailto:)/i.test(trimmedUrl) && !/^javascript:/i.test(trimmedUrl);
+        const safeHref = isSafeUrl ? trimmedUrl : '#';
+
         elements.push(
           <a
             key={index}
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={safeHref}
+            target={isSafeUrl && !trimmedUrl.startsWith('/') ? "_blank" : undefined}
+            rel={isSafeUrl ? "noopener noreferrer" : undefined}
             className="text-[var(--color-navy)] underline font-medium hover:text-[var(--color-gold)] transition-colors inline-flex items-center gap-1"
           >
             {linkText}
-            <i className="fas fa-external-link-alt text-[9px]"></i>
+            {isSafeUrl && !trimmedUrl.startsWith('/') && (
+              <i className="fas fa-external-link-alt text-[9px]"></i>
+            )}
           </a>
         );
       } else {
