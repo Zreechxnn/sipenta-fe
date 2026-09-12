@@ -7,11 +7,30 @@ export function getApiBaseUrl(): string {
 let inMemoryAccessToken: string | null = null;
 
 export function getAccessToken(): string | null {
+  if (inMemoryAccessToken) return inMemoryAccessToken;
+  if (typeof window !== 'undefined') {
+    const stored = sessionStorage.getItem('sipenta_token');
+    if (stored && stored !== 'hidden-httponly-token' && stored !== 'session-active' && !isTokenExpired(stored)) {
+      inMemoryAccessToken = stored;
+      return inMemoryAccessToken;
+    }
+  }
   return inMemoryAccessToken;
 }
 
 export function setAccessToken(token: string | null): void {
   inMemoryAccessToken = token;
+  if (typeof window !== 'undefined') {
+    if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
+      try {
+        sessionStorage.setItem('sipenta_token', token);
+      } catch {}
+    } else if (!token) {
+      try {
+        sessionStorage.removeItem('sipenta_token');
+      } catch {}
+    }
+  }
 }
 
 export function isTokenExpired(token: string | null): boolean {
