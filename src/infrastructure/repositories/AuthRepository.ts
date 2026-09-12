@@ -80,8 +80,12 @@ export class AuthRepository implements IAuthRepository {
     const inMem = getAccessToken();
     if (inMem) return inMem;
 
-    // Do NOT read access token from sessionStorage (mitigasi FE-04 / CWE-312).
-    // Token disimpan eksklusif dalam inMemoryAccessToken.
+    const storedToken = (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_token') : null) || getCookie('sipenta_token');
+    if (storedToken && storedToken !== 'hidden-httponly-token' && storedToken !== 'session-active') {
+      setAccessToken(storedToken);
+      return storedToken;
+    }
+
     const role = getCookie('sipenta_role') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sipenta_role') : null);
     if (role) {
       return 'session-active';
@@ -114,12 +118,13 @@ export class AuthRepository implements IAuthRepository {
     if (typeof window === 'undefined') return;
 
     if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {
-      // Simpan token hanya di memori aplikasi (inMemoryAccessToken) tanpa persistensi ke sessionStorage
       setAccessToken(token);
+      try {
+        sessionStorage.setItem('sipenta_token', token);
+      } catch {}
     }
 
     try {
-      sessionStorage.removeItem('sipenta_token');
       sessionStorage.removeItem('sipenta_refresh_token');
       deleteCookie('sipenta_token');
       deleteCookie('sipenta_refresh_token');

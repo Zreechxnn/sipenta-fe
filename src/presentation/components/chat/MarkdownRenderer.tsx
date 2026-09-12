@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { getApiBaseUrl } from '@/infrastructure/api/apiClient';
+import { getApiBaseUrl, authFetch, getAccessToken } from '@/infrastructure/api/apiClient';
 
 interface MarkdownRendererProps {
   content: string;
@@ -12,16 +12,143 @@ interface MarkdownRendererProps {
 const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [displaySrc, setDisplaySrc] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(1);
 
   const rawSrc = (src || '').replace(/^url\s*=\s*/i, '').trim();
-  let cleanSrc = rawSrc.startsWith('/') ? rawSrc : `/${rawSrc}`;
+
+  // Normalize any drive or hallucinated external host (e.g. imgur, google drive) containing a document image file ID
+  let normalizedSrc = rawSrc;
+  const driveIdMatch = rawSrc.match(/(?:images\/|[?&]id=|imgur\.com\/)([a-zA-Z0-9_\-]{25,})/i);
+  if (driveIdMatch) {
+    normalizedSrc = `/api/Documents/images/${driveIdMatch[1]}`;
+  }
+
+  let cleanSrc = normalizedSrc.startsWith('/') ? normalizedSrc : `/${normalizedSrc}`;
   if (cleanSrc.startsWith('/Documents/images/')) {
     cleanSrc = `/api${cleanSrc}`;
   }
   const baseUrl = getApiBaseUrl().replace(/\/api\/?$/, '');
-  const fullUrl = rawSrc.startsWith('http')
-    ? rawSrc
+  const isApiImage = cleanSrc.startsWith('/api/Documents/images/') || normalizedSrc.includes('/Documents/images/');
+  const fullUrl = normalizedSrc.startsWith('http') && !isApiImage
+    ? normalizedSrc
     : `${baseUrl}${cleanSrc}`;
+
+  useEffect(() => {
+    if (!rawSrc) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    let blobUrl: string | null = null;
+
+    const fetchImage = async () => {
+      setLoading(true);
+      setError(false);
+
+      if (isApiImage) {
+        try {
+          const res = await authFetch(fullUrl);
+          if (!res.ok) {
+            throw new Error(`HTTP error ${res.status}`);
+          }
+          const blob = await res.blob();
+          if (!isMounted) return;
+          blobUrl = URL.createObjectURL(blob);
+          setDisplaySrc(blobUrl);
+          setLoading(false);
+        } catch {
+          if (!isMounted) return;
+          // Fallback to tokenized URL in query parameter
+          const token = getAccessToken();
+          const separator = fullUrl.includes('?') ? '&' : '?';
+          const fallback = token ? `${fullUrl}${separator}access_token=${encodeURIComponent(token)}` : fullUrl;
+          setDisplaySrc(fallback);
+          setLoading(false);
+        }
+      } else {
+        setDisplaySrc(fullUrl);
+        setLoading(false);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      isMounted = false;
+      if (blobUrl) {
+        URL.revokeObjectURL(blobUrl);
+      }
+    };
+  }, [fullUrl, isApiImage, rawSrc]);
+
+  // Handle keyboard events & body scroll lock when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        setZoom(1);
+      } else if (e.key === '+' || e.key === '=') {
+        setZoom(z => Math.min(3, Number((z + 0.25).toFixed(2))));
+      } else if (e.key === '-' || e.key === '_') {
+        setZoom(z => Math.max(0.5, Number((z - 0.25).toFixed(2))));
+      } else if (e.key === '0') {
+        setZoom(1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
+  const handleOpen = () => {
+    setZoom(1);
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setZoom(1);
+  };
+
+  const handleZoomIn = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setZoom(z => Math.min(3, Number((z + 0.25).toFixed(2))));
+  };
+
+  const handleZoomOut = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setZoom(z => Math.max(0.5, Number((z - 0.25).toFixed(2))));
+  };
+
+  const handleResetZoom = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setZoom(1);
+  };
+
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setZoom(z => (z > 1 ? 1 : 1.75));
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.deltaY < 0) {
+      setZoom(z => Math.min(3, Number((z + 0.15).toFixed(2))));
+    } else {
+      setZoom(z => Math.max(0.5, Number((z - 0.15).toFixed(2))));
+    }
+  };
 
   if (error || !rawSrc) {
     return (
@@ -32,26 +159,37 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
     );
   }
 
+  const activeSrc = displaySrc || fullUrl;
+
   return (
     <>
       <div className="my-2.5 w-full max-w-[320px] sm:w-[360px] sm:max-w-[360px] rounded-xl overflow-hidden border border-slate-200/80 bg-white shadow-xs group">
         <div 
-          onClick={() => setIsOpen(true)}
+          onClick={handleOpen}
           className="relative cursor-zoom-in overflow-hidden bg-slate-100 aspect-[16/10] flex items-center justify-center"
         >
-          <img
-            src={fullUrl}
-            alt={alt || 'Foto Dokumentasi'}
-            onError={() => setError(true)}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-            decoding="async"
-          />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-            <span className="bg-black/75 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs shadow-xs">
-              <i className="fas fa-search-plus text-[10px]" /> Perbesar
-            </span>
-          </div>
+          {loading ? (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400 bg-slate-50 animate-pulse">
+              <i className="fas fa-circle-notch fa-spin text-lg text-emerald-500" />
+              <span className="text-[11px] font-medium text-slate-500">Memuat foto...</span>
+            </div>
+          ) : (
+            <img
+              src={activeSrc}
+              alt={alt || 'Foto Dokumentasi'}
+              onError={() => setError(true)}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+          {!loading && (
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none">
+              <span className="bg-black/75 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-xs shadow-xs">
+                <i className="fas fa-search-plus text-[10px]" /> Perbesar
+              </span>
+            </div>
+          )}
         </div>
         {alt && (
           <div className="px-3 py-1.5 bg-slate-50/70 border-t border-slate-100 text-[11px] text-slate-600 font-medium truncate flex items-center gap-1.5">
@@ -63,30 +201,113 @@ const ChatImage: React.FC<{ src: string; alt?: string }> = ({ src, alt }) => {
 
       {isOpen && (
         <div 
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-[999] bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in chat-image-modal"
+          onClick={handleClose}
+          className="fixed inset-0 z-[999] bg-black/85 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-fade-in chat-image-modal select-none"
           role="dialog"
           aria-modal="true"
         >
-          <div className="relative max-w-4xl max-h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 text-white">
-              <div className="flex items-center gap-2 text-xs font-semibold truncate">
-                <i className="fas fa-camera text-amber-400" />
-                <span>{alt || 'Foto Dokumentasi Laporan'}</span>
+          <div 
+            className="relative w-full max-w-5xl max-h-[92vh] bg-slate-900 text-white rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-slate-700/60" 
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header with Title & Zoom Controls */}
+            <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-950/90 border-b border-slate-800 text-white gap-2">
+              <div className="flex items-center gap-2 text-xs font-semibold truncate min-w-0">
+                <i className="fas fa-camera text-amber-400 shrink-0" />
+                <span className="truncate">{alt || 'Foto Dokumentasi Laporan'}</span>
               </div>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
-              >
-                <i className="fas fa-times" />
-              </button>
+
+              {/* Action & Zoom Toolbar */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                {/* Zoom Out Button */}
+                <button
+                  type="button"
+                  onClick={handleZoomOut}
+                  disabled={zoom <= 0.5}
+                  className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-40 disabled:hover:bg-white/10 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+                  title="Perkecil / Zoom Out (-)"
+                >
+                  <i className="fas fa-search-minus" />
+                </button>
+
+                {/* Zoom Level Reset Button */}
+                <button
+                  type="button"
+                  onClick={handleResetZoom}
+                  className="px-2 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white/90 hover:text-white flex items-center justify-center text-[11px] font-mono transition-colors cursor-pointer"
+                  title="Klik untuk reset zoom ke 100%"
+                >
+                  {Math.round(zoom * 100)}%
+                </button>
+
+                {/* Zoom In Button */}
+                <button
+                  type="button"
+                  onClick={handleZoomIn}
+                  disabled={zoom >= 3}
+                  className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-40 disabled:hover:bg-white/10 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+                  title="Perbesar / Zoom In (+)"
+                >
+                  <i className="fas fa-search-plus" />
+                </button>
+
+                {/* Open in new tab */}
+                <a
+                  href={activeSrc}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+                  title="Buka gambar di tab baru"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <i className="fas fa-arrow-up-right-from-square text-[11px]" />
+                </a>
+
+                <div className="w-[1px] h-4 bg-white/20 mx-0.5" />
+
+                {/* Close Button */}
+                <button 
+                  type="button"
+                  onClick={handleClose}
+                  className="w-7 h-7 rounded-lg bg-rose-500/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+                  title="Tutup (Esc)"
+                >
+                  <i className="fas fa-times" />
+                </button>
+              </div>
             </div>
-            <div className="p-2 bg-slate-950 flex items-center justify-center overflow-auto max-h-[80vh]">
-              <img
-                src={fullUrl}
-                alt={alt || 'Foto Dokumentasi'}
-                className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-lg"
-              />
+
+            {/* Image Viewport Container */}
+            <div 
+              onWheel={handleWheel}
+              onClick={handleClose}
+              className="p-3 sm:p-4 bg-slate-950/95 flex items-center justify-center overflow-auto max-h-[82vh] min-h-[300px] cursor-pointer"
+              title="Klik di luar gambar atau tekan Esc untuk menutup"
+            >
+              <div 
+                className="transition-transform duration-200 ease-out flex items-center justify-center"
+                style={{ transform: `scale(${zoom})`, transformOrigin: 'center center' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <img
+                  src={activeSrc}
+                  alt={alt || 'Foto Dokumentasi'}
+                  onClick={handleImageClick}
+                  className={`max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl transition-all ${
+                    zoom > 1 ? 'cursor-zoom-out' : 'cursor-zoom-in'
+                  }`}
+                  title={zoom > 1 ? 'Klik gambar untuk zoom out (100%)' : 'Klik gambar untuk zoom in'}
+                />
+              </div>
+            </div>
+
+            {/* Footer Hint */}
+            <div className="px-3.5 py-1.5 bg-slate-950 border-t border-slate-800/80 text-[10.5px] text-slate-400 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <i className="fas fa-info-circle text-sky-400" />
+                <span>Gunakan tombol zoom, scroll mouse wheel, atau klik gambar untuk memperbesar/memperkecil.</span>
+              </span>
+              <span className="hidden sm:inline-block text-slate-500">Tekan Esc atau klik latar luar untuk keluar</span>
             </div>
           </div>
         </div>

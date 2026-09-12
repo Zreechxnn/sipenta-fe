@@ -20,7 +20,7 @@ const MODEL_OPTIONS: ModelOption[] = [
     badge: 'Rekomendasi',
     icon: 'fa-wand-magic-sparkles',
     color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
-    description: 'Deteksi gambar otomatis menggunakan Vision AI & penalaran teks',
+    description: 'Deteksi visual & kata rujukan otomatis (Vision AI) dan analisis mendalam teks',
   },
   {
     id: 'text',
@@ -64,6 +64,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       const saved = localStorage.getItem('siap_chat_model_mode') as ModelMode;
       if (saved && (saved === 'auto' || saved === 'text' || saved === 'vision')) {
         setModelMode(saved);
+      } else {
+        setModelMode('auto');
       }
     } catch {}
   }, []);
