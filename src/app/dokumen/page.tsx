@@ -94,7 +94,7 @@ export default function DashboardPage() {
     const names = new Set<string>();
     documents.forEach(doc => {
       if (doc.namaTenagaAhli && doc.namaTenagaAhli.trim()) {
-        names.add(doc.namaTenagaAhli.trim());
+        names.add(doc.namaTenagaAhli.trim().toUpperCase());
       }
     });
     return Array.from(names).sort();

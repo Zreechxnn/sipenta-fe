@@ -151,7 +151,7 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({
                 <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-100 text-xs">
                   <div>
                     <span className="block text-[10px] font-bold uppercase tracking-wider mb-0.5 text-slate-400">Tenaga Ahli</span>
-                    <span className="font-medium text-slate-700 line-clamp-1">{doc.namaTenagaAhli || '-'}</span>
+                    <span className="font-medium text-slate-700 line-clamp-1 uppercase">{doc.namaTenagaAhli || '-'}</span>
                   </div>
                   <div>
                     <span className="block text-[10px] font-bold uppercase tracking-wider mb-0.5 text-slate-400">Jenis</span>
@@ -307,7 +307,7 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({
                       )}
                     </td>
                     <td className="p-4 align-middle">
-                      <div className="font-medium text-xs text-slate-800">{doc.namaTenagaAhli || '-'}</div>
+                      <div className="font-medium text-xs text-slate-800 uppercase">{doc.namaTenagaAhli || '-'}</div>
                     </td>
                     <td className="p-4 align-middle">
                       <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200/60">

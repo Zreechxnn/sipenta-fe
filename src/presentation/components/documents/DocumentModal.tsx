@@ -226,7 +226,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                 <div className="p-3.5 rounded-xl border border-indigo-100 bg-indigo-50/50 flex items-start gap-3">
                   <i className="fas fa-info-circle text-indigo-600 mt-0.5"></i>
                   <div className="text-xs text-indigo-900 flex-1">
-                    {role === 'super-admin' ? (
+                    {isAdmin || role === 'admin' ? (
                       <div className="space-y-1.5">
                         <span className="font-semibold block">Tentukan Bidang untuk Dokumen yang Diunggah:</span>
                         <select
