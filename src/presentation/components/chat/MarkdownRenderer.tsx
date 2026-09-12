@@ -491,7 +491,30 @@ export const MarkdownRenderer = React.memo<MarkdownRendererProps>(({
 }) => {
   if (!content) return null;
 
-  const blocks = content.split(/(```[\s\S]*?```)/g);
+  let cleanContent = content;
+
+  // 1. Remove closed <think>...</think>
+  cleanContent = cleanContent.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+
+  // 2. If <think> tag is unclosed (e.g. truncated output in chat history)
+  if (cleanContent.includes('<think>')) {
+    const finalMatch = cleanContent.match(/(?:(?:Final Polish|Final Response|Jawaban Akhir|Jawaban|Direct Answer|Headline:)\s*)[^:\n]*:?\s*([\s\S]+)$/i);
+    if (finalMatch && finalMatch[1].trim().length > 20) {
+      cleanContent = finalMatch[1].trim();
+    } else {
+      cleanContent = cleanContent.replace(/^<think>[\s\S]*?(?:Here's a thinking process.*?\n\n|Analyze the User.*?\n\n)?/i, '').trim();
+    }
+  }
+
+  // 3. If content starts with "1. **Analyze ...", extract final polish / answer section
+  if (/^\s*1\.\s+\*\*Analyze/i.test(cleanContent)) {
+    const finalMatch = cleanContent.match(/(?:(?:Final Polish|Final Response|Jawaban Akhir|Jawaban|Direct Answer|Headline:)\s*)[^:\n]*:?\s*([\s\S]+)$/i);
+    if (finalMatch && finalMatch[1].trim().length > 20) {
+      cleanContent = finalMatch[1].trim();
+    }
+  }
+
+  const blocks = cleanContent.split(/(```[\s\S]*?```)/g);
 
   return (
     <div className={`space-y-3 leading-relaxed font-normal text-[var(--color-ink)] min-w-0 break-words ${className}`}>
