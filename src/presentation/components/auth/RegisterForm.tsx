@@ -8,9 +8,10 @@ import { GoogleLogin } from '@react-oauth/google';
 
 interface RegisterFormProps {
   showToast: (msg: string, isError?: boolean) => void;
+  onSwitchToLogin?: () => void;
 }
 
-export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast }) => {
+export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast, onSwitchToLogin }) => {
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -169,12 +170,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast }) => {
 
       <div className="text-center pt-4 border-t border-[var(--color-border)] text-[13px] text-[var(--color-ink-muted)]">
         Sudah memiliki akun terdaftar?{' '}
-        <Link
-          href="/login"
-          className="font-medium text-[var(--color-navy)] hover:underline ml-1"
-        >
-          Masuk di sini
-        </Link>
+        {onSwitchToLogin ? (
+          <button
+            type="button"
+            onClick={onSwitchToLogin}
+            className="font-medium text-[var(--color-navy)] hover:underline ml-1 cursor-pointer"
+          >
+            Masuk di sini
+          </button>
+        ) : (
+          <Link
+            href="/login"
+            className="font-medium text-[var(--color-navy)] hover:underline ml-1"
+          >
+            Masuk di sini
+          </Link>
+        )}
       </div>
     </form>
   );

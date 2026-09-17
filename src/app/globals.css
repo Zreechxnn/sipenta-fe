@@ -159,7 +159,7 @@ body {
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -175,7 +175,7 @@ body {
 @keyframes scaleUp {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(8px);
+    transform: scale(0.96) translateY(6px);
   }
   to {
     opacity: 1;
@@ -188,9 +188,47 @@ body {
   to   { transform: translateX(0);    opacity: 1; }
 }
 
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+
 @keyframes slideInUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tabFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes backdropFade {
@@ -200,7 +238,7 @@ body {
 
 @keyframes pulse-gentle {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50%       { transform: scale(1.15); opacity: 0.7; }
+  50%       { transform: scale(1.12); opacity: 0.75; }
 }
 
 @keyframes pulse-ring {
@@ -209,13 +247,38 @@ body {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 122, 79, 0); }
 }
 
-.animate-fade-in    { animation: fadeIn     0.22s ease-out forwards; }
-.animate-fade-up    { animation: fadeUp     0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-scale-up   { animation: scaleUp    0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-slide-left { animation: slideInLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-slide-up   { animation: slideInUp  0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-backdrop   { animation: backdropFade 0.2s ease-out forwards; }
-.animate-pulse-sync { animation: pulse-ring 2.2s infinite cubic-bezier(0.45, 0, 0.55, 1); }
+/* Primary animation classes with both kebab-case and camelCase support */
+.animate-fade-in,
+.animate-fadeIn     { animation: fadeIn      0.22s ease-out forwards; }
+
+.animate-fade-up,
+.animate-fadeUp     { animation: fadeUp      0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.animate-scale-up,
+.animate-scaleUp    { animation: scaleUp     0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.animate-slide-left,
+.animate-slideLeft  { animation: slideInLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.animate-slide-right,
+.animate-slideRight { animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.animate-slide-up,
+.animate-slideUp    { animation: slideInUp   0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.animate-slide-down,
+.animate-slideDown  { animation: slideDown   0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.animate-tab-fade   { animation: tabFade     0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-bubble-in  { animation: bubbleIn    0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-shake      { animation: shake       0.4s ease-in-out; }
+.animate-backdrop   { animation: backdropFade 0.22s ease-out forwards; }
+.animate-pulse-sync { animation: pulse-ring  2.2s infinite cubic-bezier(0.45, 0, 0.55, 1); }
+
+/* Fluid spring transition utility */
+.transition-fluid {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
 /* Stagger animation utilities */
 .stagger-1 { animation-delay: 40ms; }
@@ -229,10 +292,12 @@ body {
 button,
 a {
   transition:
-    background-color 0.15s ease,
-    color            0.15s ease,
-    border-color     0.15s ease,
-    opacity          0.15s ease;
+    background-color 0.18s ease,
+    color            0.18s ease,
+    border-color     0.18s ease,
+    opacity          0.18s ease,
+    transform        0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow       0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 input,

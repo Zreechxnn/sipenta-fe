@@ -173,12 +173,12 @@ export const UserModal: React.FC<UserModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fadeIn"
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
         onClick={() => !loading && onClose()}
       />
       
       {/* Modal */}
-      <div className="w-full max-w-lg bg-white rounded-2xl border border-slate-100 shadow-2xl relative animate-scaleUp max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="w-full max-w-lg bg-white rounded-2xl border border-slate-100 shadow-2xl relative animate-scale-up max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80">
           <div>

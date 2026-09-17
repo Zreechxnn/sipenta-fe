@@ -101,7 +101,7 @@ export default function ChatPage() {
       <Header onToggleMobileSidebar={() => setMobileOpen(true)} isLiveSyncing={isSignalRConnected} />
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-2 sm:pb-4 flex flex-col min-h-0 overflow-hidden animate-fadeIn">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2.5 sm:px-6 lg:px-8 pt-2 sm:pt-4 pb-2 sm:pb-4 flex flex-col min-h-0 overflow-hidden animate-fade-in">
         {/* Pending Approval Alert */}
         {isPendingApproval && (
           <div className="shrink-0 mb-2 sm:mb-3">

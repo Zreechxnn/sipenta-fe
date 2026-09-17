@@ -208,15 +208,15 @@ export default function KonfigurasiPage() {
             {/* LLM Stat */}
             <div
               onClick={() => setActiveTab('llm')}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+              className={`p-4 rounded-2xl border transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
                 activeTab === 'llm'
-                  ? 'bg-white border-indigo-400 ring-2 ring-indigo-500/10 shadow-xs'
-                  : 'bg-white/80 border-slate-200 hover:border-slate-300'
+                  ? 'bg-white border-indigo-500 ring-2 ring-indigo-500/15 shadow-sm'
+                  : 'bg-white/80 border-slate-200/80 hover:border-slate-300'
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500">LLM API Keys</span>
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs shadow-2xs">
                   <i className="fa-solid fa-microchip"></i>
                 </div>
               </div>
@@ -224,24 +224,24 @@ export default function KonfigurasiPage() {
                 <span className="text-xl font-bold text-slate-900">{overview.activeLlmKeys} Aktif</span>
                 <span className="text-xs text-slate-400">dari {overview.totalLlmKeys} total kunci</span>
               </div>
-              <p className="text-[11px] text-indigo-600 mt-1 font-semibold flex items-center gap-1">
+              <p className="text-[11px] text-indigo-600 mt-1 font-semibold flex items-center gap-1 group">
                 <span>Kelola failover multi-kunci</span>
-                <i className="fa-solid fa-arrow-right text-[9px]"></i>
+                <i className="fa-solid fa-arrow-right text-[9px] transition-transform duration-200 group-hover:translate-x-0.5"></i>
               </p>
             </div>
 
             {/* Storage Stat */}
             <div
               onClick={() => setActiveTab('storage')}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+              className={`p-4 rounded-2xl border transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
                 activeTab === 'storage'
-                  ? 'bg-white border-indigo-400 ring-2 ring-indigo-500/10 shadow-xs'
-                  : 'bg-white/80 border-slate-200 hover:border-slate-300'
+                  ? 'bg-white border-emerald-500 ring-2 ring-emerald-500/15 shadow-sm'
+                  : 'bg-white/80 border-slate-200/80 hover:border-slate-300'
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500">Cloud Storage Aktif</span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs shadow-2xs">
                   <i className="fa-solid fa-cloud"></i>
                 </div>
               </div>
@@ -250,59 +250,61 @@ export default function KonfigurasiPage() {
                   {overview.activeStorageProvider || 'Google Drive'}
                 </span>
               </div>
-              <p className="text-[11px] text-emerald-600 mt-1 font-semibold flex items-center gap-1">
+              <p className="text-[11px] text-emerald-600 mt-1 font-semibold flex items-center gap-1 group">
                 <span>Ubah ke Nextcloud / PDN / S3</span>
-                <i className="fa-solid fa-arrow-right text-[9px]"></i>
+                <i className="fa-solid fa-arrow-right text-[9px] transition-transform duration-200 group-hover:translate-x-0.5"></i>
               </p>
             </div>
 
             {/* Database Stat */}
             <div
               onClick={() => setActiveTab('database')}
-              className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+              className={`p-4 rounded-2xl border transition-all duration-200 cursor-pointer hover:-translate-y-0.5 hover:shadow-md ${
                 activeTab === 'database'
-                  ? 'bg-white border-indigo-400 ring-2 ring-indigo-500/10 shadow-xs'
-                  : 'bg-white/80 border-slate-200 hover:border-slate-300'
+                  ? 'bg-white border-amber-500 ring-2 ring-amber-500/15 shadow-sm'
+                  : 'bg-white/80 border-slate-200/80 hover:border-slate-300'
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500">Database PostgreSQL</span>
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
+                <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xs shadow-2xs">
                   <i className="fa-solid fa-database"></i>
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-2">
                 <span
-                  className={`w-2 h-2 rounded-full ${overview.isDatabaseConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}
+                  className={`w-2 h-2 rounded-full ${overview.isDatabaseConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}
                 ></span>
                 <span className="text-xs font-bold text-slate-800 truncate" title={overview.databaseHost}>
                   {overview.databaseHost || 'localhost'}
                 </span>
               </div>
-              <p className="text-[11px] text-amber-700 mt-1 font-semibold flex items-center gap-1">
+              <p className="text-[11px] text-amber-700 mt-1 font-semibold flex items-center gap-1 group">
                 <span>Atur URL & Connection String</span>
-                <i className="fa-solid fa-arrow-right text-[9px]"></i>
+                <i className="fa-solid fa-arrow-right text-[9px] transition-transform duration-200 group-hover:translate-x-0.5"></i>
               </p>
             </div>
 
           </div>
         )}
 
-        {/* Tab Navigation */}
-        <div className="flex items-center gap-2 border-b border-slate-200 mb-6 overflow-x-auto">
+        {/* Tab Navigation — Modern Segmented Control */}
+        <div className="flex items-center gap-1 p-1 bg-slate-200/60 rounded-2xl mb-6 max-w-fit border border-slate-200/80 shadow-2xs overflow-x-auto">
           <button
             type="button"
             onClick={() => setActiveTab('llm')}
-            className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === 'llm'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'bg-white text-indigo-700 shadow-xs ring-1 ring-black/5'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
             }`}
           >
-            <i className="fa-solid fa-microchip"></i>
-            API Key LLM
+            <i className="fa-solid fa-microchip text-[11px]"></i>
+            <span>API Key LLM</span>
             {llmConfig && (
-              <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-indigo-50 text-indigo-600">
+              <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
+                activeTab === 'llm' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-300/60 text-slate-600'
+              }`}>
                 {llmConfig.endpoints.length}
               </span>
             )}
@@ -311,46 +313,46 @@ export default function KonfigurasiPage() {
           <button
             type="button"
             onClick={() => setActiveTab('storage')}
-            className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === 'storage'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'bg-white text-indigo-700 shadow-xs ring-1 ring-black/5'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
             }`}
           >
-            <i className="fa-solid fa-cloud-arrow-up"></i>
-            Cloud Storage
+            <i className="fa-solid fa-cloud-arrow-up text-[11px]"></i>
+            <span>Cloud Storage</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('database')}
-            className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 flex items-center gap-2 whitespace-nowrap cursor-pointer active:scale-95 ${
               activeTab === 'database'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'bg-white text-indigo-700 shadow-xs ring-1 ring-black/5'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
             }`}
           >
-            <i className="fa-solid fa-database"></i>
-            URL Database
+            <i className="fa-solid fa-database text-[11px]"></i>
+            <span>URL Database</span>
           </button>
         </div>
 
         {/* Error message if any */}
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
+          <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 animate-fade-in">
             <i className="fa-solid fa-circle-exclamation text-rose-500"></i>
             <span>{error}</span>
           </div>
         )}
 
-        {/* Tab Content */}
+        {/* Tab Content with Fluid Animated Transition */}
         {loading && !llmConfig && !storageConfig && !databaseConfig ? (
-          <div className="p-12 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200">
+          <div className="p-12 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 animate-fade-in">
             <i className="fa-solid fa-spinner fa-spin text-2xl text-indigo-600 mb-2"></i>
             <span className="text-xs font-semibold text-slate-500">Memuat rincian konfigurasi...</span>
           </div>
         ) : (
-          <div>
+          <div key={activeTab} className="animate-tab-fade">
             {activeTab === 'llm' && llmConfig && (
               <LlmConfigTab
                 config={llmConfig}
