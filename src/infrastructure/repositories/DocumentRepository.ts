@@ -76,8 +76,12 @@ export class DocumentRepository implements IDocumentRepository {
     return { ok: false, message: result.pesan || result.message || 'Gagal menghapus dokumen' };
   }
 
-  async downloadDocument(id: string): Promise<Blob> {
-    const res = await authFetch(`${API_ENDPOINTS.DOCUMENTS}/${id}/download`, {
+  async downloadDocument(id: string, inline: boolean = true): Promise<Blob> {
+    const url = inline
+      ? `${API_ENDPOINTS.DOCUMENTS}/${id}/download?inline=true`
+      : `${API_ENDPOINTS.DOCUMENTS}/${id}/download`;
+
+    const res = await authFetch(url, {
       headers: getAuthHeaders(),
     });
 

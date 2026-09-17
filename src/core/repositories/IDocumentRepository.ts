@@ -5,7 +5,7 @@ export interface IDocumentRepository {
   createDocument(data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }>;
   updateDocument(id: string, data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }>;
   deleteDocument(id: string): Promise<{ ok: boolean; message?: string }>;
-  downloadDocument(id: string): Promise<Blob>;
+  downloadDocument(id: string, inline?: boolean): Promise<Blob>;
 
   // Document Sharing
   getShares(documentId: string): Promise<DocumentAccessUser[]>;

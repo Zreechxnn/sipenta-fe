@@ -20,8 +20,8 @@ export class DocumentUseCases {
     return await this.docRepo.deleteDocument(id);
   }
 
-  async downloadDocument(id: string): Promise<Blob> {
-    return await this.docRepo.downloadDocument(id);
+  async downloadDocument(id: string, inline: boolean = true): Promise<Blob> {
+    return await this.docRepo.downloadDocument(id, inline);
   }
 
   async fetchShares(documentId: string): Promise<DocumentAccessUser[]> {
