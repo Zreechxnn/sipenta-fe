@@ -30,4 +30,6 @@ export interface IConfigurationRepository {
   sudoLock(): Promise<void>;
   getSudoToken(): string | null;
   setSudoToken(token: string | null): void;
+
+  encryptAllConfigurations(): Promise<{ success: boolean; message: string }>;
 }

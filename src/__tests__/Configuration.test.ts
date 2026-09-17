@@ -29,6 +29,7 @@ describe('ConfigurationUseCases', () => {
       getSudoToken: vi.fn(),
       setSudoToken: vi.fn(),
       sudoLock: vi.fn(),
+      encryptAllConfigurations: vi.fn(),
     };
     useCases = new ConfigurationUseCases(mockRepo);
   });
@@ -121,5 +122,16 @@ describe('ConfigurationUseCases', () => {
 
     const saveRes = await useCases.saveDatabaseConfig(mockDb);
     expect(saveRes.requiresRestart).toBe(true);
+  });
+
+  it('should trigger encryptAllConfigurations successfully', async () => {
+    vi.mocked(mockRepo.encryptAllConfigurations).mockResolvedValue({
+      success: true,
+      message: 'All configurations encrypted.',
+    });
+
+    const res = await useCases.encryptAllConfigurations();
+    expect(res.success).toBe(true);
+    expect(mockRepo.encryptAllConfigurations).toHaveBeenCalledOnce();
   });
 });
