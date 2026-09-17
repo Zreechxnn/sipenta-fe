@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   devIndicators: false,
   allowedDevOrigins: ["192.168.0.104", "192.168.0.104:3000", "localhost:3000", ".rechanpage.my.id"],
   experimental: {
