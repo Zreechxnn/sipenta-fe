@@ -68,34 +68,102 @@ export function useDocuments() {
   };
 
   const downloadDocument = async (id: string, fileName?: string) => {
-    const newWindow = window.open('', '_blank');
+    // 1. Buka window tab baru segera saat user klik untuk mencegah popup blocker
+    const newWindow = typeof window !== 'undefined' ? window.open('', '_blank') : null;
     if (newWindow) {
-      newWindow.document.write('<div style="font-family:sans-serif;padding:20px;text-align:center;">Memuat dokumen, harap tunggu...</div>');
+      try {
+        newWindow.document.write(`
+          <!DOCTYPE html>
+          <html lang="id">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <title>${fileName || 'Memuat Dokumen...'} - SIAP</title>
+              <style>
+                body {
+                  margin: 0;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  height: 100vh;
+                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                  background-color: #f8fafc;
+                  color: #334155;
+                }
+                .loader {
+                  width: 36px;
+                  height: 36px;
+                  border: 3px solid #e2e8f0;
+                  border-top-color: #4f46e5;
+                  border-radius: 50%;
+                  animation: spin 0.8s linear infinite;
+                  margin-bottom: 14px;
+                }
+                @keyframes spin {
+                  to { transform: rotate(360deg); }
+                }
+                .title { font-size: 14px; font-weight: 600; margin: 0 0 4px; color: #0f172a; }
+                .subtitle { font-size: 12px; color: #64748b; margin: 0; }
+              </style>
+            </head>
+            <body>
+              <div class="loader"></div>
+              <p class="title">Membuka berkas dokumen...</p>
+              <p class="subtitle">${fileName || 'Harap tunggu beberapa detik'}</p>
+            </body>
+          </html>
+        `);
+      } catch {
+        // Abaikan jika penulisan awal tidak didukung
+      }
     }
 
     try {
-      const blob = await docUseCases.downloadDocument(id);
-      const url = URL.createObjectURL(blob);
-      
-      if (newWindow) {
-        newWindow.document.body.innerHTML = `
-          <body style="margin:0;padding:0;overflow:hidden;">
-            <embed src="${url}" type="application/pdf" width="100%" height="100%" style="border:none;" />
-          </body>
-        `;
-        newWindow.document.title = fileName || 'Dokumen';
+      const blob = await docUseCases.downloadDocument(id, true);
+
+      // Tentukan MIME type yang tepat agar browser merender dokumen langsung di tab
+      const isPdf = fileName?.toLowerCase().endsWith('.pdf') || blob.type === 'application/pdf';
+      const isImage = /\.(jpe?g|png|webp|gif|svg)$/i.test(fileName || '') || blob.type.startsWith('image/');
+
+      const resolvedType = isPdf ? 'application/pdf' : (isImage ? (blob.type || 'image/jpeg') : blob.type);
+      const viewableBlob = new Blob([blob], { type: resolvedType });
+      const url = URL.createObjectURL(viewableBlob);
+
+      if (newWindow && !newWindow.closed) {
+        if (isPdf || isImage) {
+          // Navigasi tingkat atas ke Blob URL mengaktifkan PDF Viewer native peramban (tanpa terunduh otomatis)
+          newWindow.location.replace(url);
+        } else {
+          // Untuk file non-viewable (misal .docx, .xlsx, .zip), tutup tab sementara dan unduh berkas
+          newWindow.close();
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName || 'dokumen';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
       } else {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName || 'document.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        // Fallback jika tab baru diblokir popup blocker
+        if (isPdf || isImage) {
+          window.open(url, '_blank');
+        } else {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName || 'dokumen';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
       }
-      
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+      // Pertahankan object URL selama 5 menit agar tab PDF tidak rusak saat dibaca
+      setTimeout(() => URL.revokeObjectURL(url), 300000);
     } catch (err) {
-      if (newWindow) newWindow.close();
+      if (newWindow && !newWindow.closed) {
+        newWindow.close();
+      }
       throw err;
     }
   };
