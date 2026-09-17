@@ -34,6 +34,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
   const [bidang, setBidang] = useState<string>('');
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MONTH_NAMES_ID = [
@@ -119,6 +120,7 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsDraggingOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       appendFiles(Array.from(e.dataTransfer.files));
     }
@@ -193,12 +195,12 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fadeIn cursor-pointer"
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in cursor-pointer"
         onClick={() => !loading && onClose()}
       />
       
       {/* Modal Container */}
-      <div className="w-full max-w-2xl bg-white rounded-2xl border border-slate-100 shadow-2xl relative animate-scaleUp max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="w-full max-w-2xl bg-white rounded-2xl border border-slate-100 shadow-2xl relative animate-scale-up max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/80">
           <div>
@@ -257,12 +259,22 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                 </div>
                 
                 <div
-                  onDragOver={e => e.preventDefault()}
+                  onDragOver={e => {
+                    e.preventDefault();
+                    setIsDraggingOver(true);
+                  }}
+                  onDragLeave={() => setIsDraggingOver(false)}
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
-                  className="relative border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/20 transition-all group"
+                  className={`relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 group ${
+                    isDraggingOver
+                      ? 'border-indigo-600 bg-indigo-50/70 scale-[1.01] shadow-md ring-4 ring-indigo-500/10'
+                      : 'border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/20'
+                  }`}
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center mb-3 transition-transform group-hover:scale-110">
+                  <div className={`w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center mb-3 transition-transform ${
+                    isDraggingOver ? 'scale-125' : 'group-hover:scale-110'
+                  }`}>
                     <i className="fas fa-cloud-upload-alt text-2xl"></i>
                   </div>
                   <p className="text-sm font-bold text-slate-800 mb-1">

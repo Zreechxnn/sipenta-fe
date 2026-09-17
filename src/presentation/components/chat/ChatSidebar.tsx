@@ -170,7 +170,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {/* Session list */}
       <div className="flex-1 overflow-y-auto min-h-0 p-2.5 space-y-1 overscroll-contain custom-scrollbar">
         {sessions.length === 0 ? (
-          <div className="text-center py-10 px-4 space-y-2.5 animate-fadeIn">
+          <div className="text-center py-10 px-4 space-y-2.5 animate-fade-in">
             <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
               <i className="fas fa-comments" />
             </div>

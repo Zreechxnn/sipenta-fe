@@ -50,11 +50,11 @@ export const ConfigSecurityGateModal: React.FC<ConfigSecurityGateModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200/80 p-6 sm:p-8 w-full max-w-md animate-scaleUp">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md animate-fade-in">
+      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200/80 p-6 sm:p-8 w-full max-w-md animate-scale-up">
         
         {/* Security Shield Icon */}
-        <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-2xl mx-auto mb-4 shadow-inner">
+        <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-2xl mx-auto mb-4 shadow-xs">
           <i className="fa-solid fa-shield-halved"></i>
         </div>
 
@@ -67,7 +67,7 @@ export const ConfigSecurityGateModal: React.FC<ConfigSecurityGateModalProps> = (
         </p>
 
         {errorMsg && (
-          <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2 animate-fadeIn">
+          <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2 animate-shake shadow-xs">
             <i className="fa-solid fa-circle-exclamation shrink-0 text-rose-500"></i>
             <span>{errorMsg}</span>
           </div>

@@ -76,7 +76,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
       {/* Floating Mini Tooltip on Hover */}
       {isHovered && !showLabel && (
-        <div className="absolute top-full right-0 mt-2 z-50 whitespace-nowrap rounded-xl bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white shadow-xl pointer-events-none animate-fadeIn border border-slate-700">
+        <div className="absolute top-full right-0 mt-2 z-50 whitespace-nowrap rounded-xl bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white shadow-xl pointer-events-none animate-fade-in border border-slate-700">
           <div className="flex items-center gap-1.5">
             <span
               className={`w-1.5 h-1.5 rounded-full ${

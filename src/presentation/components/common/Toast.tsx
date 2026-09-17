@@ -15,12 +15,11 @@ export const Toast: React.FC<ToastProps> = ({ show, message, isError = false, on
   return (
     <div
       role="alert"
-      className="fixed bottom-6 right-6 z-50 max-w-sm rounded-sm p-4 animate-slide-up shadow-xl border backdrop-blur-xs flex flex-col overflow-hidden"
-      style={{ 
-        backgroundColor: isError ? 'var(--color-error)' : 'var(--color-navy)',
-        borderColor: isError ? '#7f1d2d' : '#1e3a5f',
-        color: '#fff'
-      }}
+      className={`fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl p-4 animate-slide-up shadow-2xl border backdrop-blur-md flex flex-col overflow-hidden ${
+        isError
+          ? 'bg-rose-950/95 border-rose-700/80 text-white shadow-rose-950/30'
+          : 'bg-slate-900/95 border-slate-700/80 text-white shadow-slate-950/30'
+      }`}
     >
       <div className="flex items-start gap-3">
         <div className="mt-0.5 shrink-0">

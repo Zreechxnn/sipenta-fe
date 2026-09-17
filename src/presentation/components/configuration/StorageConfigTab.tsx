@@ -252,14 +252,14 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
           {/* Google Drive */}
           <div
             onClick={() => setActiveProvider('GoogleDrive')}
-            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
               activeProvider === 'GoogleDrive'
-                ? 'border-indigo-600 bg-indigo-50/40 shadow-xs'
+                ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-500/20'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shadow-2xs">
                 <i className="fa-brands fa-google-drive"></i>
               </div>
               <input
@@ -267,7 +267,7 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
                 name="storage_provider"
                 checked={activeProvider === 'GoogleDrive'}
                 onChange={() => setActiveProvider('GoogleDrive')}
-                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               />
             </div>
             <h3 className="text-xs font-bold text-slate-800">Google Drive</h3>
@@ -277,14 +277,14 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
           {/* Supabase Storage */}
           <div
             onClick={() => setActiveProvider('Supabase')}
-            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
               activeProvider === 'Supabase'
-                ? 'border-indigo-600 bg-indigo-50/40 shadow-xs'
+                ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-500/20'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shadow-2xs">
                 <i className="fa-solid fa-bolt text-emerald-500"></i>
               </div>
               <input
@@ -292,7 +292,7 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
                 name="storage_provider"
                 checked={activeProvider === 'Supabase'}
                 onChange={() => setActiveProvider('Supabase')}
-                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               />
             </div>
             <h3 className="text-xs font-bold text-slate-800">Supabase Storage</h3>
@@ -302,14 +302,14 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
           {/* Nextcloud / ownCloud / PDN WebDAV */}
           <div
             onClick={() => setActiveProvider('WebDav')}
-            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
               activeProvider === 'WebDav'
-                ? 'border-indigo-600 bg-indigo-50/40 shadow-xs'
+                ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-500/20'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm shadow-2xs">
                 <i className="fa-solid fa-network-wired"></i>
               </div>
               <input
@@ -317,7 +317,7 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
                 name="storage_provider"
                 checked={activeProvider === 'WebDav'}
                 onChange={() => setActiveProvider('WebDav')}
-                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               />
             </div>
             <h3 className="text-xs font-bold text-slate-800">Nextcloud / ownCloud / PDN</h3>
@@ -327,14 +327,14 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
           {/* S3 / OpenStack / PDN Object Storage */}
           <div
             onClick={() => setActiveProvider('S3Compatible')}
-            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
               activeProvider === 'S3Compatible'
-                ? 'border-indigo-600 bg-indigo-50/40 shadow-xs'
+                ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-500/20'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-sm">
+              <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center text-sm shadow-2xs">
                 <i className="fa-solid fa-server"></i>
               </div>
               <input
@@ -342,7 +342,7 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
                 name="storage_provider"
                 checked={activeProvider === 'S3Compatible'}
                 onChange={() => setActiveProvider('S3Compatible')}
-                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               />
             </div>
             <h3 className="text-xs font-bold text-slate-800">OpenStack / S3 / PDN Object</h3>
@@ -352,14 +352,14 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
           {/* Local Disk Storage */}
           <div
             onClick={() => setActiveProvider('LocalStorage')}
-            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+            className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] ${
               activeProvider === 'LocalStorage'
-                ? 'border-indigo-600 bg-indigo-50/40 shadow-xs'
+                ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-500/20'
                 : 'border-slate-200 bg-white hover:border-slate-300'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
+              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm shadow-2xs">
                 <i className="fa-solid fa-hard-drive"></i>
               </div>
               <input
@@ -367,7 +367,7 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
                 name="storage_provider"
                 checked={activeProvider === 'LocalStorage'}
                 onChange={() => setActiveProvider('LocalStorage')}
-                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               />
             </div>
             <h3 className="text-xs font-bold text-slate-800">Local Disk Storage</h3>
@@ -379,10 +379,10 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
 
       {/* Provider Details Form */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
-        
+        <div key={activeProvider} className="animate-tab-fade">
         {/* Google Drive Configuration */}
         {activeProvider === 'GoogleDrive' && (
-          <div className="space-y-4 animate-fadeIn">
+          <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h4 className="text-xs font-bold text-slate-800 flex items-center gap-2">
                 <i className="fa-brands fa-google-drive text-emerald-600"></i>
@@ -922,6 +922,7 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
             </div>
           </div>
         )}
+        </div>
 
       </div>
 

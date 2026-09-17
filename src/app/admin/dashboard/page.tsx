@@ -70,7 +70,7 @@ export default function AdminDashboardPage() {
       <Header onToggleMobileSidebar={() => setMobileOpen(true)} isLiveSyncing={isSignalRConnected} />
       <MobileSidebar isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
-      <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-fadeIn">
+      <main className="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-fade-in">
         
         {/* Standard Page Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -85,23 +85,6 @@ export default function AdminDashboardPage() {
               {bidang ? ` (${bidang})` : ''}. {isKasubag ? 'Panel ringkasan dokumen dan statistik bidang Anda.' : 'Panel kendali utama Sistem Informasi Pelaporan Tenaga Ahli (SIPENTA).'}
             </p>
           </div>
-          
-          <div className="flex gap-2 shrink-0">
-            {isRoleAdmin && (
-              <Link href="/admin/konfigurasi" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-xs active:scale-95 cursor-pointer bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
-                <i className="fa-solid fa-sliders text-indigo-600"></i>
-                Konfigurasi
-              </Link>
-            )}
-            <Link href="/users" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-xs active:scale-95 cursor-pointer bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
-              <i className="fa-solid fa-users text-slate-400"></i>
-              Kelola Pengguna
-            </Link>
-            <Link href="/dokumen" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-md shadow-indigo-600/20 active:scale-95 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white">
-              <i className="fa-solid fa-file-lines text-[14px]"></i>
-              Lihat Dokumen
-            </Link>
-          </div>
         </div>
 
         {loading ? (
@@ -115,9 +98,9 @@ export default function AdminDashboardPage() {
           <div className="space-y-6">
             {/* Stats Overview Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80">
+              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
+                  <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shadow-2xs">
                     <i className="fa-solid fa-users"></i>
                   </div>
                   <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Pengguna</h3>
@@ -125,9 +108,9 @@ export default function AdminDashboardPage() {
                 <p className="text-3xl font-bold text-slate-800">{summary?.totalUsers || 0}</p>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80">
+              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500">
+                  <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shadow-2xs">
                     <i className="fa-solid fa-user-clock"></i>
                   </div>
                   <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Antrean Persetujuan</h3>
@@ -140,9 +123,9 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80">
+              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 shadow-2xs">
                     <i className="fa-solid fa-file-lines"></i>
                   </div>
                   <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Volume Dokumen</h3>
@@ -150,10 +133,10 @@ export default function AdminDashboardPage() {
                 <p className="text-3xl font-bold text-slate-800">{summary?.totalDocuments || 0}</p>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 flex flex-col justify-between">
+              <div className="bg-white p-5 rounded-2xl shadow-xs border border-slate-200/80 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 shadow-2xs">
                       <i className="fa-solid fa-hard-drive"></i>
                     </div>
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Beban Penyimpanan</h3>

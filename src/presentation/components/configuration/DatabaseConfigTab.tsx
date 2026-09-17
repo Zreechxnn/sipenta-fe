@@ -344,9 +344,9 @@ export const DatabaseConfigTab: React.FC<DatabaseConfigTabProps> = ({
 
       {/* Confirmation Dialog */}
       {confirmModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 w-full max-w-md animate-scaleUp">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 text-xl mx-auto mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 w-full max-w-md animate-scale-up">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 text-xl mx-auto mb-4 shadow-xs">
               <i className="fa-solid fa-triangle-exclamation"></i>
             </div>
             <h3 className="text-base font-bold text-slate-900 text-center">Konfirmasi Perubahan Database</h3>
@@ -358,14 +358,14 @@ export const DatabaseConfigTab: React.FC<DatabaseConfigTabProps> = ({
               <button
                 type="button"
                 onClick={() => setConfirmModalOpen(false)}
-                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleSaveConfirmed}
-                className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-600/20 cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-600/20 active:scale-95 transition-all cursor-pointer"
               >
                 Ya, Simpan Perubahan
               </button>

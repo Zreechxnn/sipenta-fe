@@ -157,7 +157,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
           {/* Dropdown Menu - Opens Upward over messages */}
           {isModelDropdownOpen && (
-            <div className="absolute bottom-full left-0 mb-1.5 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 animate-scaleUp">
+            <div className="absolute bottom-full left-0 mb-1.5 w-72 sm:w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-1.5 z-50 animate-scale-up">
               <div className="px-2.5 py-1.5 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] font-bold text-slate-700">Pilih Model AI</span>
                 <span className="text-[9.5px] text-slate-400">SIAP Multimodal</span>

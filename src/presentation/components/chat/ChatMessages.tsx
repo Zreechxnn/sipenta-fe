@@ -72,7 +72,7 @@ const MessageBubble = React.memo<MessageBubbleProps>(({ msg, index, isCopied, on
 
   return (
     <div
-      className={`relative z-10 flex flex-col group min-w-0 ${
+      className={`relative z-10 flex flex-col group min-w-0 animate-bubble-in ${
         isUser
           ? 'max-w-[92%] sm:max-w-[85%] w-fit self-end items-end'
           : 'w-full sm:w-fit sm:max-w-[85%] self-start items-start'
@@ -283,7 +283,7 @@ export const ChatMessages = forwardRef<ChatMessagesRef, ChatMessagesProps>(
           )}
 
           {isSending && (
-            <div className="max-w-[90%] sm:max-w-[85%] w-fit self-start mr-auto relative z-10 flex flex-col">
+            <div className="max-w-[90%] sm:max-w-[85%] w-fit self-start mr-auto relative z-10 flex flex-col animate-bubble-in">
               <div className="flex items-center gap-2 mb-1.5 ml-1">
                 <div className="w-5 h-5 rounded-md bg-indigo-600 text-white flex items-center justify-center shadow-xs">
                   <i className="fas fa-robot text-[9px]"></i>

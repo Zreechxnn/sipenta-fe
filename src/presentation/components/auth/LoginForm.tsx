@@ -11,9 +11,10 @@ const LOCKOUT_COOKIE_KEY = 'sipenta_lockout_until';
 
 interface LoginFormProps {
   showToast: (msg: string, isError?: boolean) => void;
+  onSwitchToRegister?: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ showToast, onSwitchToRegister }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -142,7 +143,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
 
       {/* Remaining Attempts Warning Banner */}
       {lockoutSeconds === 0 && remainingAttempts !== null && remainingAttempts < 5 && (
-        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2.5 animate-fadeIn">
+        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-2.5 animate-shake shadow-xs">
           <i className="fa-solid fa-triangle-exclamation text-amber-600 text-sm shrink-0"></i>
           <span className="leading-snug">
             Kata sandi salah. Sisa kesempatan: <strong className="text-amber-800">{remainingAttempts} kali</strong> lagi sebelum akun terkunci selama 5 menit.
@@ -262,12 +263,22 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
 
       <div className="text-center pt-4 border-t border-[var(--color-border)] text-[13px] text-[var(--color-ink-muted)]">
         Belum memiliki akun?{' '}
-        <Link
-          href="/register"
-          className="font-medium text-[var(--color-navy)] hover:underline ml-1"
-        >
-          Daftar akun baru
-        </Link>
+        {onSwitchToRegister ? (
+          <button
+            type="button"
+            onClick={onSwitchToRegister}
+            className="font-medium text-[var(--color-navy)] hover:underline ml-1 cursor-pointer"
+          >
+            Daftar akun baru
+          </button>
+        ) : (
+          <Link
+            href="/register"
+            className="font-medium text-[var(--color-navy)] hover:underline ml-1"
+          >
+            Daftar akun baru
+          </Link>
+        )}
       </div>
     </form>
   );
