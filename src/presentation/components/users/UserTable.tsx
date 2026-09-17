@@ -70,8 +70,9 @@ export const UserTable: React.FC<UserTableProps> = ({
               ? BIDANG_COLORS[user.bidang]
               : { bg: 'bg-slate-100 text-slate-700', border: 'border-slate-200' };
 
-            const roleDisplay = roleLower === 'admin' ? 'Admin' : (roleLower === 'kasubag' ? 'Kasubag' : 'Tenaga Ahli');
-            const roleBadgeColor = roleLower === 'admin' ? 'text-purple-800 bg-purple-100' : (roleLower === 'kasubag' ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
+            const isKasubag = roleLower === 'kasubag';
+            const roleDisplay = roleLower === 'admin' ? 'Admin' : (isKasubag ? 'Kasubag' : 'Tenaga Ahli');
+            const roleBadgeColor = roleLower === 'admin' ? 'text-purple-800 bg-purple-100' : (isKasubag ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
 
             return (
               <div
@@ -199,8 +200,9 @@ export const UserTable: React.FC<UserTableProps> = ({
                   ? BIDANG_COLORS[user.bidang]
                   : { bg: 'bg-slate-100 text-slate-700', border: 'border-slate-200' };
 
-                const roleDisplay = roleLower === 'admin' ? 'Admin' : (roleLower === 'kasubag' ? 'Kasubag' : 'Tenaga Ahli');
-                const roleBadgeColor = roleLower === 'admin' ? 'text-purple-800 bg-purple-100' : (roleLower === 'kasubag' ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
+                const isKasubag = roleLower === 'kasubag';
+                const roleDisplay = roleLower === 'admin' ? 'Admin' : (isKasubag ? 'Kasubag' : 'Tenaga Ahli');
+                const roleBadgeColor = roleLower === 'admin' ? 'text-purple-800 bg-purple-100' : (isKasubag ? 'text-blue-800 bg-blue-100' : 'text-indigo-700 bg-indigo-50');
 
                 return (
                   <tr

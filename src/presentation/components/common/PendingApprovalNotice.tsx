@@ -21,7 +21,7 @@ export const PendingApprovalNotice: React.FC<PendingApprovalNoticeProps> = ({ on
             </span>
           </div>
           <p className="mt-1 text-sm text-amber-800 leading-relaxed">
-            Akun Anda baru saja terdaftar dan saat ini sedang menunggu verifikasi dari <strong>Administrator / Kasubag Diskominfo</strong> untuk disetujui serta ditentukan penempatan <strong>Bidang</strong> kerjanya.
+            Akun Anda baru saja terdaftar dan saat ini sedang menunggu verifikasi dari <strong>Administrator / Kepala Bidang Diskominfo</strong> untuk disetujui serta ditentukan penempatan <strong>Bidang</strong> kerjanya.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <span className="text-xs text-amber-700 bg-white/70 px-3 py-1.5 rounded-lg border border-amber-200/60 font-medium">

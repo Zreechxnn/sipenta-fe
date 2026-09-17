@@ -90,7 +90,7 @@ export default function ChatPage() {
 
   const handleSendMessage = (msg: string, mode: string = 'auto') => {
     if (isPendingApproval) {
-      showToast('Akun Anda masih menunggu persetujuan Admin/Kasubag sebelum dapat menggunakan Asisten AI.', true);
+      showToast('Akun Anda masih menunggu persetujuan Admin/Kepala Bidang sebelum dapat menggunakan Asisten AI.', true);
       return;
     }
     sendMessage(msg, mode);

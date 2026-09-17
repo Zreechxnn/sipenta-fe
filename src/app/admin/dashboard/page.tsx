@@ -87,6 +87,12 @@ export default function AdminDashboardPage() {
           </div>
           
           <div className="flex gap-2 shrink-0">
+            {isRoleAdmin && (
+              <Link href="/admin/konfigurasi" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-xs active:scale-95 cursor-pointer bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
+                <i className="fa-solid fa-sliders text-indigo-600"></i>
+                Konfigurasi
+              </Link>
+            )}
             <Link href="/users" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all text-xs font-bold shadow-xs active:scale-95 cursor-pointer bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
               <i className="fa-solid fa-users text-slate-400"></i>
               Kelola Pengguna

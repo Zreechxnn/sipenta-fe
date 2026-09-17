@@ -142,10 +142,11 @@ export default function ProfilePage() {
                 <div className="mb-6">
                   {(() => {
                     const r = profile?.role?.toLowerCase() || '';
-                    const label = r === 'admin' ? 'Admin' : (r === 'kasubag' ? 'Kasubag' : 'Tenaga Ahli');
+                    const isKasubagRole = r === 'kasubag';
+                    const label = r === 'admin' ? 'Admin' : (isKasubagRole ? 'Kasubag' : 'Tenaga Ahli');
                     const badgeClass = r === 'admin'
                       ? 'bg-purple-100 text-purple-700 border-purple-200'
-                      : r === 'kasubag'
+                      : isKasubagRole
                       ? 'bg-blue-100 text-blue-700 border-blue-200'
                       : 'bg-indigo-100 text-indigo-700 border-indigo-200';
 

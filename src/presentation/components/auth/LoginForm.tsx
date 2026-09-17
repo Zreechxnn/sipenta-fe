@@ -92,9 +92,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
         showToast('Login berhasil!');
         
         const userRole = result.user?.role || result.User?.Role || 'user';
-        const isAdmin = ['admin', 'kasubag'].includes(userRole.toLowerCase());
+        const isExecutive = ['admin', 'kasubag'].includes(userRole.toLowerCase());
         setTimeout(() => {
-          router.push(isAdmin ? '/dokumen' : '/chat');
+          router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
         }, 600);
       } else {
         if (result.isLockedOut) {
@@ -240,9 +240,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast }) => {
                   showToast('Login dengan Google berhasil!');
                   
                   const userRole = result.user?.role || result.User?.Role || 'user';
-                  const isAdmin = ['admin', 'kasubag'].includes(userRole.toLowerCase());
+                  const isExecutive = ['admin', 'kasubag'].includes(userRole.toLowerCase());
                   setTimeout(() => {
-                    router.push(isAdmin ? '/dokumen' : '/chat');
+                    router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
                   }, 600);
                 } else {
                   showToast(result.message || 'Login dengan Google gagal', true);

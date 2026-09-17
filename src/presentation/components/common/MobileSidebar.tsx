@@ -233,6 +233,9 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
           {isAdmin && (
             <NavItem index={3} href="/users" icon="fa-users" label="Kelola Pengguna" />
           )}
+          {role === 'admin' && (
+            <NavItem index={3.5} href="/admin/konfigurasi" icon="fa-sliders" label="Konfigurasi Sistem" />
+          )}
 
           <NavItem index={4} href="/chat" icon="fa-comments" label="Asisten Analisis AI" />
           <NavItem index={5} href="/profile" icon="fa-id-card" label="Profil Saya" />

@@ -68,7 +68,7 @@ export default function HomePage() {
       category: 'Bidang Persandian',
       label: 'Evaluasi Keamanan & Hak Akses Sistem',
       q: 'Bagaimana hasil peninjauan keamanan informasi dan tata kelola akun pengguna?',
-      a: 'Berdasarkan Laporan Kerja Tenaga Ahli Keamanan Informasi:\n• Peninjauan hak akses pengguna berdasarkan 3 tingkatan peran (Admin, Kasubag, Tenaga Ahli).\n• Memastikan isolasi data dokumen per bidang berjalan dengan aman.\n• Verifikasi mekanisme persetujuan akun baru untuk mencegah akses tanpa otorisasi.',
+      a: 'Berdasarkan Laporan Kerja Tenaga Ahli Keamanan Informasi:\n• Peninjauan hak akses pengguna berdasarkan 3 tingkatan peran (Admin, Kepala Bidang, Tenaga Ahli).\n• Memastikan isolasi data dokumen per bidang berjalan dengan aman.\n• Verifikasi mekanisme persetujuan akun baru untuk mencegah akses tanpa otorisasi.',
       source: 'Laporan_Keamanan_Informasi_2026.pdf',
       page: 'Halaman 5',
       status: 'Terverifikasi dalam Laporan',
@@ -146,7 +146,7 @@ export default function HomePage() {
     {
       num: '03',
       title: 'Penelusuran Dokumen Interaktif',
-      desc: 'Kasubag dan tim evaluator dapat menanyakan rincian pekerjaan bulanan, progres fitur, atau kendala lapangan melalui ruang konsultasi dokumen.',
+      desc: 'Kepala Bidang dan tim evaluator dapat menanyakan rincian pekerjaan bulanan, progres fitur, atau kendala lapangan melalui ruang konsultasi dokumen.',
       icon: 'fa-comments',
       badge: 'Pencarian Berbasis Dokumen',
     },
@@ -223,7 +223,7 @@ export default function HomePage() {
     },
     {
       q: 'Bagaimana mekanisme persetujuan akun pengguna baru?',
-      a: 'Demi menjaga keamanan data instansi, pengguna yang baru mendaftar akan berstatus Menunggu Persetujuan (Pending). Administrator atau Kasubag akan memverifikasi data dan menentukan penempatan bidang sebelum akun dapat mengakses fitur laporan.',
+      a: 'Demi menjaga keamanan data instansi, pengguna yang baru mendaftar akan berstatus Menunggu Persetujuan (Pending). Administrator atau Kepala Bidang akan memverifikasi data dan menentukan penempatan bidang sebelum akun dapat mengakses fitur laporan.',
     },
     {
       q: 'Format berkas apa saja yang didukung oleh sistem?',
@@ -602,7 +602,7 @@ export default function HomePage() {
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs font-medium">
               <i className="fas fa-user-shield text-indigo-500 text-xs" />
-              Hak Akses 3 Peran (Admin, Kasubag, Ahli)
+              Hak Akses 3 Peran (Admin, Kasubag, Tenaga Ahli)
             </span>
           </div>
         </div>
@@ -773,7 +773,7 @@ export default function HomePage() {
                 3 Tingkat
               </span>
               <span className="text-xs text-slate-500 font-medium">
-                Hak Akses (Admin, Kasubag, Ahli)
+                Hak Akses (Admin, Kasubag, Tenaga Ahli)
               </span>
             </div>
             <div className="px-2">
@@ -913,7 +913,7 @@ export default function HomePage() {
                   Persetujuan & Hak Akses
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Pendaftaran akun baru wajib diverifikasi oleh Admin/Kasubag guna menjamin kerahasiaan dan isolasi dokumen per bidang tugas.
+                  Pendaftaran akun baru wajib diverifikasi oleh Admin/Kepala Bidang guna menjamin kerahasiaan dan isolasi dokumen per bidang tugas.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-200 text-[11px] font-semibold text-rose-700">
@@ -999,7 +999,7 @@ export default function HomePage() {
                 }`}
               >
                 <i className="fas fa-user-tie mr-1.5" />
-                Kasubag / Penilai
+                Kepala Bidang / Penilai
               </button>
               <button
                 onClick={() => setActiveTabRole('expert')}
@@ -1035,7 +1035,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                      Kemudahan untuk Kasubag & Tim Penilai
+                      Kemudahan untuk Kepala Bidang & Tim Penilai
                     </h3>
                     <p className="text-xs text-slate-500">
                       Evaluasi kinerja bulanan terstruktur berbasis bukti dokumen laporan

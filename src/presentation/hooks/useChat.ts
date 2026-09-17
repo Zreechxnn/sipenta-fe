@@ -101,7 +101,7 @@ export function useChat() {
         };
         setMessages(prev => [...prev, errorMessage]);
       }
-    } catch (err) {
+    } catch {
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content: 'Kesalahan koneksi.',

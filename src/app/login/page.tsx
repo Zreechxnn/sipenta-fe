@@ -6,7 +6,6 @@ import { useAuth } from '@/presentation/hooks/useAuth';
 import { useToast } from '@/presentation/hooks/useToast';
 import { LoginForm } from '@/presentation/components/auth/LoginForm';
 import { Toast } from '@/presentation/components/common/Toast';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,8 +14,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isLoading && token) {
-      const isAdmin = role && ['admin', 'kasubag'].includes(role.toLowerCase());
-      router.push(isAdmin ? '/dokumen' : '/chat');
+      const isExecutive = role && ['admin', 'kasubag'].includes(role.toLowerCase());
+      router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
     }
   }, [token, role, isLoading, router]);
 

@@ -115,6 +115,7 @@ export class AuthRepository implements IAuthRepository {
   }
 
   setAuth(token: string, role: string, user?: any, expiresAt?: string, _refreshToken?: string): void {
+    void _refreshToken;
     if (typeof window === 'undefined') return;
 
     if (token && token !== 'hidden-httponly-token' && token !== 'session-active') {

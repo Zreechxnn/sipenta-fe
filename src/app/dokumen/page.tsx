@@ -17,10 +17,9 @@ import { useBidangs } from '@/presentation/hooks/useBidangs';
 import { useDataSignalR } from '@/presentation/hooks/useDataSignalR';
 import { useToast } from '@/presentation/hooks/useToast';
 import { Document } from '@/core/domain/document';
-import { BIDANG_LIST } from '@/core/constants/bidang';
 
 export default function DashboardPage() {
-  const { isLoading: authLoading, role, bidang: userBidang, isPendingApproval, isAdmin, checkAuth, refreshProfile } = useAuth(true, false);
+  const { isLoading: authLoading, role, bidang: userBidang, isPendingApproval, isAdmin, refreshProfile } = useAuth(true, false);
   const { bidangs } = useBidangs();
   const { toast, showToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -173,7 +172,7 @@ export default function DashboardPage() {
 
   const handleOpenUploadModal = () => {
     if (isPendingApproval) {
-      showToast('Akun Anda masih menunggu persetujuan Admin/Kasubag sebelum dapat mengunggah dokumen.', true);
+      showToast('Akun Anda masih menunggu persetujuan Admin/Kepala Bidang sebelum dapat mengunggah dokumen.', true);
       return;
     }
     setEditingDoc(null);

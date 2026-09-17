@@ -264,4 +264,5 @@ export const API_ENDPOINTS = {
   get CHAT() { return `${getApiBaseUrl()}/Chat`; },
   get BIDANG() { return `${getApiBaseUrl()}/bidang`; },
   get DASHBOARD() { return `${getApiBaseUrl()}/Dashboard`; },
+  get CONFIGURATIONS() { return `${getApiBaseUrl()}/Configuration`; },
 };
