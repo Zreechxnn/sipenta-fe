@@ -16,12 +16,14 @@ interface NavItemConfig {
   label: string;
   icon: string;
   adminOnly?: boolean;
+  roleSpecific?: string;
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: 'fa-chart-pie', adminOnly: true },
   { href: '/dokumen', label: 'Laporan Kerja', icon: 'fa-file-alt' },
   { href: '/users', label: 'Pengguna', icon: 'fa-users', adminOnly: true },
+  { href: '/admin/konfigurasi', label: 'Konfigurasi', icon: 'fa-sliders', roleSpecific: 'admin' },
   { href: '/chat', label: 'Chat AI', icon: 'fa-comments' },
   { href: '/profile', label: 'Profil', icon: 'fa-id-card' },
 ];
@@ -49,6 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar, isLiveSyn
   const navRef = useRef<HTMLElement>(null);
   const availableNavItems = useMemo(
     () => NAV_ITEMS.filter(item => {
+      if (item.roleSpecific) return role === item.roleSpecific;
       if (item.adminOnly) return isAdmin;
       return true;
     }),

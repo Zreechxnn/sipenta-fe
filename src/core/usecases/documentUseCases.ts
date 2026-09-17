@@ -1,5 +1,5 @@
 import { IDocumentRepository } from '../repositories/IDocumentRepository';
-import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentChunk, DocumentAccessUser } from '../domain/document';
+import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentAccessUser } from '../domain/document';
 
 export class DocumentUseCases {
   constructor(private docRepo: IDocumentRepository) {}
@@ -22,14 +22,6 @@ export class DocumentUseCases {
 
   async downloadDocument(id: string): Promise<Blob> {
     return await this.docRepo.downloadDocument(id);
-  }
-
-  async fetchChunks(id: string): Promise<DocumentChunk[]> {
-    return await this.docRepo.getChunks(id);
-  }
-
-  async saveChunk(documentId: string, chunkId: string, content: string): Promise<{ ok: boolean; message?: string }> {
-    return await this.docRepo.updateChunk(documentId, chunkId, content);
   }
 
   async fetchShares(documentId: string): Promise<DocumentAccessUser[]> {

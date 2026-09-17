@@ -26,7 +26,6 @@ export const ApproveUserModal: React.FC<ApproveUserModalProps> = ({
   const [selectedBidang, setSelectedBidang] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
-  const isAdmin = role === 'admin';
   const isKasubag = role === 'kasubag';
 
   useEffect(() => {

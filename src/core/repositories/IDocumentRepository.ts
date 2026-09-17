@@ -1,4 +1,4 @@
-import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentChunk, DocumentAccessUser } from '../domain/document';
+import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentAccessUser } from '../domain/document';
 
 export interface IDocumentRepository {
   getDocuments(params: DocumentQueryParams): Promise<DocumentPagedResponse>;
@@ -6,8 +6,6 @@ export interface IDocumentRepository {
   updateDocument(id: string, data: SaveDocumentDto): Promise<{ ok: boolean; message?: string }>;
   deleteDocument(id: string): Promise<{ ok: boolean; message?: string }>;
   downloadDocument(id: string): Promise<Blob>;
-  getChunks(id: string): Promise<DocumentChunk[]>;
-  updateChunk(documentId: string, chunkId: string, content: string): Promise<{ ok: boolean; message?: string }>;
 
   // Document Sharing
   getShares(documentId: string): Promise<DocumentAccessUser[]>;

@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import fs from 'fs';
+import { test } from '@playwright/test';
 import path from 'path';
 
 test.describe('Diagram Visual Audit', () => {

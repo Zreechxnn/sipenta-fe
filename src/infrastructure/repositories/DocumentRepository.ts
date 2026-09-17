@@ -1,5 +1,5 @@
 import { IDocumentRepository } from '@/core/repositories/IDocumentRepository';
-import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentChunk, DocumentAccessUser } from '@/core/domain/document';
+import { DocumentPagedResponse, DocumentQueryParams, SaveDocumentDto, DocumentAccessUser } from '@/core/domain/document';
 import { API_ENDPOINTS, getAuthHeaders, authFetch } from '../api/apiClient';
 
 export class DocumentRepository implements IDocumentRepository {
@@ -85,35 +85,6 @@ export class DocumentRepository implements IDocumentRepository {
       throw new Error('Gagal mengunduh dokumen');
     }
     return await res.blob();
-  }
-
-  async getChunks(id: string): Promise<DocumentChunk[]> {
-    const res = await authFetch(`${API_ENDPOINTS.DOCUMENTS}/${id}/chunks`, {
-      headers: getAuthHeaders(),
-    });
-    const result = await res.json();
-    let data: DocumentChunk[] = [];
-    if (result.sukses !== undefined) {
-      if (result.data?.chunks) data = result.data.chunks;
-      else if (result.data?.Chunks) data = result.data.Chunks;
-      else if (Array.isArray(result.data)) data = result.data;
-    } else if (result.chunks) data = result.chunks;
-    else if (result.Chunks) data = result.Chunks;
-    else if (Array.isArray(result)) data = result;
-
-    return data;
-  }
-
-  async updateChunk(documentId: string, chunkId: string, content: string): Promise<{ ok: boolean; message?: string }> {
-    const res = await authFetch(`${API_ENDPOINTS.DOCUMENTS}/${documentId}/chunks/${chunkId}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(true),
-      body: JSON.stringify({ Content: content }),
-    });
-
-    if (res.ok) return { ok: true };
-    const result = await res.json().catch(() => ({}));
-    return { ok: false, message: result.message || result.pesan || 'Gagal memperbarui chunk' };
   }
 
   // Document Sharing

@@ -293,7 +293,7 @@ export const UserModal: React.FC<UserModalProps> = ({
                     <option value={2}>Admin</option>
                   )}
                   {isAdmin && (
-                    <option value={1}>Kasubag</option>
+                    <option value={1}>Kasubag (Admin Bidang)</option>
                   )}
                   <option value={3}>Tenaga Ahli</option>
                 </select>

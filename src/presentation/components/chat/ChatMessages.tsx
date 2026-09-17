@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { ChatMessage } from '@/core/domain/chat';
-import { getApiBaseUrl } from '@/infrastructure/api/apiClient';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 const getSourceLabel = (src: any) => {

@@ -14,7 +14,6 @@ import { useBidangs } from '@/presentation/hooks/useBidangs';
 import { useDataSignalR } from '@/presentation/hooks/useDataSignalR';
 import { useToast } from '@/presentation/hooks/useToast';
 import { UserAccount } from '@/core/domain/user';
-import { BIDANG_LIST } from '@/core/constants/bidang';
 
 export default function UsersPage() {
   const { isLoading: authLoading, role: currentRole, bidang: currentBidang } = useAuth(true, true);

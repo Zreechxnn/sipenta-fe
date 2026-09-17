@@ -20,7 +20,7 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
   const [bidang, setBidang] = useState<string | null>(null);
   const [isApproved, setIsApproved] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(requireAuth);
 
   const checkAuth = useCallback(async () => {
     let auth = authUseCases.getAuthState();
@@ -62,7 +62,7 @@ export function useAuth(requireAuth = false, requireAdmin = false) {
     }
 
     if (requireAdmin && (!auth.token || !auth.isAdmin)) {
-      router.push(auth.token ? '/chat' : '/login?reason=expired');
+      router.push(auth.token ? '/dokumen' : '/login?reason=expired');
       return false;
     }
 

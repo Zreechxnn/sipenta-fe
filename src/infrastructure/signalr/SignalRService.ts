@@ -1,6 +1,6 @@
 import * as signalR from '@microsoft/signalr';
 import { ISignalRService } from '@/core/services/ISignalRService';
-import { getApiBaseUrl, getAccessToken, tryRefreshToken } from '../api/apiClient';
+import { getAccessToken, tryRefreshToken } from '../api/apiClient';
 
 export class SignalRService implements ISignalRService {
   private connection: signalR.HubConnection | null = null;
@@ -43,7 +43,7 @@ export class SignalRService implements ISignalRService {
     try {
       await this.connection.start();
       console.log('SignalR DataHub connected to:', hubUrl);
-    } catch (err) {
+    } catch {
       console.warn('SignalR DataHub connection warning:', hubUrl);
     }
   }

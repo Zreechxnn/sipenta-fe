@@ -50,7 +50,7 @@ export function useDataSignalR(
       signalRService.onUserChanged((event, data) => {
         if (event === 'UserRegistered' || event === 'UserCreated') {
           sendDeviceNotification('SIPENTA - Pengguna Baru', {
-            body: 'Pengguna baru telah mendaftar dan menunggu verifikasi Admin/Kasubag.',
+            body: 'Pengguna baru telah mendaftar dan menunggu verifikasi Admin/Kepala Bidang.',
             url: '/users',
             tag: 'user-registered',
           });
