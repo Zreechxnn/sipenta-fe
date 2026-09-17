@@ -83,7 +83,10 @@ export class ConfigurationRepository implements IConfigurationRepository {
       headers: this.getHeaders(),
     });
     if (!res.ok) {
-      throw new Error(`Gagal memuat ringkasan konfigurasi: ${res.statusText}`);
+      const err = await res.json().catch(() => ({}));
+      const error: any = new Error(err.detail || err.message || `Gagal memuat ringkasan konfigurasi: ${res.statusText}`);
+      error.code = err.code;
+      throw error;
     }
     return await res.json();
   }
@@ -94,7 +97,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || `Gagal memuat konfigurasi LLM: ${res.statusText}`);
+      const error: any = new Error(err.detail || err.message || `Gagal memuat konfigurasi LLM: ${res.statusText}`);
       error.code = err.code;
       throw error;
     }
@@ -136,7 +139,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || `Gagal memuat konfigurasi Storage: ${res.statusText}`);
+      const error: any = new Error(err.detail || err.message || `Gagal memuat konfigurasi Storage: ${res.statusText}`);
       error.code = err.code;
       throw error;
     }
@@ -151,7 +154,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || 'Gagal menyimpan konfigurasi storage.');
+      const error: any = new Error(err.detail || err.message || 'Gagal menyimpan konfigurasi storage.');
       error.code = err.code;
       throw error;
     }
@@ -165,7 +168,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || 'Gagal menguji koneksi storage.');
+      const error: any = new Error(err.detail || err.message || 'Gagal menguji koneksi storage.');
       error.code = err.code;
       throw error;
     }
@@ -178,7 +181,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || `Gagal memuat konfigurasi Database: ${res.statusText}`);
+      const error: any = new Error(err.detail || err.message || `Gagal memuat konfigurasi Database: ${res.statusText}`);
       error.code = err.code;
       throw error;
     }
@@ -193,7 +196,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || 'Gagal menguji koneksi database.');
+      const error: any = new Error(err.detail || err.message || 'Gagal menguji koneksi database.');
       error.code = err.code;
       throw error;
     }
@@ -208,7 +211,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      const error: any = new Error(err.message || 'Gagal menyimpan konfigurasi database.');
+      const error: any = new Error(err.detail || err.message || 'Gagal menyimpan konfigurasi database.');
       error.code = err.code;
       throw error;
     }
