@@ -47,7 +47,7 @@ export class ConfigurationRepository implements IConfigurationRepository {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Verifikasi kata sandi gagal.');
+      throw new Error(err.message || err.detail || err.title || 'Verifikasi kata sandi gagal.');
     }
 
     const data = await res.json();
