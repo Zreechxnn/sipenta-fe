@@ -217,6 +217,20 @@ export class ConfigurationRepository implements IConfigurationRepository {
     }
     return await res.json();
   }
+
+  async encryptAllConfigurations(): Promise<{ success: boolean; message: string }> {
+    const res = await authFetch(`${API_ENDPOINTS.CONFIGURATIONS}/encrypt-all`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const error: any = new Error(err.detail || err.message || 'Gagal mengenkripsi seluruh konfigurasi.');
+      error.code = err.code;
+      throw error;
+    }
+    return await res.json();
+  }
 }
 
 export const configurationRepository = new ConfigurationRepository();

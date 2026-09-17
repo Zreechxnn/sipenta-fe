@@ -73,4 +73,8 @@ export class ConfigurationUseCases {
   setSudoToken(token: string | null): void {
     this.repo.setSudoToken(token);
   }
+
+  async encryptAllConfigurations() {
+    return await this.repo.encryptAllConfigurations();
+  }
 }

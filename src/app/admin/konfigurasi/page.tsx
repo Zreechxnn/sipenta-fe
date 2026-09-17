@@ -46,6 +46,7 @@ export default function KonfigurasiPage() {
     fetchDatabaseConfig,
     testDatabase,
     saveDatabaseConfig,
+    encryptAllConfigurations,
   } = useConfiguration();
 
   // Active Anti-Inspect & Anti-Copy Protection
@@ -150,6 +151,22 @@ export default function KonfigurasiPage() {
                     Sudo Mode: {Math.floor(elevatedSecondsLeft / 60)}:{(elevatedSecondsLeft % 60).toString().padStart(2, '0')}
                   </span>
                 </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const res = await encryptAllConfigurations();
+                      showToast(res.message || 'Seluruh konfigurasi sistem dan kredensial database terenkripsi AES-256-GCM.');
+                    } catch (err: any) {
+                      showToast(err.message || 'Gagal mengenkripsi konfigurasi.', true);
+                    }
+                  }}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                  title="Verifikasi dan pastikan 100% konfigurasi database terenkripsi AES-256-GCM"
+                >
+                  <i className="fa-solid fa-shield-halved text-emerald-600"></i>
+                  Enkripsi DB
+                </button>
                 <button
                   type="button"
                   onClick={async () => {

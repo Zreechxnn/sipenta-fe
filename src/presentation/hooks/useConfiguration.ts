@@ -265,6 +265,22 @@ export function useConfiguration() {
     }
   };
 
+  const encryptAllConfigurations = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+      const res = await useCases.encryptAllConfigurations();
+      await fetchOverview();
+      return res;
+    } catch (err: any) {
+      handleSudoCheckError(err);
+      setError(err.message || 'Gagal mengenkripsi konfigurasi.');
+      throw err;
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return {
     overview,
     llmConfig,
@@ -288,6 +304,7 @@ export function useConfiguration() {
     fetchDatabaseConfig,
     testDatabase,
     saveDatabaseConfig,
+    encryptAllConfigurations,
     sessionExpired,
     setSessionExpired,
   };
