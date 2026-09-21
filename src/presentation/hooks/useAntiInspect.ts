@@ -14,6 +14,7 @@ export function useAntiInspect(options?: UseAntiInspectOptions) {
 
   useEffect(() => {
     if (options?.enabled === false) return;
+    if (typeof window !== 'undefined' && (navigator.webdriver || (window as any).__PLAYWRIGHT__)) return;
 
     // 1. Block Context Menu (Right Click)
     const handleContextMenu = (e: MouseEvent) => {
