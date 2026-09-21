@@ -52,7 +52,9 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
   const [webdavServerUrl, setWebdavServerUrl] = useState(config.webDav?.serverUrl || '');
   const [webdavUsername, setWebdavUsername] = useState(config.webDav?.username || '');
   const [webdavPassword, setWebdavPassword] = useState(config.webDav?.password || '');
-  const [webdavRemotePath, setWebdavRemotePath] = useState(config.webDav?.remotePath || 'siap');
+  const [webdavRemotePath, setWebdavRemotePath] = useState(
+    config.webDav?.remotePath && config.webDav.remotePath !== 'siap' ? config.webDav.remotePath : 'sipenta'
+  );
   const [webdavPreset, setWebdavPreset] = useState(config.webDav?.preset || 'Nextcloud');
   const [webdavDocumentPath, setWebdavDocumentPath] = useState(config.webDav?.documentPath || 'documents');
   const [webdavImagePath, setWebdavImagePath] = useState(config.webDav?.imagePath || 'images');
@@ -103,7 +105,9 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
       if (config.webDav.serverUrl) setWebdavServerUrl(config.webDav.serverUrl);
       if (config.webDav.username) setWebdavUsername(config.webDav.username);
       if (config.webDav.password) setWebdavPassword(config.webDav.password);
-      if (config.webDav.remotePath) setWebdavRemotePath(config.webDav.remotePath);
+      if (config.webDav.remotePath) {
+        setWebdavRemotePath(config.webDav.remotePath === 'siap' ? 'sipenta' : config.webDav.remotePath);
+      }
       if (config.webDav.preset) setWebdavPreset(config.webDav.preset);
       if (config.webDav.documentPath) setWebdavDocumentPath(config.webDav.documentPath);
       if (config.webDav.imagePath) setWebdavImagePath(config.webDav.imagePath);
@@ -563,11 +567,11 @@ export const StorageConfigTab: React.FC<StorageConfigTabProps> = ({
                 type="text"
                 value={webdavRemotePath}
                 onChange={(e) => setWebdavRemotePath(e.target.value)}
-                placeholder="siap"
+                placeholder="sipenta"
                 className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
               />
               <span className="text-[10px] text-slate-400">
-                Nama folder di root Nextcloud/ownCloud/PDN tempat dokumen SIAP disimpan (default: <code>siap</code>).
+                Nama folder di root Nextcloud/ownCloud/PDN tempat dokumen SIPENTA disimpan (default: <code>sipenta</code>).
               </span>
             </div>
 

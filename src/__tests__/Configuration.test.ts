@@ -82,7 +82,7 @@ describe('ConfigurationUseCases', () => {
       googleDrive: { tokenJson: '', folderId: '', folderImageId: '', clientId: '', clientSecret: '' },
       localStorage: { basePath: 'Uploads/Storage' },
       s3Compatible: { endpoint: '', bucketName: 'docs', accessKey: '', secretKey: '', region: 'us-east-1' },
-      webDav: { serverUrl: '', username: '', password: '', remotePath: 'siap', preset: 'Nextcloud' },
+      webDav: { serverUrl: '', username: '', password: '', remotePath: 'sipenta', preset: 'Nextcloud' },
     };
     vi.mocked(mockRepo.getStorageConfig).mockResolvedValue(mockStorage);
     vi.mocked(mockRepo.testStorage).mockResolvedValue({
