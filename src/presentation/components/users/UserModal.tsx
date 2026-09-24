@@ -35,7 +35,7 @@ export const UserModal: React.FC<UserModalProps> = ({
   const [loading, setLoading] = useState(false);
 
   const isAdmin = userRole === 'admin';
-  const isKepalaBagian = userRole === 'kepala bagian' || userRole === 'kasubag';
+  const isKepalaBidang = userRole === 'kepala bidang' || userRole === 'kepala bagian' || userRole === 'kasubag';
 
   useEffect(() => {
     if (editingUser) {
@@ -45,9 +45,9 @@ export const UserModal: React.FC<UserModalProps> = ({
       setPassword('');
       let currentRoleId = 3;
       if (editingUser.role?.toLowerCase() === 'admin') currentRoleId = 2;
-      else if (editingUser.role?.toLowerCase() === 'kepala bagian' || editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
+      else if (editingUser.role?.toLowerCase() === 'kepala bidang' || editingUser.role?.toLowerCase() === 'kepala bagian' || editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
       setRoleId(currentRoleId);
-      setBidang(isKepalaBagian ? (userBidang || '') : (editingUser.bidang || ''));
+      setBidang(isKepalaBidang ? (userBidang || '') : (editingUser.bidang || ''));
       setIsApproved(editingUser.isApproved ?? true);
     } else {
       setFullName('');
@@ -55,10 +55,10 @@ export const UserModal: React.FC<UserModalProps> = ({
       setEmail('');
       setPassword('');
       setRoleId(3);
-      setBidang(isKepalaBagian ? (userBidang || '') : '');
+      setBidang(isKepalaBidang ? (userBidang || '') : '');
       setIsApproved(true);
     }
-  }, [editingUser, bidangs, isKepalaBagian, userBidang]);
+  }, [editingUser, bidangs, isKepalaBidang, userBidang]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -119,11 +119,11 @@ export const UserModal: React.FC<UserModalProps> = ({
     setLoading(true);
 
     let finalBidang = bidang;
-    if (isKepalaBagian) {
+    if (isKepalaBidang) {
       finalBidang = userBidang || '';
     }
 
-    const finalRoleId = isKepalaBagian ? 3 : roleId;
+    const finalRoleId = isKepalaBidang ? 3 : roleId;
 
     try {
       if (isEdit) {
@@ -246,13 +246,13 @@ export const UserModal: React.FC<UserModalProps> = ({
                 Bidang Diskominfo
               </label>
               <select
-                value={isKepalaBagian ? (currentUser?.bidang || userBidang || '') : bidang}
+                value={isKepalaBidang ? (currentUser?.bidang || userBidang || '') : bidang}
                 onChange={handleBidangChange}
-                disabled={isKepalaBagian}
+                disabled={isKepalaBidang}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {!isKepalaBagian && <option value="">-- Belum Ditentukan --</option>}
-                {isKepalaBagian ? (
+                {!isKepalaBidang && <option value="">-- Belum Ditentukan --</option>}
+                {isKepalaBidang ? (
                   <option value={currentUser?.bidang || userBidang || ''}>{currentUser?.bidang || userBidang || ''}</option>
                 ) : bidangs.length > 0 ? (
                   <>
@@ -284,16 +284,16 @@ export const UserModal: React.FC<UserModalProps> = ({
                 </label>
                 <select
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                  value={isKepalaBagian ? 3 : roleId}
+                  value={isKepalaBidang ? 3 : roleId}
                   onChange={(e) => setRoleId(Number(e.target.value))}
-                  disabled={isKepalaBagian}
+                  disabled={isKepalaBidang}
                   required
                 >
                   {isAdmin && (
                     <option value={2}>Admin</option>
                   )}
                   {isAdmin && (
-                    <option value={1}>Kepala Bagian (Admin Bidang)</option>
+                    <option value={1}>Kepala Bidang (Admin Bidang)</option>
                   )}
                   <option value={3}>Tenaga Ahli</option>
                 </select>

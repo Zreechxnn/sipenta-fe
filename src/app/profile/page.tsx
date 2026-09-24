@@ -142,11 +142,11 @@ export default function ProfilePage() {
                 <div className="mb-6">
                   {(() => {
                     const r = profile?.role?.toLowerCase() || '';
-                    const isKepalaBagianRole = r === 'kepala bagian' || r === 'kasubag';
-                    const label = r === 'admin' ? 'Admin' : (isKepalaBagianRole ? 'Kepala Bagian' : 'Tenaga Ahli');
+                    const isKepalaBidangRole = r === 'kepala bidang' || r === 'kepala bagian' || r === 'kasubag';
+                    const label = r === 'admin' ? 'Admin' : (isKepalaBidangRole ? 'Kepala Bidang' : 'Tenaga Ahli');
                     const badgeClass = r === 'admin'
                       ? 'bg-purple-100 text-purple-700 border-purple-200'
-                      : isKepalaBagianRole
+                      : isKepalaBidangRole
                       ? 'bg-blue-100 text-blue-700 border-blue-200'
                       : 'bg-indigo-100 text-indigo-700 border-indigo-200';
 

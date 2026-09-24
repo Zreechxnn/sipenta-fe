@@ -69,7 +69,7 @@ export default function KonfigurasiPage() {
     }
   }, [sessionExpired, setSessionExpired, showToast]);
 
-  // Strict role check: Only admin (not kepala bagian or normal user)
+  // Strict role check: Only admin (not kepala bidang or normal user)
   useEffect(() => {
     if (!authLoading && role && role !== 'admin') {
       router.push('/dokumen');

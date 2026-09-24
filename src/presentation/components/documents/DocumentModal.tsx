@@ -364,13 +364,13 @@ export const DocumentModal: React.FC<DocumentModalProps> = ({
                       Bidang Diskominfo
                     </label>
                     <select
-                      value={role === 'kepala bagian' || role === 'kasubag' || role === 'user' ? (userBidang || '') : bidang}
+                      value={role === 'kepala bidang' || role === 'kepala bagian' || role === 'kasubag' || role === 'user' ? (userBidang || '') : bidang}
                       onChange={e => setBidang(e.target.value)}
-                      disabled={role === 'kepala bagian' || role === 'kasubag' || role === 'user'}
+                      disabled={role === 'kepala bidang' || role === 'kepala bagian' || role === 'kasubag' || role === 'user'}
                       className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      {role !== 'kepala bagian' && role !== 'kasubag' && role !== 'user' && <option value="">-- Belum Ditentukan --</option>}
-                      {role === 'kepala bagian' || role === 'kasubag' || role === 'user' ? (
+                      {role !== 'kepala bidang' && role !== 'kepala bagian' && role !== 'kasubag' && role !== 'user' && <option value="">-- Belum Ditentukan --</option>}
+                      {role === 'kepala bidang' || role === 'kepala bagian' || role === 'kasubag' || role === 'user' ? (
                         <option value={userBidang || ''}>{userBidang || 'Belum Ditentukan'}</option>
                       ) : bidangs.length > 0 ? (
                         bidangs.map((b) => (

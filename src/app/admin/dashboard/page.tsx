@@ -63,7 +63,7 @@ export default function AdminDashboardPage() {
   if (authLoading || !isAdmin) return null;
 
   const isRoleAdmin = role === 'admin';
-  const isKepalaBagian = !isRoleAdmin;
+  const isKepalaBidang = !isRoleAdmin;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50">
@@ -77,12 +77,12 @@ export default function AdminDashboardPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-                {isKepalaBagian ? `Dashboard Kepala Bagian (${bidang || 'Admin Bidang'})` : 'Admin Dashboard'}
+                {isKepalaBidang ? `Dashboard Kepala Bidang (${bidang || 'Admin Bidang'})` : 'Admin Dashboard'}
               </h1>
             </div>
             <p className="text-sm text-slate-500 mt-1">
               Selamat Datang, <strong className="text-slate-800">{user?.fullName || user?.nama || user?.namaLengkap || 'Administrator'}</strong>
-              {bidang ? ` (${bidang})` : ''}. {isKepalaBagian ? 'Panel ringkasan dokumen dan statistik bidang Anda.' : 'Panel kendali utama Sistem Informasi Pelaporan Tenaga Ahli (SIPENTA).'}
+              {bidang ? ` (${bidang})` : ''}. {isKepalaBidang ? 'Panel ringkasan dokumen dan statistik bidang Anda.' : 'Panel kendali utama Sistem Informasi Pelaporan Tenaga Ahli (SIPENTA).'}
             </p>
           </div>
         </div>

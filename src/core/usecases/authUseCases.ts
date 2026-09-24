@@ -49,7 +49,7 @@ export class AuthUseCases {
     const token = this.authRepo.getToken();
     const role = this.authRepo.getRole();
     const user = this.authRepo.getUser();
-    const isAdmin = !!(role && ['admin', 'kepala bagian', 'kasubag'].includes(role.toLowerCase()));
+    const isAdmin = !!(role && ['admin', 'kepala bidang', 'kepala bagian', 'kasubag'].includes(role.toLowerCase()));
     const bidangId = user?.bidangId ? Number(user.bidangId) : null;
     const bidang = user?.bidang || null;
     const isApproved = isAdmin || (user?.isApproved ?? false);
