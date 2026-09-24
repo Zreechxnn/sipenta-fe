@@ -38,7 +38,7 @@ export const AuthSliderLayout: React.FC<AuthSliderLayoutProps> = ({ initialMode 
   // Redirect if already authenticated
   useEffect(() => {
     if (!isLoading && token) {
-      const isExecutive = role && ['admin', 'kasubag'].includes(role.toLowerCase());
+      const isExecutive = role && ['admin', 'kepala bagian', 'kasubag'].includes(role.toLowerCase());
       router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
     }
   }, [token, role, isLoading, router]);

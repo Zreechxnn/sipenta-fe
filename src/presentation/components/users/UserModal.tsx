@@ -35,7 +35,7 @@ export const UserModal: React.FC<UserModalProps> = ({
   const [loading, setLoading] = useState(false);
 
   const isAdmin = userRole === 'admin';
-  const isKasubag = userRole === 'kasubag';
+  const isKepalaBagian = userRole === 'kepala bagian' || userRole === 'kasubag';
 
   useEffect(() => {
     if (editingUser) {
@@ -45,9 +45,9 @@ export const UserModal: React.FC<UserModalProps> = ({
       setPassword('');
       let currentRoleId = 3;
       if (editingUser.role?.toLowerCase() === 'admin') currentRoleId = 2;
-      else if (editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
+      else if (editingUser.role?.toLowerCase() === 'kepala bagian' || editingUser.role?.toLowerCase() === 'kasubag') currentRoleId = 1;
       setRoleId(currentRoleId);
-      setBidang(isKasubag ? (userBidang || '') : (editingUser.bidang || ''));
+      setBidang(isKepalaBagian ? (userBidang || '') : (editingUser.bidang || ''));
       setIsApproved(editingUser.isApproved ?? true);
     } else {
       setFullName('');
@@ -55,10 +55,10 @@ export const UserModal: React.FC<UserModalProps> = ({
       setEmail('');
       setPassword('');
       setRoleId(3);
-      setBidang(isKasubag ? (userBidang || '') : '');
+      setBidang(isKepalaBagian ? (userBidang || '') : '');
       setIsApproved(true);
     }
-  }, [editingUser, bidangs, isKasubag, userBidang]);
+  }, [editingUser, bidangs, isKepalaBagian, userBidang]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -119,11 +119,11 @@ export const UserModal: React.FC<UserModalProps> = ({
     setLoading(true);
 
     let finalBidang = bidang;
-    if (isKasubag) {
+    if (isKepalaBagian) {
       finalBidang = userBidang || '';
     }
 
-    const finalRoleId = isKasubag ? 3 : roleId;
+    const finalRoleId = isKepalaBagian ? 3 : roleId;
 
     try {
       if (isEdit) {
@@ -246,13 +246,13 @@ export const UserModal: React.FC<UserModalProps> = ({
                 Bidang Diskominfo
               </label>
               <select
-                value={isKasubag ? (currentUser?.bidang || userBidang || '') : bidang}
+                value={isKepalaBagian ? (currentUser?.bidang || userBidang || '') : bidang}
                 onChange={handleBidangChange}
-                disabled={isKasubag}
+                disabled={isKepalaBagian}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {!isKasubag && <option value="">-- Belum Ditentukan --</option>}
-                {isKasubag ? (
+                {!isKepalaBagian && <option value="">-- Belum Ditentukan --</option>}
+                {isKepalaBagian ? (
                   <option value={currentUser?.bidang || userBidang || ''}>{currentUser?.bidang || userBidang || ''}</option>
                 ) : bidangs.length > 0 ? (
                   <>
@@ -284,16 +284,16 @@ export const UserModal: React.FC<UserModalProps> = ({
                 </label>
                 <select
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                  value={isKasubag ? 3 : roleId}
+                  value={isKepalaBagian ? 3 : roleId}
                   onChange={(e) => setRoleId(Number(e.target.value))}
-                  disabled={isKasubag}
+                  disabled={isKepalaBagian}
                   required
                 >
                   {isAdmin && (
                     <option value={2}>Admin</option>
                   )}
                   {isAdmin && (
-                    <option value={1}>Kasubag (Admin Bidang)</option>
+                    <option value={1}>Kepala Bagian (Admin Bidang)</option>
                   )}
                   <option value={3}>Tenaga Ahli</option>
                 </select>

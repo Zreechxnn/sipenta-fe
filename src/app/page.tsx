@@ -602,7 +602,7 @@ export default function HomePage() {
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs font-medium">
               <i className="fas fa-user-shield text-indigo-500 text-xs" />
-              Hak Akses 3 Peran (Admin, Kasubag, Tenaga Ahli)
+              Hak Akses 3 Peran (Admin, Kepala Bagian, Tenaga Ahli)
             </span>
           </div>
         </div>
@@ -773,7 +773,7 @@ export default function HomePage() {
                 3 Tingkat
               </span>
               <span className="text-xs text-slate-500 font-medium">
-                Hak Akses (Admin, Kasubag, Tenaga Ahli)
+                Hak Akses (Admin, Kepala Bagian, Tenaga Ahli)
               </span>
             </div>
             <div className="px-2">

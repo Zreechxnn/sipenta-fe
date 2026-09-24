@@ -57,7 +57,7 @@ export default function UsersPage() {
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
-      const isAdmin = ['admin', 'kasubag'].includes(u.role?.toLowerCase() || '');
+      const isAdmin = ['admin', 'kepala bagian', 'kasubag'].includes(u.role?.toLowerCase() || '');
       const isApproved = isAdmin || u.isApproved;
 
       if (statusFilter === 'pending' && isApproved) return false;
@@ -86,7 +86,7 @@ export default function UsersPage() {
 
   const stats = useMemo(() => {
     const total = users.length;
-    const pending = users.filter((u) => !['admin', 'kasubag'].includes(u.role?.toLowerCase() || '') && !u.isApproved).length;
+    const pending = users.filter((u) => !['admin', 'kepala bagian', 'kasubag'].includes(u.role?.toLowerCase() || '') && !u.isApproved).length;
     const approved = total - pending;
     return { total, pending, approved };
   }, [users]);
@@ -94,7 +94,7 @@ export default function UsersPage() {
   if (authLoading) return null;
 
   const isAdmin = currentRole === 'admin';
-  const isBidangAdmin = currentRole === 'kasubag';
+  const isBidangAdmin = currentRole === 'kepala bagian' || currentRole === 'kasubag';
 
   const handleOpenAdd = () => {
     setEditingUser(null);
