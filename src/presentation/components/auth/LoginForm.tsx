@@ -93,7 +93,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast, onSwitchToRegis
         showToast('Login berhasil!');
         
         const userRole = result.user?.role || result.User?.Role || 'user';
-        const isExecutive = ['admin', 'kasubag'].includes(userRole.toLowerCase());
+        const isExecutive = ['admin', 'kepala bidang', 'kepala bagian', 'kasubag'].includes(userRole.toLowerCase());
         setTimeout(() => {
           router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
         }, 600);
@@ -241,7 +241,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ showToast, onSwitchToRegis
                   showToast('Login dengan Google berhasil!');
                   
                   const userRole = result.user?.role || result.User?.Role || 'user';
-                  const isExecutive = ['admin', 'kasubag'].includes(userRole.toLowerCase());
+                  const isExecutive = ['admin', 'kepala bidang', 'kepala bagian', 'kasubag'].includes(userRole.toLowerCase());
                   setTimeout(() => {
                     router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
                   }, 600);

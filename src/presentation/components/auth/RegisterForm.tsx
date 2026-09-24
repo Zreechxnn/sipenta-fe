@@ -34,7 +34,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast, onSwitchT
       if (result.token || result.sukses !== false) {
         showToast('Pendaftaran akun berhasil!');
         const userRole = result.user?.role || result.User?.Role || 'user';
-        const isExecutive = ['admin', 'kasubag'].includes(userRole.toLowerCase());
+        const isExecutive = ['admin', 'kepala bidang', 'kepala bagian', 'kasubag'].includes(userRole.toLowerCase());
         setTimeout(() => {
           router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
         }, 600);
@@ -148,7 +148,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ showToast, onSwitchT
                 if (result.token) {
                   showToast('Pendaftaran dengan Google berhasil!');
                   const userRole = result.user?.role || result.User?.Role || 'user';
-                  const isExecutive = ['admin', 'kasubag'].includes(userRole.toLowerCase());
+                  const isExecutive = ['admin', 'kepala bidang', 'kepala bagian', 'kasubag'].includes(userRole.toLowerCase());
                   setTimeout(() => {
                     router.push(isExecutive ? '/admin/dashboard' : '/dokumen');
                   }, 600);

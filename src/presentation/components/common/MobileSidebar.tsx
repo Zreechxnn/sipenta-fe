@@ -90,8 +90,8 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
 
   const roleDisplay = role === 'admin'
     ? 'Administrator'
-    : role === 'kasubag'
-    ? 'Kasubag'
+    : (role === 'kepala bidang' || role === 'kepala bagian' || role === 'kasubag')
+    ? 'Kepala Bidang'
     : 'Tenaga Ahli';
 
   const NavItem = ({ href, icon, label, index }: { href: string; icon: string; label: string; index: number }) => {
@@ -227,7 +227,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose })
         <nav className="p-3 flex flex-col gap-1 flex-1 overflow-y-auto overscroll-contain">
           <NavItem index={0} href="/" icon="fa-home" label="Beranda" />
           {isAdmin && (
-            <NavItem index={1} href="/admin/dashboard" icon="fa-chart-pie" label={role === 'kasubag' ? 'Dashboard Kasubag' : 'Admin Dashboard'} />
+            <NavItem index={1} href="/admin/dashboard" icon="fa-chart-pie" label={(role === 'kepala bidang' || role === 'kepala bagian' || role === 'kasubag') ? 'Dashboard Kepala Bagian' : 'Admin Dashboard'} />
           )}
           <NavItem index={2} href="/dokumen" icon="fa-file-alt" label="Laporan Kerja" />
           {isAdmin && (
